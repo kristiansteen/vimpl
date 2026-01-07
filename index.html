@@ -220,14 +220,25 @@
             <a href="#" onclick="logout()" class="nav-cta">Logout</a>
           `;
         } else {
+          const isGoogleConfigured = googleConfig && googleConfig.client_id && !googleConfig.client_id.includes('YOUR_');
+          const isMicrosoftConfigured = microsoftConfig && microsoftConfig.client_id && !microsoftConfig.client_id.includes('YOUR_');
+
+          const googleLoginButton = isGoogleConfigured
+            ? `<a href="#" class="nav-cta-secondary" onclick="loginWithGoogle()">Login with Google</a>`
+            : `<a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO is not configured. Please set the client ID in auth.js.">Login with Google</a>`;
+
+          const microsoftLoginButton = isMicrosoftConfigured
+            ? `<a href="#" class="nav-cta-secondary" onclick="loginWithMicrosoft()">Login with Microsoft</a>`
+            : `<a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO is not configured. Please set the client ID in auth.js.">Login with Microsoft</a>`;
+
           authContainer.innerHTML = `
             <form id="email-login-form" style="display: flex; align-items: center; gap: 8px;">
               <input type="email" id="email-input" placeholder="Enter your email" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
               <input type="password" placeholder="Password" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;" disabled>
               <button type="submit" class="nav-cta">Login</button>
             </form>
-            <a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO login is temporarily disabled.">Login with Google</a>
-            <a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO login is temporarily disabled.">Login with Microsoft</a>
+            ${googleLoginButton}
+            ${microsoftLoginButton}
           `;
 
           document.getElementById('email-login-form').addEventListener('submit', (e) => {
