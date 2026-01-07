@@ -11,529 +11,12 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #0ea5e9;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --dark: #1e293b;
-            --dark-lighter: #334155;
-            --light: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-        
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-            text-decoration: none;
-        }
-        
-        .logo span {
-            font-weight: 400;
-            opacity: 0.7;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
-        
-        .nav-link {
-            color: var(--gray-600);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary);
-        }
-        
-        .nav-cta {
-            background: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .nav-cta:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 120px 24px 80px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 80%;
-            height: 150%;
-            background: radial-gradient(ellipse, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        
-        .hero-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-        
-        .hero-content {
-            z-index: 1;
-        }
-        
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--primary);
-            margin-bottom: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        .hero-badge i {
-            color: var(--accent);
-        }
-        
-        .hero h1 {
-            font-size: 56px;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            color: var(--dark);
-        }
-        
-        .hero h1 span {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .hero p {
-            font-size: 18px;
-            color: var(--gray-600);
-            margin-bottom: 32px;
-            max-width: 500px;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-        
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--primary);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-        }
-        
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            color: var(--dark);
-            padding: 16px 32px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-            border: 2px solid var(--gray-200);
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .hero-image {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .hero-image img {
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.15);
-        }
-        
-        .hero-preview {
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.15);
-            border: 1px solid var(--gray-200);
-        }
-        
-        .preview-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-        
-        .preview-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .preview-dot.red { background: #ef4444; }
-        .preview-dot.yellow { background: #f59e0b; }
-        .preview-dot.green { background: #10b981; }
-        
-        .preview-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        
-        .preview-card {
-            background: var(--gray-100);
-            border-radius: 8px;
-            padding: 12px;
-            min-height: 60px;
-        }
-        
-        .preview-card.purple { background: rgba(99, 102, 241, 0.1); }
-        .preview-card.blue { background: rgba(14, 165, 233, 0.1); }
-        .preview-card.green { background: rgba(16, 185, 129, 0.1); }
-        .preview-card.orange { background: rgba(245, 158, 11, 0.1); }
-        
-        .preview-postit {
-            width: 24px;
-            height: 24px;
-            border-radius: 3px;
-            margin: 4px;
-            display: inline-block;
-        }
-        
-        .preview-postit.yellow { background: #fef08a; }
-        .preview-postit.pink { background: #fda4af; }
-        .preview-postit.blue { background: #93c5fd; }
-        
-        /* Features Section */
-        .features {
-            padding: 100px 24px;
-            background: white;
-        }
-        
-        .features-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-header h2 {
-            font-size: 40px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--dark);
-        }
-        
-        .section-header p {
-            font-size: 18px;
-            color: var(--gray-500);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-        
-        .feature-card {
-            padding: 32px;
-            border-radius: 16px;
-            background: var(--gray-100);
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 12px;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .feature-icon i {
-            font-size: 24px;
-            color: white;
-        }
-        
-        .feature-card h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--dark);
-        }
-        
-        .feature-card p {
-            font-size: 15px;
-            color: var(--gray-500);
-            line-height: 1.6;
-        }
-        
-        /* CTA Section */
-        .cta {
-            padding: 100px 24px;
-            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-lighter) 100%);
-            text-align: center;
-        }
-        
-        .cta-container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        
-        .cta h2 {
-            font-size: 40px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 16px;
-        }
-        
-        .cta p {
-            font-size: 18px;
-            color: var(--gray-400);
-            margin-bottom: 32px;
-        }
-        
-        .cta .btn-primary {
-            padding: 20px 48px;
-            font-size: 18px;
-        }
-        
-        /* Footer */
-        .footer {
-            padding: 40px 24px;
-            background: var(--dark);
-            border-top: 1px solid var(--dark-lighter);
-        }
-        
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .footer-logo span {
-            opacity: 0.5;
-        }
-        
-        .footer-links {
-            display: flex;
-            gap: 24px;
-        }
-        
-        .footer-link {
-            color: var(--gray-400);
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-        
-        .footer-link:hover {
-            color: white;
-        }
-        
-        .footer-copy {
-            color: var(--gray-500);
-            font-size: 14px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 968px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .hero h1 {
-                font-size: 40px;
-            }
-            
-            .hero p {
-                margin: 0 auto 32px;
-            }
-            
-            .hero-buttons {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .hero-image {
-                order: -1;
-                max-width: 500px;
-                margin: 0 auto;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .hero h1 {
-                font-size: 32px;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .section-header h2, .cta h2 {
-                font-size: 28px;
-            }
-            
-            .footer-container {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-        }
-        
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .hero-preview {
-            animation: float 6s ease-in-out infinite;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client-ts/2.2.0/oidc-client-ts.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -541,12 +24,14 @@
         <div class="nav-container">
             <a href="/" class="logo">vimpl<span>.com</span></a>
             <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#" class="nav-link">Pricing</a>
-                <a href="#" class="nav-link">About</a>
-                <a href="board.html?new=true" class="nav-cta">Get Started</a>
-            </div>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#" class="nav-link">Pricing</a>
+          <a href="#" class="nav-link">About</a>
         </div>
+        <div class="nav-auth">
+          <!-- Auth buttons will be dynamically shown/hidden -->
+        </div>
+      </div>
     </nav>
     
     <!-- Hero Section -->
@@ -683,5 +168,77 @@
             <div class="footer-copy">© 2025 vimpl. All rights reserved.</div>
         </div>
     </footer>
+
+    <div id="create-board-modal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+      <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px; border-radius: 8px;">
+        <h2>Create a new board</h2>
+        <p>Please enter a name for your new board.</p>
+        <input type="text" id="board-name-input" placeholder="Board name" style="width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <button id="submit-board-name" style="width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer;">Create Board</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const createBoardLinks = document.querySelectorAll('a[href="board.html?new=true"]');
+        const modal = document.getElementById('create-board-modal');
+        const boardNameInput = document.getElementById('board-name-input');
+        const submitBoardNameBtn = document.getElementById('submit-board-name');
+
+        createBoardLinks.forEach(link => {
+          link.addEventListener('click', (event) => {
+            event.preventDefault();
+            modal.style.display = 'block';
+          });
+        });
+
+        submitBoardNameBtn.addEventListener('click', () => {
+          const boardName = boardNameInput.value.trim();
+          if (boardName) {
+            const slug = boardName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            window.location.href = `board.html#${slug}`;
+          } else {
+            alert('Please enter a board name.');
+          }
+        });
+
+        window.addEventListener('click', (event) => {
+          if (event.target == modal) {
+            modal.style.display = 'none';
+          }
+        });
+      });
+    </script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authContainer = document.querySelector('.nav-auth');
+        const user = getCurrentUser();
+
+        if (user) {
+          authContainer.innerHTML = `
+            <span class="nav-user">Hello, ${user.name}</span>
+            <a href="#" onclick="logout()" class="nav-cta">Logout</a>
+          `;
+        } else {
+          authContainer.innerHTML = `
+            <form id="email-login-form" style="display: flex; align-items: center; gap: 8px;">
+              <input type="email" id="email-input" placeholder="Enter your email" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+              <input type="password" placeholder="Password" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;" disabled>
+              <button type="submit" class="nav-cta">Login</button>
+            </form>
+            <a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO login is temporarily disabled.">Login with Google</a>
+            <a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO login is temporarily disabled.">Login with Microsoft</a>
+          `;
+
+          document.getElementById('email-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            if (email) {
+              loginWithEmail(email);
+            }
+          });
+        }
+      });
+    </script>
 </body>
 </html>
