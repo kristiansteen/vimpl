@@ -28,6 +28,7 @@
             <input type="text" id="projectTitle" class="project-title-input" value="Project name" placeholder="Enter project name..." />
         </div>
         <div class="header-controls">
+            <div id="auth-container"></div>
             <div class="autosave-indicator" id="autosaveIndicator">
                 <span class="autosave-dot"></span>
                 <span class="autosave-text">All changes saved</span>
@@ -255,6 +256,19 @@
     <!-- GridStack JS -->
     <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0.0/dist/gridstack-all.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authContainer = document.getElementById('auth-container');
+        const user = getCurrentUser();
+
+        if (user) {
+          authContainer.innerHTML = `
+            <span class="nav-user" style="color: #fff; margin-right: 1rem;">Hello, ${user.name}</span>
+            <a href="#" onclick="logout()" class="btn btn-secondary">Logout</a>
+          `;
+        }
+      });
+    </script>
     <script src="assets/js/board.js"></script>
 </body>
 </html>

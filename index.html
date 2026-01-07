@@ -220,10 +220,22 @@
           `;
         } else {
           authContainer.innerHTML = `
-            <a href="#" onclick="loginWithGoogle()" class="nav-cta-secondary">Login with Google</a>
-            <a href="#" onclick="loginWithMicrosoft()" class="nav-cta-secondary">Login with Microsoft</a>
-            <a href="board.html?new=true" class="nav-cta">Get Started</a>
+            <form id="email-login-form" style="display: flex; align-items: center; gap: 8px;">
+              <input type="email" id="email-input" placeholder="Enter your email" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+              <input type="password" placeholder="Password" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;" disabled>
+              <button type="submit" class="nav-cta">Login</button>
+            </form>
+            <a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO login is temporarily disabled.">Login with Google</a>
+            <a href="#" class="nav-cta-secondary" style="color: #aaa; cursor: not-allowed; text-decoration: none;" title="SSO login is temporarily disabled.">Login with Microsoft</a>
           `;
+
+          document.getElementById('email-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            if (email) {
+              loginWithEmail(email);
+            }
+          });
         }
       });
     </script>
