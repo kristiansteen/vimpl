@@ -3,7 +3,8 @@
 // Note: SSO functionality is temporarily disabled. The configuration remains for easy reactivation.
 const googleConfig = {
     authority: "https://accounts.google.com",
-    client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    // IMPORTANT: Replace with your actual Google Client ID
+    client_id: "630665134432-rvq98p8eo9ahgo66kv4738a4neph1cej.apps.googleusercontent.com",
     redirect_uri: `${window.location.origin}/callback.html`,
     response_type: "id_token token",
     scope: "openid profile email",
@@ -12,6 +13,7 @@ const googleConfig = {
 
 const microsoftConfig = {
     authority: "https://login.microsoftonline.com/common",
+    // IMPORTANT: Replace with your actual Microsoft Client ID
     client_id: "YOUR_MICROSOFT_CLIENT_ID",
     redirect_uri: `${window.location.origin}/callback.html`,
     response_type: "id_token token",
@@ -19,8 +21,8 @@ const microsoftConfig = {
     loadUserInfo: true,
 };
 
-// const googleUserManager = new Oidc.UserManager(googleConfig);
-// const microsoftUserManager = new Oidc.UserManager(microsoftConfig);
+const googleUserManager = new Oidc.UserManager(googleConfig);
+const microsoftUserManager = new Oidc.UserManager(microsoftConfig);
 
 /**
  * Logs the user in using a simple email-based approach for testing.
@@ -42,17 +44,13 @@ function loginWithEmail(email) {
 }
 
 function loginWithGoogle() {
-    // SSO login is temporarily disabled.
-    alert("SSO login is temporarily disabled for testing.");
-    // localStorage.setItem('vimpl_provider', 'google');
-    // googleUserManager.signinRedirect();
+    localStorage.setItem('vimpl_provider', 'google');
+    googleUserManager.signinRedirect();
 }
 
 function loginWithMicrosoft() {
-    // SSO login is temporarily disabled.
-    alert("SSO login is temporarily disabled for testing.");
-    // localStorage.setItem('vimpl_provider', 'microsoft');
-    // microsoftUserManager.signinRedirect();
+    localStorage.setItem('vimpl_provider', 'microsoft');
+    microsoftUserManager.signinRedirect();
 }
 
 /**
@@ -88,26 +86,25 @@ function getCurrentUser() {
  */
 async function handleAuthCallback() {
     const provider = localStorage.getItem('vimpl_provider');
-    // let userManager = provider === 'google' ? googleUserManager : microsoftUserManager;
+    let userManager = provider === 'google' ? googleUserManager : microsoftUserManager;
 
-    // try {
-    //     const user = await userManager.signinRedirectCallback();
-    //     if (user) {
-    //         const userData = {
-    //             id: user.profile.sub,
-    //             name: user.profile.name,
-    //             email: user.profile.email,
-    //             provider: provider
-    //         };
-    //         localStorage.setItem('vimpl-user', JSON.stringify(userData));
-    //         window.location.href = localStorage.getItem('vimpl_redirect_url') || '/';
-    //         localStorage.removeItem('vimpl_redirect_url');
-    //     } else {
-    //         window.location.href = '/';
-    //     }
-    // } catch (error) {
-    //     console.error("Authentication callback error:", error);
-    //     window.location.href = '/';
-    // }
-    console.log("handleAuthCallback called, but SSO is disabled.");
+    try {
+        const user = await userManager.signinRedirectCallback();
+        if (user) {
+            const userData = {
+                id: user.profile.sub,
+                name: user.profile.name,
+                email: user.profile.email,
+                provider: provider
+            };
+            localStorage.setItem('vimpl-user', JSON.stringify(userData));
+            window.location.href = localStorage.getItem('vimpl_redirect_url') || '/';
+            localStorage.removeItem('vimpl_redirect_url');
+        } else {
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error("Authentication callback error:", error);
+        window.location.href = '/';
+    }
 }
