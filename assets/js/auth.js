@@ -4,7 +4,7 @@
 const googleConfig = {
     authority: "https://accounts.google.com",
     // IMPORTANT: Replace with your actual Google Client ID
-    client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    client_id: "630665134432-rvq98p8eo9ahgo66kv4738a4neph1cej.apps.googleusercontent.com",
     redirect_uri: `${window.location.origin}/callback.html`,
     response_type: "id_token token",
     scope: "openid profile email",
