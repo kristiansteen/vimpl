@@ -13,7 +13,9 @@
             selectedColor: null,
             currentPostitId: null,
             lockedSections: new Set(),
-            autoSaveTimeout: null
+            autoSaveTimeout: null,
+            boardKey: 'vimplBoardState',
+            userId: null
         };
 
         // ========================================
@@ -125,21 +127,29 @@
                     sectionContent,
                     projectTitle,
                     teamMembers: AppState.teamMembers,
+                    userId: AppState.userId,
                     version: 2
                 };
-                localStorage.setItem('vimplBoardState', JSON.stringify(state));
+                localStorage.setItem(AppState.boardKey, JSON.stringify(state));
             } catch (e) {
                 console.error('Save error:', e);
             }
         }
 
         function loadBoardState() {
-            const saved = localStorage.getItem('vimplBoardState');
+            const saved = localStorage.getItem(AppState.boardKey);
             if (!saved) return false;
 
             try {
                 const state = JSON.parse(saved);
                 if (state.version !== 2) return false;
+
+                // Check if the board has a user ID and if it matches the current user
+                if (state.userId && state.userId !== AppState.userId) {
+                    alert("You don't have permission to access this board.");
+                    window.location.href = 'index.html';
+                    return false;
+                }
 
                 AppState.grid.load(state.grid);
                 AppState.postits = state.postits || {};
@@ -1316,8 +1326,18 @@
         // ========================================
 
         document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            AppState.userId = user ? user.id : null;
+
             initializeGrid();
             initializePostitPalette();
+
+            const boardSlug = window.location.hash.substring(1);
+            if (boardSlug) {
+                AppState.boardKey = `vimpl-board-${boardSlug}`;
+                const boardName = boardSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                document.getElementById('projectTitle').value = boardName;
+            }
 
             // Check for ?new=true URL parameter
             const urlParams = new URLSearchParams(window.location.search);
@@ -1325,7 +1345,7 @@
 
             if (isNewBoard) {
                 // Clear any existing state and create fresh board
-                localStorage.removeItem('vimplBoardState');
+                localStorage.removeItem(AppState.boardKey);
                 AppState.postits = {};
                 AppState.eventLog = [];
                 AppState.matrixLog = [];
@@ -1358,7 +1378,7 @@
             // New Board
             document.getElementById('newBoard').addEventListener('click', () => {
                 if (confirm('Create a new board? This will clear the current board.')) {
-                    localStorage.removeItem('vimplBoardState');
+                    localStorage.removeItem(AppState.boardKey);
                     AppState.postits = {};
                     AppState.eventLog = [];
                     AppState.matrixLog = [];
@@ -1406,7 +1426,7 @@
 
             // Export
             document.getElementById('exportBoard').addEventListener('click', () => {
-                const data = localStorage.getItem('vimplBoardState');
+                const data = localStorage.getItem(AppState.boardKey);
                 if (data) {
                     const blob = new Blob([data], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);

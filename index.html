@@ -15,6 +15,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client-ts/2.2.0/oidc-client-ts.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -22,12 +23,14 @@
         <div class="nav-container">
             <a href="/" class="logo">vimpl<span>.com</span></a>
             <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#" class="nav-link">Pricing</a>
-                <a href="#" class="nav-link">About</a>
-                <a href="board.html?new=true" class="nav-cta">Get Started</a>
-            </div>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#" class="nav-link">Pricing</a>
+          <a href="#" class="nav-link">About</a>
         </div>
+        <div class="nav-auth">
+          <!-- Auth buttons will be dynamically shown/hidden -->
+        </div>
+      </div>
     </nav>
     
     <!-- Hero Section -->
@@ -164,5 +167,65 @@
             <div class="footer-copy">© 2025 vimpl. All rights reserved.</div>
         </div>
     </footer>
+
+    <div id="create-board-modal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+      <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px; border-radius: 8px;">
+        <h2>Create a new board</h2>
+        <p>Please enter a name for your new board.</p>
+        <input type="text" id="board-name-input" placeholder="Board name" style="width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <button id="submit-board-name" style="width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer;">Create Board</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const createBoardLinks = document.querySelectorAll('a[href="board.html?new=true"]');
+        const modal = document.getElementById('create-board-modal');
+        const boardNameInput = document.getElementById('board-name-input');
+        const submitBoardNameBtn = document.getElementById('submit-board-name');
+
+        createBoardLinks.forEach(link => {
+          link.addEventListener('click', (event) => {
+            event.preventDefault();
+            modal.style.display = 'block';
+          });
+        });
+
+        submitBoardNameBtn.addEventListener('click', () => {
+          const boardName = boardNameInput.value.trim();
+          if (boardName) {
+            const slug = boardName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            window.location.href = `board.html#${slug}`;
+          } else {
+            alert('Please enter a board name.');
+          }
+        });
+
+        window.addEventListener('click', (event) => {
+          if (event.target == modal) {
+            modal.style.display = 'none';
+          }
+        });
+      });
+    </script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authContainer = document.querySelector('.nav-auth');
+        const user = getCurrentUser();
+
+        if (user) {
+          authContainer.innerHTML = `
+            <span class="nav-user">Hello, ${user.name}</span>
+            <a href="#" onclick="logout()" class="nav-cta">Logout</a>
+          `;
+        } else {
+          authContainer.innerHTML = `
+            <a href="#" onclick="loginWithGoogle()" class="nav-cta-secondary">Login with Google</a>
+            <a href="#" onclick="loginWithMicrosoft()" class="nav-cta-secondary">Login with Microsoft</a>
+            <a href="board.html?new=true" class="nav-cta">Get Started</a>
+          `;
+        }
+      });
+    </script>
 </body>
 </html>
