@@ -56,8 +56,9 @@
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 700;
+            font-family: 'Birthstone', cursive;
+            font-size: 38px;
+            font-weight: 400;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
