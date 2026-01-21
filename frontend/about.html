@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - vimpl</title>
+    <meta name="description" content="About vimpl - The visual planning tool for agile teams.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%236366f1' rx='20' width='100' height='100'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>v</text></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">vimpl<span>.com</span></a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="about.html" class="nav-link active">About</a>
+            </div>
+            <div class="nav-auth">
+                <a href="login.html" class="nav-link">Log in</a>
+                <a href="register.html" class="btn-primary-small">Sign up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="min-height: 400px; padding-top: 120px; padding-bottom: 60px;">
+        <div class="hero-container" style="flex-direction: column; text-align: center; gap: 20px;">
+            <h1 style="max-width: 800px; margin: 0 auto;">Mission: <span style="color: var(--primary);">Simplify
+                    Planning</span></h1>
+            <p style="max-width: 600px; margin: 0 auto; color: var(--gray-600); font-size: 1.25rem;">
+                We believe that complex projects don't need complex tools. Vimpl was built to bring clarity, visuality,
+                and fun back into project management.
+            </p>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="features" style="background: white;">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>The Story</h2>
+                <p>From a frustration with spreadsheets to a visual revolution.</p>
+            </div>
+            <div style="max-width: 800px; margin: 0 auto; font-size: 1.1rem; line-height: 1.8; color: var(--gray-700);">
+                <p style="margin-bottom: 24px;">
+                    Vimpl started as a side project by <strong>Kristian Steen</strong>, a software engineer and product
+                    enthusiast based in Copenhagen, Denmark.
+                    Frustrated by the rigidity of traditional Gantt charts and the chaos of physical post-it notes
+                    falling off walls, Kristian set out to build a digital solution that felt as flexible as a
+                    whiteboard but as powerful as a database.
+                </p>
+                <p>
+                    What began as a simple grid for organizing tasks has grown into a comprehensive visual planning
+                    suite used by teams to track risks, manage sprints, and visualize KPIs in real-time.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="features" style="background: var(--gray-50);">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>Meet the Founder</h2>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 40px; margin-top: 40px;">
+                <div class="feature-card" style="text-align: center; max-width: 350px;">
+                    <div
+                        style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: bold;">
+                        K
+                    </div>
+                    <h3>Kristian Steen</h3>
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 12px;">Founder & Lead Developer
+                    </p>
+                    <p>
+                        Passionate about building intuitive software that solves real problems. With a background in
+                        product development and agile methodologies, Kristian leads the vision and engineering of vimpl.
+                    </p>
+                    <div style="margin-top: 16px;">
+                        <a href="https://github.com/kristiansteen" target="_blank"
+                            style="color: var(--gray-600); font-size: 24px; margin: 0 8px;"><i
+                                class="fab fa-github"></i></a>
+                        <!-- LinkedIn or other arguably relevant links could go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Join the journey</h2>
+            <p>Be part of the visual planning revolution.</p>
+            <a href="register.html" class="btn-primary">
+                <i class="fas fa-rocket"></i> Get Started Free
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">vimpl<span>.com</span></div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy</a>
+                <a href="#" class="footer-link">Terms</a>
+                <a href="https://github.com/kristiansteen/vimpl" class="footer-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <div class="footer-copy">© 2025 vimpl. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="assets/js/api-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authContainer = document.querySelector('.nav-auth');
+            const apiClient = new ApiClient();
+
+            if (apiClient.isAuthenticated()) {
+                try {
+                    const response = await apiClient.getCurrentUser();
+                    const user = response.user || response;
+
+                    authContainer.innerHTML = `
+            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+              <span class="nav-user" style="font-weight: 500; color: #333;">Hello, ${user.name}</span>
+              <a href="dashboard.html" class="btn-primary-small" style="text-decoration: none;">Dashboard</a>
+              <button onclick="logout()" class="nav-link" style="border: none; background: none; cursor: pointer; color: #666;">Logout</button>
+            </div>
+          `;
+                } catch (e) {
+                    apiClient.clearToken();
+                }
+            }
+        });
+
+        async function logout() {
+            const apiClient = new ApiClient();
+            await apiClient.logout();
+            window.location.reload();
+        }
+    </script>
+</body>
+
+</html>
