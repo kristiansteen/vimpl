@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import authService from '../services/auth.service';
 import logger from '../utils/logger';
 
-export interface AuthRequest extends Request {
+export interface AuthRequest extends Request<any, any, any, any> {
   user?: {
     userId: string;
     email: string;

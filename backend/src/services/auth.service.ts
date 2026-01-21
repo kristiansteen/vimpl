@@ -38,7 +38,7 @@ class AuthService {
   generateAccessToken(payload: TokenPayload): string {
     return jwt.sign(payload, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn,
-    });
+    } as jwt.SignOptions);
   }
 
   /**
@@ -47,7 +47,7 @@ class AuthService {
   generateRefreshToken(payload: TokenPayload): string {
     return jwt.sign(payload, config.jwt.refreshSecret, {
       expiresIn: config.jwt.refreshExpiresIn,
-    });
+    } as jwt.SignOptions);
   }
 
   /**
@@ -104,7 +104,7 @@ class AuthService {
     const passwordHash = await this.hashPassword(password);
 
     // Create verification token
-    const verificationToken = jwt.sign({ email }, config.jwt.secret, { expiresIn: '24h' });
+    const verificationToken = jwt.sign({ email }, config.jwt.secret, { expiresIn: '24h' } as jwt.SignOptions);
 
     // Create user
     const user = await prisma.user.create({
