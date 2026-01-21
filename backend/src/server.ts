@@ -56,7 +56,7 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Health check endpoint
-app.get('/health', async (req: Request, res: Response) => {
+app.get('/health', async (_req: Request, res: Response) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.json({
@@ -90,7 +90,7 @@ app.use((req: Request, res: Response) => {
 });
 
 // Global error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   logger.error('Unhandled error:', err);
 
   const statusCode = (err as any).statusCode || 500;

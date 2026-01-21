@@ -38,10 +38,10 @@ class PortfolioController {
    * Get board comparison
    * GET /api/v1/portfolio/comparison
    */
-  async getPortfolioStats(req: AuthRequest, res: Response): Promise<void> {
+  async getPortfolioStats(_req: AuthRequest, res: Response): Promise<void> {
     try {
       // Platform admin check would go here
-      const _user = req.user;
+      // const user = req.user;
 
       const stats = await portfolioService.getPortfolioStats();
       res.json(stats);
@@ -67,7 +67,7 @@ class PortfolioController {
 
       const comparison = await portfolioService.getBoardComparison(req.user.userId);
 
-      res.json({ comparison });
+      res.json(comparison);
     } catch (error) {
       logger.error('Get board comparison error:', error);
       res.status(500).json({

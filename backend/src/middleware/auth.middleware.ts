@@ -7,10 +7,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 
 export interface AuthRequest extends Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>> {
-  user?: {
-    userId: string;
-    email: string;
-  };
+  user?: any;
 }
 
 /**

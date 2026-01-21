@@ -6,7 +6,7 @@ class BoardService {
   /**
    * Create a unique slug from title
    */
-  private async generateUniqueSlug(title: string, userId: string): Promise<string> {
+  private async generateUniqueSlug(title: string, _userId: string): Promise<string> {
     const baseSlug = title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')

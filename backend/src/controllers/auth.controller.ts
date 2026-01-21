@@ -121,7 +121,7 @@ class AuthController {
    * Logout
    * POST /api/v1/auth/logout
    */
-  async logout(req: Request, res: Response): Promise<void> {
+  async logout(_req: Request, res: Response): Promise<void> {
     try {
       // Clear refresh token cookie
       res.clearCookie('refreshToken');
@@ -240,7 +240,7 @@ class AuthController {
    * Refresh token endpoint (for explicit refresh token submission)
    * POST /api/v1/auth/refresh-token
    */
-  async refreshToken(_req: Request, res: Response): Promise<void> {
+  async refreshToken(req: Request, res: Response): Promise<void> {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
