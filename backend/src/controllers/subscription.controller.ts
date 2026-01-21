@@ -8,7 +8,7 @@ class SubscriptionController {
    * Get subscription tiers
    * GET /api/v1/subscription/tiers
    */
-  async getTiers(req: AuthRequest, res: Response): Promise<void> {
+  async getTiers(_req: AuthRequest, res: Response): Promise<void> {
     try {
       res.json({
         tiers: Object.values(SUBSCRIPTION_TIERS)

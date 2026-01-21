@@ -33,7 +33,7 @@ router.get(
   authController.googleCallback
 );
 
-router.get('/google/failure', (req, res) => {
+router.get('/google/failure', (_req, res) => {
   res.status(401).json({
     error: 'Authentication Failed',
     message: 'Google authentication failed',

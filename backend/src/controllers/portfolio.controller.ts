@@ -17,7 +17,7 @@ class PortfolioController {
       }
 
       // Check if user has commercial subscription (required for portfolio)
-      const user = await subscriptionService.getTierDetails(req.user.userId);
+      await subscriptionService.getTierDetails(req.user.userId);
 
       const dashboard = await portfolioService.getPortfolioDashboard(req.user.userId);
 

@@ -13,7 +13,7 @@ if (config.google.clientId && config.google.clientSecret) {
         clientSecret: config.google.clientSecret,
         callbackURL: config.google.callbackUrl,
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (_accessToken, _refreshToken, profile, done) => {
         try {
           const user = await authService.findOrCreateGoogleUser(profile);
           done(null, { userId: user.id, email: user.email });
