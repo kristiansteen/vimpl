@@ -18,7 +18,7 @@ class PortfolioController {
 
       // Check if user has commercial subscription (required for portfolio)
       const user = await subscriptionService.getTierDetails(req.user.userId);
-      
+
       const dashboard = await portfolioService.getPortfolioDashboard(req.user.userId);
 
       res.json({
@@ -30,6 +30,26 @@ class PortfolioController {
       res.status(500).json({
         error: 'Server Error',
         message: 'Failed to fetch portfolio dashboard',
+      });
+    }
+  }
+
+  /**
+   * Get board comparison
+   * GET /api/v1/portfolio/comparison
+   */
+  async getPortfolioStats(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      // Platform admin check would go here
+      const _user = req.user;
+
+      const stats = await portfolioService.getPortfolioStats();
+      res.json(stats);
+    } catch (error) {
+      logger.error('Error fetching portfolio stats:', error);
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'Failed to fetch portfolio stats',
       });
     }
   }

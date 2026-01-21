@@ -41,6 +41,18 @@ export interface PortfolioDashboard {
 
 class PortfolioService {
   /**
+   * Get portfolio stats
+   */
+  async getPortfolioStats() {
+    // Placeholder implementation
+    return {
+      totalBoards: await prisma.board.count(),
+      totalSections: await prisma.section.count(),
+      totalPostits: await prisma.postit.count(),
+    };
+  }
+
+  /**
    * Get portfolio dashboard for a user
    */
   async getPortfolioDashboard(userId: string): Promise<PortfolioDashboard> {
@@ -76,7 +88,7 @@ class PortfolioService {
     const boardHighlights: BoardHighlights[] = await Promise.all(
       user.boards.map(async (board) => {
         const postits = board.postits;
-        
+
         // Count post-its by status
         const postitsByStatus = {
           todo: postits.filter(p => p.status === 'todo').length,
@@ -86,9 +98,9 @@ class PortfolioService {
 
         // Check for risk matrix sections
         const hasRiskMatrix = board.sections.some(s => s.type === 'matrix');
-        
+
         // Count high risk items (risk score > 7500)
-        const highRiskItems = postits.filter(p => 
+        const highRiskItems = postits.filter(p =>
           p.riskScore !== null && p.riskScore > 7500
         ).length;
 
@@ -121,7 +133,7 @@ class PortfolioService {
     const totalSections = boardHighlights.reduce((sum, b) => sum + b.totalSections, 0);
     const totalDone = boardHighlights.reduce((sum, b) => sum + b.postitsByStatus.done, 0);
     const completionRate = totalPostits > 0 ? (totalDone / totalPostits) * 100 : 0;
-    
+
     // Active boards are those accessed in last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const activeBoards = boardHighlights.filter(b => b.lastAccessed > thirtyDaysAgo).length;
@@ -156,7 +168,7 @@ class PortfolioService {
         slug: board.boardSlug,
         metrics: {
           totalItems: board.totalPostits,
-          completionRate: board.totalPostits > 0 
+          completionRate: board.totalPostits > 0
             ? Math.round((board.postitsByStatus.done / board.totalPostits) * 100)
             : 0,
           teamSize: board.teamMemberCount,

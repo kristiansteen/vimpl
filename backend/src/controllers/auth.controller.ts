@@ -87,9 +87,9 @@ class AuthController {
       }
 
       // Get IP address and user agent for audit logging
-      const ipAddress = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || 
-                       req.socket.remoteAddress || 
-                       'unknown';
+      const ipAddress = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() ||
+        req.socket.remoteAddress ||
+        'unknown';
       const userAgent = req.headers['user-agent'] || 'unknown';
 
       // Login
@@ -233,6 +233,39 @@ class AuthController {
         error: 'Verification Failed',
         message: error.message || 'Failed to verify email',
       });
+    }
+  }
+
+  /**
+   * Refresh token endpoint (for explicit refresh token submission)
+   * POST /api/v1/auth/refresh-token
+   */
+  async refreshToken(_req: Request, res: Response): Promise<void> {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      res.status(400).json({
+        error: 'Validation Error',
+        message: 'Refresh token is required',
+      });
+      return;
+    }
+
+    try {
+      const accessToken = await authService.refreshAccessToken(refreshToken);
+      res.json({ accessToken });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(401).json({
+          error: 'Unauthorized',
+          message: error.message,
+        });
+      } else {
+        res.status(500).json({
+          error: 'Internal Server Error',
+          message: 'An unexpected error occurred',
+        });
+      }
     }
   }
 
