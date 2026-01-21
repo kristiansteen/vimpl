@@ -34,10 +34,10 @@ class BoardService {
   ): Promise<Board> {
     // Import subscription service
     const subscriptionService = (await import('./subscription.service')).default;
-    
+
     // Check if user can create a new board based on their subscription
     const { allowed, reason } = await subscriptionService.canCreateBoard(userId);
-    
+
     if (!allowed) {
       throw new Error(reason || 'Cannot create board');
     }
@@ -144,17 +144,17 @@ class BoardService {
         slug,
         OR: userId
           ? [
-              { userId },
-              { isPublic: true },
-              {
-                collaborators: {
-                  some: {
-                    userId,
-                    acceptedAt: { not: null },
-                  },
+            { userId },
+            { isPublic: true },
+            {
+              collaborators: {
+                some: {
+                  userId,
+                  acceptedAt: { not: null },
                 },
               },
-            ]
+            },
+          ]
           : [{ isPublic: true }],
       },
       include: {
@@ -185,10 +185,14 @@ class BoardService {
       throw new Error('Unauthorized to update this board');
     }
 
+    // Exclude fields that shouldn't be updated
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, userId: uid, createdAt, updatedAt, ...safeData } = data;
+
     const board = await prisma.board.update({
       where: { id: boardId },
       data: {
-        ...data,
+        ...(safeData as any),
         updatedAt: new Date(),
       },
     });
@@ -286,7 +290,7 @@ class BoardService {
 
     const section = await prisma.section.create({
       data: {
-        ...sectionData,
+        ...(sectionData as any),
         boardId,
       },
     });
@@ -321,10 +325,14 @@ class BoardService {
       throw new Error('Unauthorized to update section');
     }
 
+    // Exclude immutable fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, boardId, createdAt, updatedAt, ...safeData } = data;
+
     return prisma.section.update({
       where: { id: sectionId },
       data: {
-        ...data,
+        ...(safeData as any),
         updatedAt: new Date(),
       },
     });
@@ -401,10 +409,14 @@ class BoardService {
       throw new Error('Unauthorized to update post-it');
     }
 
+    // Exclude immutable fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, boardId, sectionId, createdAt, updatedAt, ...safeData } = data;
+
     return prisma.postit.update({
       where: { id: postitId },
       data: {
-        ...data,
+        ...safeData,
         updatedAt: new Date(),
       },
     });
