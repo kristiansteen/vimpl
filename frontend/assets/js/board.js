@@ -398,6 +398,7 @@ function restorePostit(data, parentElement) {
     postit.setAttribute('data-color', data.color);
 
     postit.innerHTML = `
+                <div class="postit-handle" title="Drag to move"></div>
                 <div class="postit-inner">
                     <div class="postit-front">
                         <textarea placeholder="...">${data.content || ''}</textarea>
@@ -954,8 +955,11 @@ function makePostitDraggable(postit) {
     postit.addEventListener('mousedown', (e) => {
         // Only allow dragging from handle or non-input areas
         if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
-        // Strict check for handle class or postit body (if clicking edge)
-        if (!e.target.classList.contains('postit-handle') && !e.target.classList.contains('postit')) return;
+
+        // Allow dragging from handle, the postit body, or the inner container
+        if (!e.target.classList.contains('postit-handle') &&
+            !e.target.classList.contains('postit') &&
+            !e.target.closest('.postit-inner')) return;
 
         isDragging = true;
         postit.classList.add('dragging');
