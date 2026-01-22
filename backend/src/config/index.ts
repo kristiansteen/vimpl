@@ -52,7 +52,8 @@ const config: Config = {
     allowedOrigins: [
       ...(process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim()).filter(Boolean) || []),
       'http://localhost:5173',
-      'https://vimpl-sl96.vercel.app'
+      'https://vimpl-sl96.vercel.app',
+      'https://vimpl.vercel.app'
     ],
   },
   rateLimit: {
