@@ -89,6 +89,16 @@ app.get('/health', async (_req: Request, res: Response) => {
   }
 });
 
+// Root route - Welcome message
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    message: 'vimpl API is running',
+    version: '1.0.0',
+    documentation: '/docs',
+    health: '/health'
+  });
+});
+
 // API Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/boards', boardRoutes);
