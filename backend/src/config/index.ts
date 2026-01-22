@@ -49,7 +49,7 @@ const config: Config = {
   },
   frontend: {
     url: process.env.FRONTEND_URL || 'http://localhost:5173',
-    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim()) || ['http://localhost:5173'],
+    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim()) || ['http://localhost:5173', 'https://vimpl-sl96.vercel.app'],
   },
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
