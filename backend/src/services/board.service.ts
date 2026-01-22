@@ -191,6 +191,8 @@ class BoardService {
       throw new Error('Unauthorized to update this board');
     }
 
+    logger.info(`Starting update for board ${boardId} (user: ${userId})`);
+
     // Exclude fields that shouldn't be updated
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, userId: uid, createdAt, updatedAt, ...safeData } = data;

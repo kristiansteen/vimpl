@@ -92,29 +92,43 @@ function getBoardIdFromUrl() {
 // ========================================
 
 function scheduleAutoSave() {
-    // Only owners/admins generally have full edit rights on structure, 
-    // but members can edit post-its. 
-    // Logic: If role is member, we might restrict structure changes but allow content.
-    // However, saveBoardState saves the WHOLE state.
-    // If a member moves a post-it, we need to save.
-
     clearTimeout(AppState.autoSaveTimeout);
     showAutoSaveStatus('saving');
-    AppState.autoSaveTimeout = setTimeout(() => {
-        saveBoardState();
-        showAutoSaveStatus('saved');
-    }, 1000);
+    AppState.autoSaveTimeout = setTimeout(async () => {
+        const success = await saveBoardState();
+        if (success) {
+            showAutoSaveStatus('saved');
+        } else {
+            showAutoSaveStatus('error');
+        }
+    }, 1500); // Slightly longer delay to batch rapid changes
 }
 
 function showAutoSaveStatus(status) {
     const indicator = document.getElementById('autosaveIndicator');
+    if (!indicator) return;
     const text = indicator.querySelector('.autosave-text');
     indicator.className = 'autosave-indicator ' + status;
-    text.textContent = status === 'saving' ? 'Saving...' : 'All changes saved';
+
+    if (status === 'saving') {
+        text.textContent = 'Saving changes...';
+    } else if (status === 'saved') {
+        text.textContent = 'All changes saved';
+        // Auto-hide success message after 3 seconds, but keep it if it's "saved"
+    } else if (status === 'error') {
+        text.textContent = 'Save failed! Retrying...';
+        // If error, try saving again after 5 seconds
+        if (!AppState.retryTimeout) {
+            AppState.retryTimeout = setTimeout(() => {
+                AppState.retryTimeout = null;
+                scheduleAutoSave();
+            }, 5000);
+        }
+    }
 }
 
 async function saveBoardState() {
-    if (!currentBoardId) return;
+    if (!currentBoardId) return false;
 
     try {
         const gridData = AppState.grid.save(true);
@@ -166,9 +180,11 @@ async function saveBoardState() {
             gridData: state
         });
 
+        return true;
     } catch (e) {
         console.error('Save error:', e);
         showAutoSaveStatus('error');
+        return false;
     }
 }
 
