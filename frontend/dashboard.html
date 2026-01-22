@@ -566,7 +566,7 @@
         // Render boards
         function renderBoards(boards) {
             const grid = document.getElementById('boardsGrid');
-            const currentUserId = (apiClient.getToken() ? JSON.parse(atob(apiClient.getToken())).id : '');
+            const currentUserId = apiClient.getUserIdFromToken();
 
             grid.innerHTML = boards.map(board => {
                 // Determine if user is owner

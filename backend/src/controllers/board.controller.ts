@@ -117,11 +117,12 @@ class BoardController {
         message: 'Board created successfully',
         board,
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Create board error:', error);
       res.status(500).json({
         error: 'Server Error',
-        message: 'Failed to create board',
+        message: error.message || 'Failed to create board',
+        details: process.env.NODE_ENV === 'development' ? error : undefined
       });
     }
   }

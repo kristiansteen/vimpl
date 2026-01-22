@@ -32,32 +32,38 @@ class BoardService {
     title: string,
     description?: string
   ): Promise<Board> {
-    // Import subscription service
-    const subscriptionService = (await import('./subscription.service')).default;
+    try {
+      // Import subscription service
+      const subscriptionService = (await import('./subscription.service')).default;
 
-    // Check if user can create a new board based on their subscription
-    const { allowed, reason } = await subscriptionService.canCreateBoard(userId);
+      // Check if user can create a new board based on their subscription
+      const { allowed, reason } = await subscriptionService.canCreateBoard(userId);
 
-    if (!allowed) {
-      throw new Error(reason || 'Cannot create board');
+      if (!allowed) {
+        logger.warn(`Board creation denied for user ${userId}: ${reason}`);
+        throw new Error(reason || 'Cannot create board');
+      }
+
+      const slug = await this.generateUniqueSlug(title, userId);
+
+      const board = await prisma.board.create({
+        data: {
+          userId,
+          title,
+          slug,
+          description,
+          gridData: {},
+          settings: {},
+        },
+      });
+
+      logger.info(`Board created: ${board.id} by user ${userId}`);
+
+      return board;
+    } catch (error: any) {
+      logger.error(`Error in createBoard for user ${userId}:`, error);
+      throw error;
     }
-
-    const slug = await this.generateUniqueSlug(title, userId);
-
-    const board = await prisma.board.create({
-      data: {
-        userId,
-        title,
-        slug,
-        description,
-        gridData: {},
-        settings: {},
-      },
-    });
-
-    logger.info(`Board created: ${board.id} by user ${userId}`);
-
-    return board;
   }
 
   /**
