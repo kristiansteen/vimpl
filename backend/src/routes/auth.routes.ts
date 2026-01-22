@@ -18,6 +18,15 @@ router.get('/me', authenticate, authController.getCurrentUser);
 // Google OAuth routes
 router.get(
   '/google',
+  (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      return res.status(503).json({
+        error: 'Service Unavailable',
+        message: 'Google Login is not configured on the server.'
+      });
+    }
+    next();
+  },
   passport.authenticate('google', {
     scope: ['profile', 'email'],
     session: false,
