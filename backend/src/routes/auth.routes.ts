@@ -18,12 +18,13 @@ router.get('/me', authenticate, authController.getCurrentUser);
 // Google OAuth routes
 router.get(
   '/google',
-  (req, res, next) => {
+  (_req, res, next) => {
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-      return res.status(503).json({
+      res.status(503).json({
         error: 'Service Unavailable',
         message: 'Google Login is not configured on the server.'
       });
+      return;
     }
     next();
   },
