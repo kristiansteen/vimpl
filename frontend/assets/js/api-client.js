@@ -159,7 +159,7 @@ class ApiClient {
     /**
      * @param {string} baseURL - Base URL of the API (production URL)
      */
-    constructor(baseURL = 'https://vimpl.onrender.com/api/v1') {
+    constructor(baseURL = 'https://vimpl-backend.onrender.com/api/v1') {
         this.baseURL = baseURL;
 
         if (USE_MOCK) {
