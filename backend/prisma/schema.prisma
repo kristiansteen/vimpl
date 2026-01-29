@@ -55,6 +55,7 @@ model Board {
   description      String?
   gridData         Json      @default("{}") @map("grid_data")
   settings         Json      @default("{}") 
+  version          Int       @default(0)  // Optimistic locking version
   isPublic         Boolean   @default(false) @map("is_public")
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")

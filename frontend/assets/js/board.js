@@ -88,20 +88,62 @@ function getBoardIdFromUrl() {
 }
 
 // ========================================
-// AUTO-SAVE FUNCTIONALITY
+// AUTO-SAVE FUNCTIONALITY (Enhanced)
 // ========================================
+
+let currentBoardVersion = 0;  // Track current version for optimistic locking
+let retryCount = 0;
+const MAX_RETRIES = 5;
+const BACKUP_KEY = 'vimpl-board-backup';
 
 function scheduleAutoSave() {
     clearTimeout(AppState.autoSaveTimeout);
     showAutoSaveStatus('saving');
+
+    // Save to local storage as backup immediately
+    saveToLocalBackup();
+
     AppState.autoSaveTimeout = setTimeout(async () => {
-        const success = await saveBoardState();
-        if (success) {
+        const result = await saveBoardState();
+        if (result.success) {
             showAutoSaveStatus('saved');
+            retryCount = 0;  // Reset retry count on success
+            clearLocalBackup();  // Clear backup on successful save
+        } else if (result.conflict) {
+            showAutoSaveStatus('conflict');
         } else {
             showAutoSaveStatus('error');
         }
-    }, 1500); // Slightly longer delay to batch rapid changes
+    }, 1500);
+}
+
+function saveToLocalBackup() {
+    if (!currentBoardId) return;
+    try {
+        const state = gatherBoardState();
+        localStorage.setItem(`${BACKUP_KEY}-${currentBoardId}`, JSON.stringify({
+            state,
+            timestamp: Date.now(),
+            version: currentBoardVersion
+        }));
+    } catch (e) {
+        console.warn('Failed to save local backup:', e);
+    }
+}
+
+function clearLocalBackup() {
+    if (!currentBoardId) return;
+    localStorage.removeItem(`${BACKUP_KEY}-${currentBoardId}`);
+}
+
+function getLocalBackup() {
+    if (!currentBoardId) return null;
+    try {
+        const backup = localStorage.getItem(`${BACKUP_KEY}-${currentBoardId}`);
+        return backup ? JSON.parse(backup) : null;
+    } catch (e) {
+        return null;
+    }
 }
 
 function showAutoSaveStatus(status) {
@@ -113,80 +155,129 @@ function showAutoSaveStatus(status) {
     if (status === 'saving') {
         text.textContent = 'Saving changes...';
     } else if (status === 'saved') {
-        text.textContent = 'All changes saved';
-        // Auto-hide success message after 3 seconds, but keep it if it's "saved"
+        const now = new Date();
+        text.textContent = `Saved at ${now.toLocaleTimeString()}`;
+    } else if (status === 'conflict') {
+        text.textContent = 'Conflict detected - please refresh';
+        indicator.style.background = '#f59e0b';
     } else if (status === 'error') {
-        text.textContent = 'Save failed! Retrying...';
-        // If error, try saving again after 5 seconds
-        if (!AppState.retryTimeout) {
-            AppState.retryTimeout = setTimeout(() => {
-                AppState.retryTimeout = null;
-                scheduleAutoSave();
-            }, 5000);
+        retryCount++;
+        if (retryCount <= MAX_RETRIES) {
+            const delay = Math.min(5000 * Math.pow(2, retryCount - 1), 30000);  // Exponential backoff
+            text.textContent = `Save failed - retrying in ${Math.round(delay / 1000)}s...`;
+            if (!AppState.retryTimeout) {
+                AppState.retryTimeout = setTimeout(() => {
+                    AppState.retryTimeout = null;
+                    scheduleAutoSave();
+                }, delay);
+            }
+        } else {
+            text.textContent = 'Save failed - changes backed up locally';
         }
     }
 }
 
+function gatherBoardState() {
+    const gridData = AppState.grid ? AppState.grid.save(true) : [];
+
+    // Save section content
+    const sectionContent = {};
+    document.querySelectorAll('.grid-stack-item').forEach(item => {
+        const id = item.getAttribute('gs-id');
+        const textarea = item.querySelector('.text-content');
+        if (textarea) {
+            sectionContent[id] = { text: textarea.value };
+        }
+        const title = item.querySelector('.section-title');
+        if (title) {
+            sectionContent[id] = sectionContent[id] || {};
+            sectionContent[id].title = title.value;
+        }
+
+        // Save Matrix Labels
+        const xLabel = item.querySelector('.x-axis-label');
+        const yLabel = item.querySelector('.y-axis-label');
+        if (xLabel || yLabel) {
+            sectionContent[id] = sectionContent[id] || {};
+            if (xLabel) sectionContent[id].xLabel = xLabel.value;
+            if (yLabel) sectionContent[id].yLabel = yLabel.value;
+        }
+    });
+
+    const projectTitle = document.getElementById('projectTitle')?.value || 'Project name';
+    updateTeamMembersFromTable();
+
+    return {
+        grid: gridData,
+        postits: AppState.postits,
+        eventLog: AppState.eventLog.slice(0, 100),
+        matrixLog: AppState.matrixLog.slice(0, 100),
+        lockedSections: Array.from(AppState.lockedSections),
+        sectionContent,
+        projectTitle,
+        teamMembers: AppState.teamMembers,
+        userId: AppState.userId,
+        version: 2
+    };
+}
+
 async function saveBoardState() {
-    if (!currentBoardId) return false;
+    if (!currentBoardId) return { success: false };
 
     try {
-        const gridData = AppState.grid.save(true);
-
-        // Save section content
-        const sectionContent = {};
-        document.querySelectorAll('.grid-stack-item').forEach(item => {
-            const id = item.getAttribute('gs-id');
-            const textarea = item.querySelector('.text-content');
-            if (textarea) {
-                sectionContent[id] = { text: textarea.value };
-            }
-            const title = item.querySelector('.section-title');
-            if (title) {
-                sectionContent[id] = sectionContent[id] || {};
-                sectionContent[id].title = title.value;
-            }
-
-            // Save Matrix Labels
-            const xLabel = item.querySelector('.x-axis-label');
-            const yLabel = item.querySelector('.y-axis-label');
-            if (xLabel || yLabel) {
-                sectionContent[id] = sectionContent[id] || {};
-                if (xLabel) sectionContent[id].xLabel = xLabel.value;
-                if (yLabel) sectionContent[id].yLabel = yLabel.value;
-            }
-        });
-
-        // Get project title
+        const state = gatherBoardState();
         const projectTitle = document.getElementById('projectTitle')?.value || 'Project name';
-        updateTeamMembersFromTable();
 
-        const state = {
-            grid: gridData,
-            postits: AppState.postits,
-            eventLog: AppState.eventLog.slice(0, 100),
-            matrixLog: AppState.matrixLog.slice(0, 100),
-            lockedSections: Array.from(AppState.lockedSections),
-            sectionContent,
-            projectTitle,
-            teamMembers: AppState.teamMembers,
-            userId: AppState.userId,
-            version: 2
-        };
-
-        // Persist to backend via gridData field
-        await apiClient.updateBoard(currentBoardId, {
+        // Include expected version for optimistic locking
+        const response = await apiClient.updateBoard(currentBoardId, {
             title: projectTitle,
-            gridData: state
+            gridData: state,
+            expectedVersion: currentBoardVersion
         });
 
-        return true;
+        // Update our version from server response
+        if (response && response.version !== undefined) {
+            currentBoardVersion = response.version;
+        }
+
+        return { success: true };
     } catch (e) {
         console.error('Save error:', e);
-        showAutoSaveStatus('error');
-        return false;
+
+        // Check for version conflict (409)
+        if (e.status === 409 || e.message?.includes('modified by another')) {
+            return { success: false, conflict: true };
+        }
+
+        return { success: false, conflict: false };
     }
 }
+
+// Save on tab/window close using sendBeacon
+window.addEventListener('beforeunload', (event) => {
+    if (currentBoardId && AppState.autoSaveTimeout) {
+        // There are pending changes - try to save
+        clearTimeout(AppState.autoSaveTimeout);
+
+        const state = gatherBoardState();
+        const projectTitle = document.getElementById('projectTitle')?.value || 'Project name';
+        const payload = JSON.stringify({
+            title: projectTitle,
+            gridData: state,
+            expectedVersion: currentBoardVersion
+        });
+
+        // Use sendBeacon for reliable save on close
+        const url = `${apiClient.baseUrl}/boards/${currentBoardId}`;
+        const blob = new Blob([payload], { type: 'application/json' });
+
+        // sendBeacon doesn't support auth headers, so also save to localStorage
+        saveToLocalBackup();
+
+        // Try sendBeacon anyway (will fail without auth but backup is saved)
+        navigator.sendBeacon(url, blob);
+    }
+});
 
 async function loadBoardState() {
     const boardId = getBoardIdFromUrl();
@@ -205,6 +296,10 @@ async function loadBoardState() {
     try {
         const response = await apiClient.getBoard(boardId);
         const board = response.board;
+
+        // Track version for optimistic locking
+        currentBoardVersion = board.version || 0;
+
         const currentUser = await apiClient.getCurrentUser();
         const userId = currentUser.user?.id || currentUser.id;
 

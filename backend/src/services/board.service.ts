@@ -177,12 +177,12 @@ class BoardService {
   }
 
   /**
-   * Update a board
+   * Update a board with optimistic locking
    */
   async updateBoard(
     boardId: string,
     userId: string,
-    data: Partial<Board>
+    data: Partial<Board> & { expectedVersion?: number }
   ): Promise<Board> {
     // Check ownership or edit permission
     const hasPermission = await this.checkBoardPermission(boardId, userId, 'edit');
@@ -193,19 +193,53 @@ class BoardService {
 
     logger.info(`Starting update for board ${boardId} (user: ${userId})`);
 
-    // Exclude fields that shouldn't be updated
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, userId: uid, createdAt, updatedAt, ...safeData } = data;
-
-    const board = await prisma.board.update({
+    // Get current board to check version
+    const currentBoard = await prisma.board.findUnique({
       where: { id: boardId },
-      data: {
-        ...(safeData as any),
-        updatedAt: new Date(),
-      },
+      select: { version: true },
     });
 
-    logger.info(`Board updated: ${boardId} by user ${userId}`);
+    if (!currentBoard) {
+      throw new Error('Board not found');
+    }
+
+    // Extract expectedVersion from data
+    const { expectedVersion, id, userId: uid, createdAt, updatedAt, ...safeData } = data as any;
+
+    // Optimistic locking: check if version matches (if expectedVersion provided)
+    if (expectedVersion !== undefined && currentBoard.version !== expectedVersion) {
+      const error = new Error('Board has been modified by another user. Please refresh and try again.');
+      (error as any).statusCode = 409;
+      (error as any).currentVersion = currentBoard.version;
+      throw error;
+    }
+
+    // Use transaction to ensure atomicity
+    const board = await prisma.$transaction(async (tx) => {
+      // Double-check version inside transaction
+      const boardInTx = await tx.board.findUnique({
+        where: { id: boardId },
+        select: { version: true },
+      });
+
+      if (expectedVersion !== undefined && boardInTx?.version !== expectedVersion) {
+        const error = new Error('Board has been modified by another user. Please refresh and try again.');
+        (error as any).statusCode = 409;
+        (error as any).currentVersion = boardInTx?.version;
+        throw error;
+      }
+
+      return tx.board.update({
+        where: { id: boardId },
+        data: {
+          ...safeData,
+          version: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      });
+    });
+
+    logger.info(`Board updated: ${boardId} by user ${userId} (version: ${board.version})`);
 
     return board;
   }
