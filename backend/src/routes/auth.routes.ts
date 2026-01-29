@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import authController from '../controllers/auth.controller';
-import { authenticate } from '../middleware/auth.middleware';
-import passport from '../config/passport';
+import { authenticate } from '../middleware/auth';
+import { googleLogin, googleCallback } from '../auth/googleAuth';
 
 const router = Router();
 
@@ -16,33 +16,15 @@ router.post('/verify-email', authController.verifyEmail);
 router.get('/me', authenticate, authController.getCurrentUser);
 
 // Google OAuth routes
-router.get(
-  '/google',
-  (_req, res, next) => {
-    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-      res.status(503).json({
-        error: 'Service Unavailable',
-        message: 'Google Login is not configured on the server.'
-      });
-      return;
-    }
-    next();
-  },
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-    session: false,
-  })
-);
+router.get('/google', googleLogin);
 
 router.get(
   '/google/callback',
-  passport.authenticate('google', {
-    session: false,
-    failureRedirect: '/api/v1/auth/google/failure',
-  }),
+  googleCallback,
   authController.googleCallback
 );
 
+// Failure route
 router.get('/google/failure', (_req, res) => {
   res.status(401).json({
     error: 'Authentication Failed',

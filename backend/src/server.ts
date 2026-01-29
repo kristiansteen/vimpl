@@ -16,6 +16,11 @@ import portfolioRoutes from './routes/portfolio.routes';
 import subscriptionRoutes from './routes/subscription.routes';
 import adminRoutes from './routes/admin.routes';
 
+import { configureGoogleStrategy } from './auth/googleAuth';
+
+// Initialize Passport Strategies
+configureGoogleStrategy();
+
 const app: Express = express();
 
 // Trust proxy (for Railway, Render, etc.)
@@ -32,7 +37,8 @@ const corsOptions = {
 
     // Check if origin is allowed
     const allowedOrigins = config.frontend.allowedOrigins;
-    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+    // Also allow the configured frontend URL explicitly if it's not in the allowedOrigins list
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*') || origin === config.frontend.url) {
       callback(null, true);
     } else {
       logger.warn(`Blocked by CORS: ${origin}`);

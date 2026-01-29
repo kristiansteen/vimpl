@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import authService from '../services/auth.service';
-import { AuthRequest } from '../middleware/auth.middleware';
+import { AuthRequest } from '../middleware/auth';
 import logger from '../utils/logger';
 import config from '../config';
 
