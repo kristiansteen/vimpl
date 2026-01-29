@@ -32,12 +32,6 @@
 
 Your Google OAuth credentials are already configured in `backend/.env`:
 
-```env
-GOOGLE_CLIENT_ID=630665134432-rvq98p8eo9ahgo66kv4738a4neph1cej.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
-GOOGLE_CALLBACK_URL=http://localhost:3001/api/v1/auth/google/callback
-```
-
 ### Step 2: Configure Google Cloud Console
 
 **Important:** You need to add redirect URI in Google Cloud Console:
