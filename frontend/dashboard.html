@@ -22,6 +22,58 @@
             min-height: 100vh;
         }
 
+        /* Auth Loading Overlay */
+        .auth-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f5f7fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .auth-loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .auth-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .auth-loading-text {
+            margin-top: 16px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Hide main content until auth verified */
+        .page-content {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .page-content.visible {
+            opacity: 1;
+        }
+
         .header {
             background: white;
             border-bottom: 1px solid #e0e0e0;
@@ -426,41 +478,50 @@
 </head>
 
 <body>
-    <div class="header">
-        <div class="logo">vimpl</div>
-        <div class="header-right">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar"></div>
-                <div class="user-name" id="userName">Loading...</div>
+    <!-- Auth Loading Overlay - shown until auth verified -->
+    <div id="authLoadingOverlay" class="auth-loading-overlay">
+        <div class="auth-spinner"></div>
+        <div class="auth-loading-text">Verifying authentication...</div>
+    </div>
+
+    <!-- Main Page Content - hidden until auth verified -->
+    <div id="pageContent" class="page-content">
+        <div class="header">
+            <div class="logo">vimpl</div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-name" id="userName">Loading...</div>
+                </div>
+                <button class="btn btn-logout" onclick="logout()">Log out</button>
             </div>
-            <button class="btn btn-logout" onclick="logout()">Log out</button>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="dashboard-header">
-            <h1>My Boards</h1>
-            <button class="btn btn-new-board" onclick="showCreateBoardModal()">
-                + New Board
-            </button>
         </div>
 
-        <div id="loading" class="loading">
-            <div class="spinner-large"></div>
-            <p style="margin-top: 16px; color: #666;">Loading your boards...</p>
-        </div>
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>My Boards</h1>
+                <button class="btn btn-new-board" onclick="showCreateBoardModal()">
+                    + New Board
+                </button>
+            </div>
 
-        <div id="boardsGrid" class="boards-grid" style="display: none;"></div>
+            <div id="loading" class="loading">
+                <div class="spinner-large"></div>
+                <p style="margin-top: 16px; color: #666;">Loading your boards...</p>
+            </div>
 
-        <div id="emptyState" class="empty-state" style="display: none;">
-            <div class="empty-state-icon">📋</div>
-            <h2>No boards yet</h2>
-            <p>Create your first board to start planning!</p>
-            <button class="btn btn-new-board" onclick="showCreateBoardModal()">
-                Create Your First Board
-            </button>
+            <div id="boardsGrid" class="boards-grid" style="display: none;"></div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">📋</div>
+                <h2>No boards yet</h2>
+                <p>Create your first board to start planning!</p>
+                <button class="btn btn-new-board" onclick="showCreateBoardModal()">
+                    Create Your First Board
+                </button>
+            </div>
         </div>
-    </div>
+    </div> <!-- End page-content -->
 
     <!-- Create Board Modal -->
     <div id="createBoardModal" class="modal">
@@ -517,14 +578,19 @@
     <script>
         const apiClient = new ApiClient();
 
-        // Check authentication
+        // Check authentication - validates BEFORE showing content
         async function checkAuth() {
+            const overlay = document.getElementById('authLoadingOverlay');
+            const pageContent = document.getElementById('pageContent');
+
+            // Quick check - no token means redirect immediately
             if (!apiClient.isAuthenticated()) {
-                window.location.href = 'login.html';
+                window.location.replace('login.html');
                 return;
             }
 
             try {
+                // Validate token with backend
                 const response = await apiClient.getCurrentUser();
                 const user = response.user || response;
 
@@ -535,11 +601,17 @@
                 const initial = (user.name || user.email).charAt(0).toUpperCase();
                 document.getElementById('userAvatar').textContent = initial;
 
+                // Auth successful - hide overlay and reveal content
+                overlay.classList.add('hidden');
+                pageContent.classList.add('visible');
+
                 // Load boards
                 loadBoards();
             } catch (error) {
                 console.error('Auth check failed:', error);
-                window.location.href = 'login.html';
+                // Clear invalid token and redirect
+                apiClient.clearToken();
+                window.location.replace('login.html');
             }
         }
 

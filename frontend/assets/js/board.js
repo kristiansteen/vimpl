@@ -1768,17 +1768,31 @@ function updateDisplays() {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const user = await apiClient.getCurrentUser().catch(() => null); // mock can fail if no token
-    // Wait, getCurrentUser is async in ApiClient?
-    // In ApiClient it is async.
-    // user might be { user: ... } or just user object depending on mock return.
-    // ApiClient.getCurrentUser returns result of handleMockRequest -> MockBackend.getCurrentUser -> { user: ... }
+    const overlay = document.getElementById('authLoadingOverlay');
+    const pageContent = document.getElementById('pageContent');
 
-    if (user && (user.user || user.id)) {
-        AppState.userId = user.user ? user.user.id : user.id;
-    } else {
-        AppState.userId = null;
+    // Quick check - no token means redirect immediately
+    if (!apiClient.isAuthenticated()) {
+        window.location.replace('login.html');
+        return;
     }
+
+    // Validate token with backend
+    const user = await apiClient.getCurrentUser().catch(() => null);
+
+    if (!user || (!user.user && !user.id)) {
+        // Token invalid - clear and redirect
+        apiClient.clearToken();
+        window.location.replace('login.html');
+        return;
+    }
+
+    // Auth successful - hide overlay and reveal content
+    if (overlay) overlay.classList.add('hidden');
+    if (pageContent) pageContent.classList.add('visible');
+
+    // Set user ID
+    AppState.userId = user.user ? user.user.id : user.id;
 
     // Initialize Grid with default settings (will be updated if role is member)
     initializeGrid();
