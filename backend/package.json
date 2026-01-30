@@ -14,7 +14,8 @@
     "db:seed": "tsx src/db/seed.ts",
     "test": "jest",
     "lint": "eslint src --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "postinstall": "prisma generate"
   },
   "keywords": [
     "vimpl",
