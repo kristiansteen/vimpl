@@ -426,6 +426,33 @@ class BoardController {
       });
     }
   }
+
+  async shareBoard(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const { id } = req.params;
+      const { email } = req.body;
+
+      if (!email) {
+        res.status(400).json({ error: 'Email is required' });
+        return;
+      }
+
+      await boardService.shareBoard(id, req.user.userId, email);
+
+      res.json({ message: `Board shared with ${email} successfully` });
+    } catch (error: any) {
+      logger.error('Share board error:', error);
+      res.status(500).json({
+        error: 'Server Error',
+        message: error.message || 'Failed to share board',
+      });
+    }
+  }
 }
 
 export default new BoardController();

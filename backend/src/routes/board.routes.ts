@@ -10,6 +10,7 @@ router.post('/', authenticate, boardController.createBoard);
 router.get('/slug/:slug', optionalAuthenticate, boardController.getBoardBySlug);
 router.get('/:id', authenticate, boardController.getBoard);
 router.put('/:id', authenticate, boardController.updateBoard);
+router.post('/:id/share', authenticate, boardController.shareBoard);
 router.delete('/:id', authenticate, boardController.deleteBoard);
 
 // Section routes

@@ -30,6 +30,13 @@ interface Config {
   session: {
     secret: string;
   };
+  email: {
+    host: string;
+    port: number;
+    user: string;
+    pass: string;
+    from: string;
+  };
 }
 
 const config: Config = {
@@ -68,6 +75,13 @@ const config: Config = {
   },
   session: {
     secret: process.env.SESSION_SECRET || 'your-session-secret',
+  },
+  email: {
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASSWORD || '',
+    from: process.env.SMTP_FROM || 'hello@vimpl.com',
   },
 };
 

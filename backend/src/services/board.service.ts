@@ -1,5 +1,7 @@
 import prisma from '../config/database';
 import { Board, Section, Postit } from '@prisma/client';
+import emailService from './email.service';
+import config from '../config';
 import logger from '../utils/logger';
 
 class BoardService {
@@ -486,6 +488,59 @@ class BoardService {
       where: { id: postitId },
     });
   }
+
+  /**
+   * Share a board with a user via email
+   */
+  async shareBoard(boardId: string, currentUserId: string, email: string): Promise<void> {
+    const board = await prisma.board.findUnique({
+      where: { id: boardId },
+      include: { user: true },
+    });
+
+    if (!board) {
+      throw new Error('Board not found');
+    }
+
+    // Check if current user is the owner
+    if (board.userId !== currentUserId) {
+      throw new Error('Only the board owner can share it');
+    }
+
+    // Check if the user to share with already exists
+    const userToShareWith = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (userToShareWith) {
+      // Add as collaborator if not already one
+      await prisma.boardCollaborator.upsert({
+        where: {
+          boardId_userId: {
+            boardId,
+            userId: userToShareWith.id,
+          },
+        },
+        update: {
+          permission: 'edit', // Default to edit for now
+        },
+        create: {
+          boardId,
+          userId: userToShareWith.id,
+          permission: 'edit',
+          invitedBy: currentUserId,
+          acceptedAt: new Date(), // For now auto-accept if sharing with existing user
+        },
+      });
+    }
+
+    // Send invite email
+    const boardUrl = `${config.frontend.url}/board.html?id=${boardId}`;
+    await emailService.sendInviteEmail(email, board.title, boardUrl);
+
+    logger.info(`Board ${boardId} shared with ${email} by user ${currentUserId}`);
+  }
 }
 
 export default new BoardService();
+

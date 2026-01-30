@@ -294,6 +294,15 @@ class ApiClient {
         });
     }
 
+    async shareBoard(boardId, email) {
+        if (USE_MOCK) return Promise.resolve({ success: true });
+
+        return this.request(`/boards/${boardId}/share`, {
+            method: 'POST',
+            body: JSON.stringify({ email })
+        });
+    }
+
     // ============================================
     // SECTION & POSTIT METHODS
     // ============================================
