@@ -36,9 +36,16 @@ const corsOptions = {
     if (!origin) return callback(null, true);
 
     // Check if origin is allowed
-    const allowedOrigins = config.frontend.allowedOrigins;
-    // Also allow the configured frontend URL explicitly if it's not in the allowedOrigins list
-    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*') || origin === config.frontend.url) {
+    const allowedOrigins = config.frontend.allowedOrigins.map(o => o.toLowerCase());
+    const lowerOrigin = origin.toLowerCase().replace(/\/+$/, '');
+
+    // Check main list, wildcards, or any vercel.app subdomain
+    if (
+      allowedOrigins.includes(lowerOrigin) ||
+      allowedOrigins.includes('*') ||
+      lowerOrigin === config.frontend.url.toLowerCase() ||
+      lowerOrigin.endsWith('.vercel.app')
+    ) {
       callback(null, true);
     } else {
       logger.warn(`Blocked by CORS: ${origin}`);

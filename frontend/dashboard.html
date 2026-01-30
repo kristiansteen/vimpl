@@ -631,7 +631,8 @@
                 }
             } catch (error) {
                 console.error('Failed to load boards:', error);
-                document.getElementById('loading').innerHTML = '<p style="color: #e74c3c;">Failed to load boards. Please try again.</p>';
+                const status = error.status ? ` (Status: ${error.status})` : '';
+                document.getElementById('loading').innerHTML = `<p style="color: #e74c3c;">Failed to load boards${status}. ${error.message || 'Please try again.'}</p>`;
             }
         }
 

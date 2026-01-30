@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import authController from '../controllers/auth.controller';
-import { authenticate } from '../middleware/auth';
+import { authenticate } from '../middleware/auth.middleware';
 import { googleLogin, googleCallback } from '../auth/googleAuth';
 
 const router = Router();
