@@ -437,7 +437,8 @@
         function loginWithGoogle() {
             // Redirect to backend Google OAuth endpoint
             const baseUrl = apiClient.baseURL.replace('/api/v1', ''); // Get root URL
-            window.location.href = `${baseUrl}/api/v1/auth/google`;
+            const state = btoa(window.location.origin);
+            window.location.href = `${baseUrl}/api/v1/auth/google?state=${state}`;
         }
 
         // Show error message

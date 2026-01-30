@@ -61,10 +61,13 @@ export const googleLogin = (req: Request, res: Response, next: NextFunction) => 
         return;
     }
 
+    const state = req.query.state as string;
+
     passport.authenticate('google', {
         scope: ['profile', 'email'],
         session: false,
         prompt: 'select_account', // Force account selection
+        state: state
     })(req, res, next);
 };
 
@@ -74,16 +77,16 @@ export const googleLogin = (req: Request, res: Response, next: NextFunction) => 
 export const googleCallback = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate('google', {
         session: false,
-        failureRedirect: `${config.frontend.url}/login?error=google_auth_failed`,
+        failureRedirect: `${config.frontend.url}/login.html?error=google_auth_failed`,
     }, (err: any, user: any, _info: any) => {
         if (err) {
             logger.error('Google Passport authentication error:', err);
-            return res.redirect(`${config.frontend.url}/login?error=google_auth_error`);
+            return res.redirect(`${config.frontend.url}/login.html?error=google_auth_error`);
         }
 
         if (!user) {
             logger.warn('Google Passport authentication failed - no user returned');
-            return res.redirect(`${config.frontend.url}/login?error=google_auth_failed`);
+            return res.redirect(`${config.frontend.url}/login.html?error=google_auth_failed`);
         }
 
         // Attach user to request for the controller

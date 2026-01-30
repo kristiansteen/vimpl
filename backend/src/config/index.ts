@@ -48,10 +48,13 @@ const config: Config = {
     callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'https://vimpl.onrender.com/api/v1/auth/google/callback',
   },
   frontend: {
-    url: (process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0].trim(),
+    url: (process.env.FRONTEND_URL || 'http://localhost:5173')
+      .split(',')[0]
+      .trim()
+      .replace(/\/+$/, ''), // Remove trailing slashes
     allowedOrigins: [
-      ...(process.env.FRONTEND_URL?.split(',').map(origin => origin.trim()).filter(Boolean) || []),
-      ...(process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim()).filter(Boolean) || []),
+      ...(process.env.FRONTEND_URL?.split(',').map(origin => origin.trim().replace(/\/+$/, '')).filter(Boolean) || []),
+      ...(process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim().replace(/\/+$/, '')).filter(Boolean) || []),
       'http://localhost:5173',
       'https://vimpl-sl96.vercel.app',
       'https://vimpl.vercel.app',

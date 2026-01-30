@@ -275,14 +275,29 @@ class AuthController {
    */
   async googleCallback(req: AuthRequest, res: Response): Promise<void> {
     try {
+      const state = req.query.state as string;
+      let redirectUrl = config.frontend.url;
+
+      if (state) {
+        try {
+          const decodedOrigin = Buffer.from(state, 'base64').toString();
+          if (decodedOrigin.startsWith('http')) {
+            redirectUrl = decodedOrigin.replace(/\/+$/, '');
+            logger.info(`Using dynamic redirect URL from state: ${redirectUrl}`);
+          }
+        } catch (e) {
+          logger.warn('Failed to decode OAuth state, falling back to default frontend URL');
+        }
+      }
+
       if (!req.user) {
-        res.redirect(`${config.frontend.url}/login.html?error=auth_failed`);
+        res.redirect(`${redirectUrl}/login.html?error=auth_failed`);
         return;
       }
 
       const user = await authService.getUserById(req.user.userId);
       if (!user) {
-        res.redirect(`${config.frontend.url}/login.html?error=user_not_found`);
+        res.redirect(`${redirectUrl}/login.html?error=user_not_found`);
         return;
       }
 
@@ -298,7 +313,7 @@ class AuthController {
       });
 
       // Redirect to frontend with access token
-      res.redirect(`${config.frontend.url}/callback.html?token=${tokens.accessToken}`);
+      res.redirect(`${redirectUrl}/callback.html?token=${tokens.accessToken}`);
     } catch (error) {
       logger.error('Google callback error:', error);
       res.redirect(`${config.frontend.url}/login.html?error=auth_failed`);
