@@ -873,7 +873,6 @@ function updateTeamMembersFromTable() {
         }
     });
     updateAllOwnerDropdowns();
-    scheduleAutoSave();
 }
 
 let updateDropdownsTimeout = null;
@@ -954,6 +953,7 @@ function attachTeamRowEvents(row) {
         deleteBtn.addEventListener('click', () => {
             row.remove();
             updateTeamMembersFromTable();
+            scheduleAutoSave();
         });
     }
 }
@@ -1649,7 +1649,7 @@ function attachTeamTableEvents() {
         attachTeamRowEvents(row);
     });
 
-    // Initial update of team members
+    // Initial update of team members (No save yet)
     updateTeamMembersFromTable();
 }
 
