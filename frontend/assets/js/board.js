@@ -254,6 +254,7 @@ async function saveBoardState() {
 }
 
 // Save on tab/window close using sendBeacon
+// Save on tab/window close using fetch with keepalive
 window.addEventListener('beforeunload', (event) => {
     if (currentBoardId && AppState.autoSaveTimeout) {
         // There are pending changes - try to save
@@ -267,15 +268,25 @@ window.addEventListener('beforeunload', (event) => {
             expectedVersion: currentBoardVersion
         });
 
-        // Use sendBeacon for reliable save on close
-        const url = `${apiClient.baseUrl}/boards/${currentBoardId}`;
-        const blob = new Blob([payload], { type: 'application/json' });
-
-        // sendBeacon doesn't support auth headers, so also save to localStorage
+        // Save to local backup just in case
         saveToLocalBackup();
 
-        // Try sendBeacon anyway (will fail without auth but backup is saved)
-        navigator.sendBeacon(url, blob);
+        // Use fetch with keepalive for reliable save on close with Auth headers
+        // Note: Using apiClient.baseURL (not baseUrl)
+        const url = `${apiClient.baseURL}/boards/${currentBoardId}`;
+        const token = apiClient.getToken();
+
+        if (token) {
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: payload,
+                keepalive: true
+            }).catch(err => console.error('Save on close failed:', err));
+        }
     }
 });
 
