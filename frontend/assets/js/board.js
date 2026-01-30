@@ -876,33 +876,41 @@ function updateTeamMembersFromTable() {
     scheduleAutoSave();
 }
 
+let updateDropdownsTimeout = null;
 function updateAllOwnerDropdowns() {
-    // Update the post-it form dropdown
-    const formOwner = document.getElementById('formOwner');
-    if (formOwner) {
-        const currentValue = formOwner.value;
-        formOwner.innerHTML = '<option value="">-- Select Owner --</option>';
-        AppState.teamMembers.forEach(member => {
-            const option = document.createElement('option');
-            option.value = member.name;
-            option.textContent = member.name + (member.email ? ` (${member.email})` : '');
-            formOwner.appendChild(option);
-        });
-        formOwner.value = currentValue;
-    }
+    // Debounce this call since it scans the whole DOM
+    if (updateDropdownsTimeout) return;
 
-    // Update action table dropdowns if any exist
-    document.querySelectorAll('.action-owner-select').forEach(select => {
-        const currentValue = select.value;
-        select.innerHTML = '<option value="">-- Select --</option>';
-        AppState.teamMembers.forEach(member => {
-            const option = document.createElement('option');
-            option.value = member.name;
-            option.textContent = member.name;
-            select.appendChild(option);
+    updateDropdownsTimeout = setTimeout(() => {
+        updateDropdownsTimeout = null;
+
+        // Update the post-it form dropdown
+        const formOwner = document.getElementById('formOwner');
+        if (formOwner) {
+            const currentValue = formOwner.value;
+            formOwner.innerHTML = '<option value="">-- Select Owner --</option>';
+            AppState.teamMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.name;
+                option.textContent = member.name + (member.email ? ` (${member.email})` : '');
+                formOwner.appendChild(option);
+            });
+            formOwner.value = currentValue;
+        }
+
+        // Update action table dropdowns if any exist
+        document.querySelectorAll('.action-owner-select').forEach(select => {
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">-- Select --</option>';
+            AppState.teamMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.name;
+                option.textContent = member.name;
+                select.appendChild(option);
+            });
+            select.value = currentValue;
         });
-        select.value = currentValue;
-    });
+    }, 100);
 }
 
 function addTeamMemberRow(tbody) {
@@ -1058,24 +1066,6 @@ function makePostitDraggable(postit) {
     let isDragging = false;
     let startX, startY, origLeft, origTop;
 
-    postit.addEventListener('mousedown', (e) => {
-        // Only allow dragging from handle or non-input areas
-        if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
-
-        // Allow dragging from handle, the postit body, or the inner container
-        if (!e.target.classList.contains('postit-handle') &&
-            !e.target.classList.contains('postit') &&
-            !e.target.closest('.postit-inner')) return;
-
-        isDragging = true;
-        postit.classList.add('dragging');
-        startX = e.clientX;
-        startY = e.clientY;
-        origLeft = postit.offsetLeft;
-        origTop = postit.offsetTop;
-        e.preventDefault();
-    });
-
     const onMouseMove = (e) => {
         if (!isDragging) return;
         const dx = e.clientX - startX;
@@ -1083,13 +1073,15 @@ function makePostitDraggable(postit) {
         postit.style.left = (origLeft + dx) + 'px';
         postit.style.top = (origTop + dy) + 'px';
 
-        // Highlight week cells when dragging over them
-        postit.hidden = true; // Briefly hide to detect element below
-        const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
-        postit.hidden = false;
+        // Highlight week cells when dragging over them (Throttle/simplify if possible)
+        const cell = document.elementFromPoint(e.clientX, e.clientY)?.closest('.week-cell');
 
-        document.querySelectorAll('.week-cell').forEach(c => c.classList.remove('drag-over-active'));
-        const cell = elemBelow?.closest('.week-cell');
+        // Remove active class from others
+        const activeCells = document.querySelectorAll('.drag-over-active');
+        activeCells.forEach(c => {
+            if (c !== cell) c.classList.remove('drag-over-active');
+        });
+
         if (cell) {
             cell.classList.add('drag-over-active');
         }
@@ -1099,7 +1091,11 @@ function makePostitDraggable(postit) {
         if (!isDragging) return;
         isDragging = false;
         postit.classList.remove('dragging');
-        document.querySelectorAll('.week-cell').forEach(c => c.classList.remove('drag-over-active'));
+        document.querySelectorAll('.drag-over-active').forEach(c => c.classList.remove('drag-over-active'));
+
+        // Cleanup global listeners
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
 
         const id = postit.id;
 
@@ -1109,17 +1105,13 @@ function makePostitDraggable(postit) {
         postit.hidden = false;
 
         let newParent = elemBelow?.closest('.postit-dropzone');
-        // If dropped on another postit, find its parent
         if (!newParent && elemBelow?.closest('.postit')) {
             newParent = elemBelow.closest('.postit').parentElement;
         }
 
         if (newParent) {
-            // Reparent if changed container
             if (newParent !== postit.parentElement) {
                 newParent.appendChild(postit);
-
-                // If moving to/from Matrix, update matrix status
                 const isMatrix = newParent.classList.contains('matrix-dropzone');
                 if (AppState.postits[id]) {
                     AppState.postits[id].isMatrix = isMatrix;
@@ -1128,28 +1120,14 @@ function makePostitDraggable(postit) {
                 }
             }
 
-            // Snap logic
             if (newParent.classList.contains('week-cell')) {
-                // Center in cell
-                postit.style.left = '50%';
-                postit.style.top = '50%';
-                postit.style.transform = 'translate(-50%, -50%)'; // Use transform for centering
-                // Store relative position as 0,0 since we rely on CSS centering for snapping
-                // Actually, let's just set explicit pixels to center
-                const rect = newParent.getBoundingClientRect();
-                const pRect = postit.getBoundingClientRect(); // will be wrong if transformed
-                // Simpler: just set left/top to a small margin if it's in a cell
-                postit.style.transform = ''; // reset transform
+                postit.style.transform = '';
                 postit.style.left = '10px';
                 postit.style.top = '10px';
             } else {
-                // Normal position update relative to new parent
                 const rect = newParent.getBoundingClientRect();
-                // Calculate position relative to new parent
-                // Global mouse pos (e.clientX) - parent offset
-                const x = e.clientX - rect.left - 76; // center horizontally (152/2)
-                const y = e.clientY - rect.top - 12;  // offset by handle height
-
+                const x = e.clientX - rect.left - 76;
+                const y = e.clientY - rect.top - 12;
                 postit.style.left = Math.max(0, x) + 'px';
                 postit.style.top = Math.max(0, y) + 'px';
             }
@@ -1161,18 +1139,14 @@ function makePostitDraggable(postit) {
         if (AppState.postits[id]) {
             AppState.postits[id].x = newX;
             AppState.postits[id].y = newY;
-
-            // Update matrix position if in matrix
             const matrixDropzone = postit.closest('.matrix-dropzone');
             if (matrixDropzone) {
                 updateMatrixPositionFromDrag(postit, matrixDropzone);
             }
         }
 
-        // Enhanced logging with context
         const columnContext = getColumnContext(postit);
         const logDetails = { x: newX, y: newY };
-
         if (columnContext.type === 'kanban') {
             logDetails.kanbanColumn = columnContext.details.column;
         } else if (columnContext.type === 'weekplan') {
@@ -1189,11 +1163,27 @@ function makePostitDraggable(postit) {
         }
 
         logEvent('move', id, 'postit', logDetails);
-        scheduleAutoSave();
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    postit.addEventListener('mousedown', (e) => {
+        if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+        if (!e.target.classList.contains('postit-handle') &&
+            !e.target.classList.contains('postit') &&
+            !e.target.closest('.postit-inner')) return;
+
+        isDragging = true;
+        postit.classList.add('dragging');
+        startX = e.clientX;
+        startY = e.clientY;
+        origLeft = postit.offsetLeft;
+        origTop = postit.offsetTop;
+
+        // Attach global listeners only while dragging
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+
+        e.preventDefault();
+    });
 }
 
 function deletePostit(id) {
@@ -2065,10 +2055,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Save before unload
-    window.addEventListener('beforeunload', () => {
-        saveBoardState();
-    });
+
 
     // Project title auto-save
     document.getElementById('projectTitle').addEventListener('input', scheduleAutoSave);
