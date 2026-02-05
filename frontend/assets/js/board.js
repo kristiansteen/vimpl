@@ -70,7 +70,8 @@ function getPostitColor(colorName) {
         pink: 'var(--postit-pink)',
         blue: 'var(--postit-blue)',
         green: 'var(--postit-green)',
-        orange: 'var(--postit-orange)'
+        orange: 'var(--postit-orange)',
+        red: 'var(--postit-red)'
     };
     return colors[colorName] || colors.yellow;
 }
@@ -1252,6 +1253,13 @@ function openPostitForm(id, clickX, clickY) {
     document.getElementById('formOwner').value = data.owner || '';
     document.getElementById('formStatus').value = data.status || 'todo';
 
+    // Set color
+    const color = data.color || 'yellow';
+    document.getElementById('formColor').value = color;
+    document.querySelectorAll('.color-opt').forEach(opt => {
+        opt.classList.toggle('selected', opt.getAttribute('data-color') === color);
+    });
+
     // Show/hide risk fields
     const riskFields = document.getElementById('riskFields');
     if (data.isMatrix) {
@@ -1291,6 +1299,7 @@ function savePostitForm() {
     data.content = document.getElementById('formContent').value;
     data.owner = document.getElementById('formOwner').value;
     data.status = document.getElementById('formStatus').value;
+    data.color = document.getElementById('formColor').value;
 
     if (data.isMatrix) {
         data.xValue = parseInt(document.getElementById('formXValue').value) || 50;
@@ -1312,6 +1321,12 @@ function savePostitForm() {
         } else {
             postit.classList.remove('done');
         }
+
+        // Update color
+        postit.style.backgroundColor = getPostitColor(data.color);
+        postit.setAttribute('data-color', data.color);
+        // Also update classes if needed
+        postit.className = 'postit' + (data.status === 'done' ? ' done ' : ' ') + data.color;
     }
 
     logEvent('edit', id, 'postit', { status: data.status, owner: data.owner });
@@ -2016,6 +2031,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             el.addEventListener('change', savePostitForm);
         }
+    });
+
+    // Color options in form
+    document.querySelectorAll('.color-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+            const color = opt.getAttribute('data-color');
+            document.getElementById('formColor').value = color;
+            document.querySelectorAll('.color-opt').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            savePostitForm();
+        });
     });
 
     // Tab switching

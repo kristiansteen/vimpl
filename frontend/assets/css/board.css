@@ -26,6 +26,7 @@
             --postit-blue: #93c5fd;
             --postit-green: #86efac;
             --postit-orange: #fdba74;
+            --postit-red: #fca5a5;
             --postit-done: #cbd5e1;
         }
 
@@ -710,6 +711,31 @@
             perspective: 1000px;
         }
 
+        .postit.yellow {
+            background: var(--postit-yellow);
+        }
+
+        .postit.pink {
+            background: var(--postit-pink);
+        }
+
+        .postit.blue {
+            background: var(--postit-blue);
+        }
+
+        .postit.green {
+            background: var(--postit-green);
+        }
+
+        .postit.orange {
+            background: var(--postit-orange);
+        }
+
+        .postit.red {
+            background: var(--postit-red);
+        }
+
+
         .postit:hover {
             box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
             z-index: 6;
@@ -850,6 +876,47 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+
+        .form-color-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .color-opt {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .color-opt:hover {
+            transform: scale(1.1);
+        }
+
+        .color-opt.selected {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .color-opt.yellow {
+            background: var(--postit-yellow);
+        }
+
+        .color-opt.red {
+            background: var(--postit-red);
+        }
+
+        .color-opt.blue {
+            background: var(--postit-blue);
+        }
+
+        .color-opt.green {
+            background: var(--postit-green);
+        }
+
 
         .postit-form .close-form {
             position: absolute;
@@ -1438,292 +1505,272 @@
             }
 
             .sidebar-label {
-
-                /* Font size tweak */
-                .postit {
-                    font-size: 8px;
-                }
-
-                /* --- EDIT MODE STYLES --- */
-
-                /* Hide structural controls by default */
-                .delete-section-btn,
-                .lock-btn,
-                #addSection,
-                .gs-resizable-handle {
-                    display: none !important;
-                }
-
-                /* Show structural controls in edit mode */
-                body.edit-mode .delete-section-btn,
-                body.edit-mode .lock-btn,
-                body.edit-mode #addSection {
-                    display: flex !important;
-                }
-
-                body.edit-mode .gs-resizable-handle {
-                    display: block !important;
-                    /* Reset transparent background for handles in edit mode so they work */
-                    background: transparent !important;
-                }
-
-                /* Show handle highlighting on hover only in edit mode */
-                body.edit-mode .grid-stack-item:hover .gs-resizable-handle {
-                    background-color: rgba(99, 102, 241, 0.2) !important;
-                }
-
-                /* Section controls container adjustments */
-                .section-controls {
-                    gap: 4px;
-                }
-
-                /* Edit toggle button active state */
-                #editLayout.active {
-                    background: var(--primary);
-                    color: white;
-                    border-color: var(--primary);
-                }
-
-                .main-container {
-                    height: calc(100vh - 90px);
-                }
-
-                .grid-stack {
-                    padding: 8px;
-                }
-
-                .section-header {
-                    padding: 8px 10px;
-                    font-size: 12px;
-                }
-
-                .section-title {
-                    font-size: 12px;
-                }
-
-                .section-btn {
-                    padding: 3px 6px;
-                    font-size: 11px;
-                }
-
-                .section-content {
-                    padding: 8px;
-                }
-
-                .postit {
-                    width: 38px;
-                    height: 38px;
-                    font-size: 7px;
-                }
-
-                .postit-form {
-                    width: 90%;
-                    max-width: 300px;
-                    padding: 12px;
-                }
-
-                .postit-form h4 {
-                    font-size: 13px;
-                }
-
-                .postit-form label {
-                    font-size: 10px;
-                }
-
-                .postit-form input,
-                .postit-form select,
-                .postit-form textarea {
-                    padding: 6px 8px;
-                    font-size: 12px;
-                }
-
-                .modal {
-                    max-width: 95%;
-                }
-
-                .modal-header h2 {
-                    font-size: 18px;
-                }
-
-                .section-type-card {
-                    padding: 12px;
-                }
-
-                .section-type-card h3 {
-                    font-size: 14px;
-                }
-
-                .section-type-card p {
-                    font-size: 11px;
-                }
-
-                .instructions {
-                    bottom: 10px;
-                    right: 10px;
-                    max-width: 220px;
-                    padding: 12px 16px;
-                    font-size: 11px;
-                }
-
-                .instructions h4 {
-                    font-size: 12px;
-                }
-
-                /* Week planner optimizations */
-                .track-column {
-                    min-width: 100px;
-                }
-
-                .week-column {
-                    min-width: 80px;
-                }
-
-                .track-header,
-                .week-header {
-                    font-size: 11px;
-                    padding: 8px 6px;
-                }
-
-                .track-item {
-                    min-height: 60px;
-                    height: 60px;
-                    padding: 6px 8px;
-                }
-
-                .week-cell {
-                    min-height: 60px;
-                    height: 60px;
-                }
-
-                /* Matrix optimizations */
-                .matrix-grid {
-                    margin-left: 20px;
-                    margin-bottom: 20px;
-                    min-height: 120px;
-                }
-
-                .matrix-y-label input,
-                .matrix-x-label input {
-                    font-size: 10px;
-                    width: 100px;
-                }
-
-                /* KPI optimizations */
-                .kpi-item {
-                    padding: 6px 8px;
-                    font-size: 12px;
-                }
-
-                .kpi-indicator {
-                    width: 10px;
-                    height: 10px;
-                }
-
-                /* Actions table */
-                .actions-table th,
-                .actions-table td {
-                    padding: 6px 8px;
-                    font-size: 11px;
-                }
-
-                /* Team section */
-                .team-member {
-                    padding: 8px 10px;
-                }
-
-                .team-member input {
-                    font-size: 12px;
-                    padding: 4px 6px;
-                }
-
-                /* Kanban board optimizations */
-                .kanban-container {
-                    flex-direction: column;
-                    gap: 8px;
-                }
-
-                .kanban-column {
-                    min-width: 100%;
-                }
-
-                .kanban-column-header {
-                    font-size: 12px;
-                    padding: 8px 10px;
-                }
-
-                .kanban-dropzone {
-                    min-height: 100px;
-                    padding: 6px;
-                }
+                display: flex !important;
             }
 
-            @media (max-width: 480px) {
-                .logo {
-                    font-size: 28px;
-                }
-
-                .header {
-                    padding: 8px 10px;
-                }
-
-                .sidebar {
-                    width: 50px;
-                    padding: 8px 0;
-                }
-
-                .sidebar-btn {
-                    width: 36px;
-                    height: 36px;
-                    font-size: 14px;
-                }
-
-                .postit-color {
-                    width: 28px;
-                    height: 28px;
-                }
-
-                .btn {
-                    padding: 5px 8px;
-                    font-size: 10px;
-                }
-
-                .postit {
-                    width: 34px;
-                    height: 34px;
-                    font-size: 6px;
-                }
-
-                .section-header {
-                    font-size: 11px;
-                    padding: 6px 8px;
-                }
-
-                .grid-stack {
-                    padding: 6px;
-                }
-
-                .modal-header h2 {
-                    font-size: 16px;
-                }
-
-                .section-type-card {
-                    padding: 10px;
-                }
-
-                .section-type-card i {
-                    font-size: 20px;
-                }
-
-                .section-type-card h3 {
-                    font-size: 13px;
-                }
-
-                .instructions {
-                    display: none;
-                }
-
-                /* Reduce grid size on very small screens */
-                :root {
-                    --grid-size: 15px;
-                }
+            body.edit-mode .gs-resizable-handle {
+                display: block !important;
+                /* Reset transparent background for handles in edit mode so they work */
+                background: transparent !important;
             }
+
+            /* Show handle highlighting on hover only in edit mode */
+            body.edit-mode .grid-stack-item:hover .gs-resizable-handle {
+                background-color: rgba(99, 102, 241, 0.2) !important;
+            }
+
+            /* Section controls container adjustments */
+            .section-controls {
+                gap: 4px;
+            }
+
+            /* Edit toggle button active state */
+            #editLayout.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+
+            .main-container {
+                height: calc(100vh - 90px);
+            }
+
+            .grid-stack {
+                padding: 8px;
+            }
+
+            .section-header {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .section-title {
+                font-size: 12px;
+            }
+
+            .section-btn {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+
+            .section-content {
+                padding: 8px;
+            }
+
+            .postit {
+                width: 38px;
+                height: 38px;
+                font-size: 7px;
+            }
+
+            .postit-form {
+                width: 90%;
+                max-width: 300px;
+                padding: 12px;
+            }
+
+            .postit-form h4 {
+                font-size: 13px;
+            }
+
+            .postit-form label {
+                font-size: 10px;
+            }
+
+            .postit-form input,
+            .postit-form select,
+            .postit-form textarea {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .modal {
+                max-width: 95%;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+
+            .section-type-card {
+                padding: 12px;
+            }
+
+            .section-type-card h3 {
+                font-size: 14px;
+            }
+
+            .section-type-card p {
+                font-size: 11px;
+            }
+
+            .instructions {
+                bottom: 10px;
+                right: 10px;
+                max-width: 220px;
+                padding: 12px 16px;
+                font-size: 11px;
+            }
+
+            .instructions h4 {
+                font-size: 12px;
+            }
+
+            /* Week planner optimizations */
+            .track-column {
+                min-width: 100px;
+            }
+
+            .week-column {
+                min-width: 80px;
+            }
+
+            .track-header,
+            .week-header {
+                font-size: 11px;
+                padding: 8px 6px;
+            }
+
+            .track-item {
+                min-height: 60px;
+                height: 60px;
+                padding: 6px 8px;
+            }
+
+            .week-cell {
+                min-height: 60px;
+                height: 60px;
+            }
+
+            /* Matrix optimizations */
+            .matrix-grid {
+                margin-left: 20px;
+                margin-bottom: 20px;
+                min-height: 120px;
+            }
+
+            .matrix-y-label input,
+            .matrix-x-label input {
+                font-size: 10px;
+                width: 100px;
+            }
+
+            /* KPI optimizations */
+            .kpi-item {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .kpi-indicator {
+                width: 10px;
+                height: 10px;
+            }
+
+            /* Actions table */
+            .actions-table th,
+            .actions-table td {
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+
+            /* Team section */
+            .team-member {
+                padding: 8px 10px;
+            }
+
+            .team-member input {
+                font-size: 12px;
+                padding: 4px 6px;
+            }
+
+            /* Kanban board optimizations */
+            .kanban-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .kanban-column {
+                min-width: 100%;
+            }
+
+            .kanban-column-header {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            .kanban-dropzone {
+                min-height: 100px;
+                padding: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 28px;
+            }
+
+            .header {
+                padding: 8px 10px;
+            }
+
+            .sidebar {
+                width: 50px;
+                padding: 8px 0;
+            }
+
+            .sidebar-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .postit-color {
+                width: 28px;
+                height: 28px;
+            }
+
+            .btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .postit {
+                width: 34px;
+                height: 34px;
+                font-size: 6px;
+            }
+
+            .section-header {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .grid-stack {
+                padding: 6px;
+            }
+
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .section-type-card {
+                padding: 10px;
+            }
+
+            .section-type-card i {
+                font-size: 20px;
+            }
+
+            .section-type-card h3 {
+                font-size: 13px;
+            }
+
+            .instructions {
+                display: none;
+            }
+
+            /* Reduce grid size on very small screens */
+            :root {
+                --grid-size: 15px;
+            }
+        }

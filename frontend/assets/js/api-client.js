@@ -159,8 +159,22 @@ class ApiClient {
     /**
      * @param {string} baseURL - Base URL of the API (production URL)
      */
-    constructor(baseURL = 'https://vimpl.onrender.com/api/v1') {
-        this.baseURL = baseURL;
+    /**
+     * @param {string} baseURL - Base URL of the API (production URL)
+     */
+    constructor(baseURL) {
+        if (baseURL) {
+            this.baseURL = baseURL;
+        } else {
+            // Auto-detect environment
+            const hostname = window.location.hostname;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                this.baseURL = 'http://localhost:3001/api/v1';
+                console.log('%c vimpl Local Dev Mode: Using Local Backend ', 'background: #222; color: #bada55; padding: 4px; border-radius: 4px;');
+            } else {
+                this.baseURL = 'https://vimpl.onrender.com/api/v1';
+            }
+        }
 
         if (USE_MOCK) {
             this.mockBackend = new MockBackend();
@@ -203,6 +217,7 @@ class ApiClient {
 
             return data;
         } catch (error) {
+            console.error(`API Request Failed: ${endpoint}`, error);
             if (error instanceof ApiError) throw error;
             throw new ApiError(error.message || 'Network Error', 500, error);
         }
