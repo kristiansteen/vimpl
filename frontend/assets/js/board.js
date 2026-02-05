@@ -963,21 +963,35 @@ function attachTeamRowEvents(row) {
 // POST-IT MANAGEMENT
 // ========================================
 
+// Force Yellow for new realistic look
+// If it's reloading from save/data, keep original color, otherwise use yellow
 function createPostit(color, x, y, parentElement, data = {}) {
     const id = data.id || generateId('postit');
+
+    // Force Yellow for new realistic look
+    // If it's reloading from save/data, keep original color, otherwise use yellow
+    const finalColor = data.color || 'yellow';
+    // We might want to migrate old ones too? Plan said "Existing non-yellow post-its (if any) will remain"
+    // So we invoke getPostitColor with whatever we decided.
+
+    // Random Rotation for "Tactile" feel (-3 to 3 degrees)
+    const rotation = data.rotation || (Math.random() * 6 - 3);
+
     const postit = document.createElement('div');
     postit.className = 'postit' + (data.status === 'done' ? ' done' : '');
     postit.id = id;
-    postit.style.backgroundColor = getPostitColor(color);
+    postit.style.backgroundColor = getPostitColor(finalColor);
     postit.style.left = snapToGrid(x) + 'px';
     postit.style.top = snapToGrid(y) + 'px';
-    postit.setAttribute('data-color', color);
+    postit.style.transform = `rotate(${rotation}deg)`; // Apply rotation
+    postit.setAttribute('data-color', finalColor);
+    postit.setAttribute('data-rotation', rotation); // Store it
 
     postit.innerHTML = `
-                <div class="postit-view">${data.content || ''}</div>
+                <div class="postit-view" style="font-family: 'Kalam', cursive; font-size: 14px; line-height: 1.1;">${data.content || ''}</div>
                 <div class="postit-inner" style="display:none;">
                     <div class="postit-front">
-                        <textarea placeholder="...">${data.content || ''}</textarea>
+                        <textarea placeholder="..." style="font-family: 'Kalam', cursive; font-size: 14px; line-height: 1.1;">${data.content || ''}</textarea>
                     </div>
                 </div>
                 <button class="postit-delete">&times;</button>
@@ -1004,7 +1018,8 @@ function createPostit(color, x, y, parentElement, data = {}) {
         isWeekPlan: weekPlanCell,
         xValue: data.xValue || 50,
         yValue: data.yValue || 50,
-        mitigation: data.mitigation || ''
+        mitigation: data.mitigation || '',
+        rotation: rotation
     };
     AppState.postits[id] = postitData;
 
@@ -1499,9 +1514,14 @@ function toggleEditMode() {
 }
 
 function initializePostitPalette() {
+    // We only support yellow now, so we modify the palette click handler to specific behavior if needed
+    // Or just ensure the HTML only has yellow.
+
     document.querySelectorAll('.postit-color').forEach(colorBtn => {
         colorBtn.addEventListener('click', () => {
-            const color = colorBtn.getAttribute('data-color');
+            // Always yellow effectively
+            const color = 'yellow'; // Force yellow logic here
+            // const color = colorBtn.getAttribute('data-color'); // Removed original logic
 
             document.querySelectorAll('.postit-color').forEach(c => c.classList.remove('selected'));
 

@@ -1,33 +1,35 @@
         :root {
-            /* Modern Color Palette */
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #0ea5e9;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #1e293b;
-            --dark-lighter: #334155;
-            --light: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
+            /* Tactile Whiteboard Palette */
+            --primary: #2c3e50;
+            /* Industrial blue-grey */
+            --primary-dark: #1a252f;
+            --primary-light: #34495e;
+            --secondary: #7f8c8d;
+            --accent: #d35400;
+            /* Burnt orange marker */
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #c0392b;
+            /* Red marker */
+
+            --dark: #2c3e50;
+            --dark-lighter: #34495e;
+            --light: #ecf0f1;
+
+            --gray-100: #fbfcff;
+            /* Whiteboard white */
+            --gray-200: #bdc3c7;
+            /* Metal frame/grid lines */
+            --gray-300: #95a5a6;
+            --gray-400: #7f8c8d;
+            --gray-500: #7f8c8d;
+            --gray-600: #2c3e50;
 
             --grid-size: 20px;
 
-            /* Post-it Colors - Modern */
-            --postit-yellow: #fef08a;
-            --postit-pink: #fda4af;
-            --postit-blue: #93c5fd;
-            --postit-green: #86efac;
-            --postit-orange: #fdba74;
-            --postit-red: #fca5a5;
-            --postit-done: #cbd5e1;
+            /* Post-it Colors - Realistic */
+            --postit-yellow: #fffeb3;
+            --postit-shadow: rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -37,10 +39,12 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            /* Clean industrial font for UI */
             background: var(--gray-100);
             min-height: 100vh;
             overflow: hidden;
+            color: var(--dark);
         }
 
         /* Header */
@@ -57,20 +61,18 @@
         }
 
         .logo {
-            font-family: 'Birthstone', cursive;
-            font-size: 38px;
-            font-weight: 400;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-            min-width: 120px;
+            font-family: 'Kalam', cursive;
+            /* Handwritten feel */
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: -0.5px;
         }
 
         .logo span {
             font-weight: 300;
-            opacity: 0.7;
+            opacity: 0.6;
+            font-size: 80%;
         }
 
         .logo-link {
@@ -129,39 +131,67 @@
             font-weight: 400;
         }
 
+
         .btn {
             padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            /* Slightly sharper */
             cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
-            font-family: inherit;
+            transition: all 0.1s;
+            /* Faster response for tactile feel */
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+            /* Physical depth */
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 0 var(--primary-dark);
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
+            background: var(--primary-light);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 5px 0 var(--primary-dark);
+        }
+
+        .btn-primary:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--primary-dark);
         }
 
         .btn-secondary {
-            background: var(--gray-100);
-            color: var(--gray-600);
-            border: 1px solid var(--gray-200);
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--gray-300);
+            box-shadow: 0 4px 0 var(--gray-300);
         }
 
         .btn-secondary:hover {
-            background: var(--gray-200);
+            background: var(--white);
+            border-color: var(--gray-400);
+            box-shadow: 0 5px 0 var(--gray-400);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--gray-300);
         }
 
         /* Main Container */
@@ -170,106 +200,133 @@
             height: calc(100vh - 65px);
         }
 
-        /* Sidebar */
+        /* Sidebar - Industrial/Minimal */
         .sidebar {
             width: 70px;
-            background: var(--dark);
+            background: var(--gray-200);
+            /* Metal frame look */
+            border-right: 1px solid var(--gray-300);
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 16px 0;
             gap: 8px;
             z-index: 50;
+            box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.05);
         }
 
         .sidebar-btn {
-            width: 44px;
-            height: 44px;
-            border: none;
-            border-radius: 12px;
-            background: transparent;
-            color: var(--gray-400);
+            width: 48px;
+            height: 48px;
+            border: 2px solid var(--gray-400);
+            border-radius: 8px;
+            background: white;
+            color: var(--gray-500);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            transition: all 0.2s;
+            font-size: 20px;
+            transition: all 0.1s;
+            box-shadow: 0 3px 0 var(--gray-400);
         }
 
         .sidebar-btn:hover {
-            background: var(--dark-lighter);
-            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 0 var(--gray-400);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .sidebar-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 var(--gray-400);
         }
 
         .sidebar-btn.active {
             background: var(--primary);
             color: white;
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 var(--primary-dark);
+            transform: translateY(3px);
+            /* Physically pressed in */
         }
 
         .sidebar-divider {
-            width: 32px;
-            height: 1px;
-            background: var(--dark-lighter);
-            margin: 8px 0;
+            width: 40px;
+            height: 2px;
+            background: var(--gray-300);
+            margin: 12px 0;
+            border-bottom: 1px solid white;
+            /* Etched look */
         }
 
         .sidebar-label {
-            color: var(--gray-500);
-            font-size: 9px;
+            color: var(--gray-600);
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 4px;
+            font-weight: 700;
         }
 
-        /* Post-it Color Palette */
+        /* Post-it Color Palette - Only Yellow/Pile */
         .postit-palette {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0;
+            /* Stack them */
             margin-top: 4px;
+            position: relative;
+            height: 50px;
+            /* Space for the pile */
+            width: 40px;
+            align-items: center;
         }
 
         .postit-color {
-            width: 36px;
-            height: 36px;
-            border: 2px solid transparent;
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e6e6a0;
+            border-radius: 2px;
+            /* Square */
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
             transition: all 0.2s;
-            position: relative;
+            position: absolute;
+            background: var(--postit-yellow);
+        }
+
+        /* Make a visual pile */
+        .postit-color::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--postit-yellow);
+            border: 1px solid #e6e6a0;
+            z-index: -1;
+            transform: rotate(3deg);
         }
 
         .postit-color:hover {
-            transform: scale(1.1);
+            transform: scale(1.05) rotate(-2deg);
         }
 
         .postit-color.selected {
-            border-color: white;
-            transform: scale(1.15);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--accent);
+            transform: scale(1.1);
         }
 
+        /* Remove other color classes behavior since we hide them or they look same */
         .postit-color.yellow {
             background: var(--postit-yellow);
         }
 
-        .postit-color.pink {
-            background: var(--postit-pink);
-        }
+        /* .postit-color.pink, .blue, etc will be hidden by JS logic or just filtered out visually if present */
 
-        .postit-color.blue {
-            background: var(--postit-blue);
-        }
-
-        .postit-color.green {
-            background: var(--postit-green);
-        }
-
-        .postit-color.orange {
-            background: var(--postit-orange);
-        }
 
         /* Board Area */
         .board-area {
@@ -278,19 +335,24 @@
             position: relative;
         }
 
-        /* Grid Background */
+        /* Grid Background - Whiteboard Style */
         .grid-background {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            background-color: var(--gray-100);
+            /* Subtle marker grid */
             background-image:
-                linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
-            background-size: var(--grid-size) var(--grid-size);
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            /* Bigger grid for whiteboard feel */
             pointer-events: none;
             z-index: 0;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.05);
+            /* Vignette */
         }
 
         /* GridStack Customization */
@@ -695,57 +757,63 @@
         }
 
         /* Post-it Notes */
+        /* Realistic Post-it Notes */
         .postit {
-            width: 42px;
-            height: 42px;
-            padding: 4px;
-            border-radius: 4px;
-            box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+            width: 140px;
+            /* Larger, readable size */
+            height: 140px;
+            padding: 12px;
+            border-radius: 2px 2px 25px 5px;
+            /* Slight curl bottom right */
+            box-shadow:
+                2px 15px 15px -10px rgba(0, 0, 0, 0.2),
+                /* Lift shadow */
+                0 0 4px rgba(0, 0, 0, 0.1);
+            /* Ambient */
             cursor: grab;
             position: absolute;
-            font-size: 8px;
-            line-height: 1.2;
+            font-size: 16px;
+            line-height: 1.4;
             overflow: hidden;
             z-index: 5;
             transition: box-shadow 0.2s, transform 0.2s;
             perspective: 1000px;
-        }
-
-        .postit.yellow {
+            font-family: 'Kalam', cursive;
+            /* Handwritten font */
             background: var(--postit-yellow);
+            color: #2c3e50;
+            /* Ink color */
         }
 
-        .postit.pink {
-            background: var(--postit-pink);
-        }
-
-        .postit.blue {
-            background: var(--postit-blue);
-        }
-
-        .postit.green {
-            background: var(--postit-green);
-        }
-
-        .postit.orange {
-            background: var(--postit-orange);
-        }
-
+        /* Enforce yellow regardless of class for uniformity, unless specifically overridden for status maybe */
+        .postit.yellow,
+        .postit.pink,
+        .postit.blue,
+        .postit.green,
+        .postit.orange,
         .postit.red {
-            background: var(--postit-red);
+            background: var(--postit-yellow);
+            /* Maybe slight tint variations for "aged" paper if we wanted, but sticking to guidelines of only yellow */
         }
-
 
         .postit:hover {
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-            z-index: 6;
+            box-shadow:
+                4px 20px 20px -10px rgba(0, 0, 0, 0.3),
+                0 0 6px rgba(0, 0, 0, 0.15);
+            z-index: 100;
         }
 
         .postit.dragging {
             cursor: grabbing;
-            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.25);
+            box-shadow:
+                10px 30px 25px -15px rgba(0, 0, 0, 0.4),
+                /* Higher lift */
+                0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 9999;
-            opacity: 0.9;
+            opacity: 1;
+            /* Don't fade, looks real */
+            transform: scale(1.05) !important;
+            /* Pop up */
         }
 
         .postit.flipped .postit-inner {
@@ -767,10 +835,12 @@
             border: none;
             background: transparent;
             resize: none;
-            font-size: 8px;
-            line-height: 1.2;
+            font-size: 16px;
+            /* Larger font */
+            line-height: 1.4;
             outline: none;
-            font-family: inherit;
+            font-family: 'Kalam', cursive;
+            color: #2c3e50;
         }
 
         .postit-back {
@@ -806,16 +876,19 @@
             height: 100%;
             border: none;
             background: transparent;
-            font-size: 8px;
-            line-height: 1.2;
-            font-family: inherit;
-            padding: 2px;
+            font-size: 16px;
+            /* Larger font */
+            line-height: 1.4;
+            font-family: 'Kalam', cursive;
+            padding: 8px;
             overflow: hidden;
             word-wrap: break-word;
             cursor: move;
             /* Indicate draggable */
             pointer-events: auto;
             /* Ensure it catches clicks */
+            white-space: pre-wrap;
+            /* Preserve formatting */
         }
 
 
