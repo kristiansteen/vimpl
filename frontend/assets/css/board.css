@@ -801,6 +801,25 @@
             display: flex;
         }
 
+        .postit-view {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            font-size: 8px;
+            line-height: 1.2;
+            font-family: inherit;
+            padding: 2px;
+            overflow: hidden;
+            word-wrap: break-word;
+            cursor: move;
+            /* Indicate draggable */
+            pointer-events: auto;
+            /* Ensure it catches clicks */
+        }
+
+
+
         /* Post-it Form (Back) */
         .postit-form {
             position: fixed;

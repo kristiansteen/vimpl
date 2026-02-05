@@ -505,8 +505,8 @@ function restorePostit(data, parentElement) {
     postit.setAttribute('data-color', data.color);
 
     postit.innerHTML = `
-                <div class="postit-handle" title="Drag to move"></div>
-                <div class="postit-inner">
+                <div class="postit-view">${data.content || ''}</div>
+                <div class="postit-inner" style="display:none;">
                     <div class="postit-front">
                         <textarea placeholder="...">${data.content || ''}</textarea>
                     </div>
@@ -974,8 +974,8 @@ function createPostit(color, x, y, parentElement, data = {}) {
     postit.setAttribute('data-color', color);
 
     postit.innerHTML = `
-                <div class="postit-handle" title="Drag to move"></div>
-                <div class="postit-inner">
+                <div class="postit-view">${data.content || ''}</div>
+                <div class="postit-inner" style="display:none;">
                     <div class="postit-front">
                         <textarea placeholder="...">${data.content || ''}</textarea>
                     </div>
@@ -1039,6 +1039,9 @@ function createPostit(color, x, y, parentElement, data = {}) {
 
 function attachPostitEvents(postit) {
     const id = postit.id;
+    const view = postit.querySelector('.postit-view');
+    const inner = postit.querySelector('.postit-inner');
+    const textarea = postit.querySelector('textarea');
 
     // Delete button
     postit.querySelector('.postit-delete').addEventListener('click', (e) => {
@@ -1047,144 +1050,178 @@ function attachPostitEvents(postit) {
     });
 
     // Content change
-    const textarea = postit.querySelector('textarea');
-    textarea.addEventListener('input', () => {
+    textarea.addEventListener('blur', () => {
         if (AppState.postits[id]) {
-            AppState.postits[id].content = textarea.value;
+            const content = textarea.value;
+            AppState.postits[id].content = content;
+            view.textContent = content;
+
+            // Switch back to view mode
+            inner.style.display = 'none';
+            view.style.display = 'block';
+
             scheduleAutoSave();
         }
     });
 
+    // Single Click to Edit (handled in drag logic or separate listener?)
+    // We handle it here but need to coordinate with drag.
+    // Actually, we'll handle the mode switch in mouseup if not dragged.
+
     // Double-click to open form
     postit.addEventListener('dblclick', (e) => {
-        if (e.target.tagName !== 'TEXTAREA') {
-            openPostitForm(id, e.clientX, e.clientY);
-        }
+        // Stop bubbling so it doesn't trigger other things
+        e.stopPropagation();
+        openPostitForm(id, e.clientX, e.clientY);
     });
 }
 
 function makePostitDraggable(postit) {
     let isDragging = false;
     let startX, startY, origLeft, origTop;
+    let didDrag = false;
 
     const onMouseMove = (e) => {
         if (!isDragging) return;
+
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
-        postit.style.left = (origLeft + dx) + 'px';
-        postit.style.top = (origTop + dy) + 'px';
 
-        // Highlight week cells when dragging over them (Throttle/simplify if possible)
-        const cell = document.elementFromPoint(e.clientX, e.clientY)?.closest('.week-cell');
+        // If moved more than threshold, consider it a drag
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            didDrag = true;
+            postit.classList.add('dragging');
+        }
 
-        // Remove active class from others
-        const activeCells = document.querySelectorAll('.drag-over-active');
-        activeCells.forEach(c => {
-            if (c !== cell) c.classList.remove('drag-over-active');
-        });
+        if (didDrag) {
+            postit.style.left = (origLeft + dx) + 'px';
+            postit.style.top = (origTop + dy) + 'px';
 
-        if (cell) {
-            cell.classList.add('drag-over-active');
+            // Highlight week cells logic...
+            const cell = document.elementFromPoint(e.clientX, e.clientY)?.closest('.week-cell');
+            const activeCells = document.querySelectorAll('.drag-over-active');
+            activeCells.forEach(c => {
+                if (c !== cell) c.classList.remove('drag-over-active');
+            });
+            if (cell) cell.classList.add('drag-over-active');
         }
     };
 
     const onMouseUp = (e) => {
         if (!isDragging) return;
         isDragging = false;
-        postit.classList.remove('dragging');
-        document.querySelectorAll('.drag-over-active').forEach(c => c.classList.remove('drag-over-active'));
 
-        // Cleanup global listeners
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
 
-        const id = postit.id;
-
-        // SNAP TO CELL LOGIC
-        postit.hidden = true;
-        const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
-        postit.hidden = false;
-
-        let newParent = elemBelow?.closest('.postit-dropzone');
-        if (!newParent && elemBelow?.closest('.postit')) {
-            newParent = elemBelow.closest('.postit').parentElement;
+        if (didDrag) {
+            // Drag Drop Logic
+            postit.classList.remove('dragging');
+            document.querySelectorAll('.drag-over-active').forEach(c => c.classList.remove('drag-over-active'));
+            handleDrop(postit, e);
+        } else {
+            // Single Click Logic (didn't drag)
+            // Enter inline edit mode
+            enterInlineEdit(postit);
         }
-
-        if (newParent) {
-            if (newParent !== postit.parentElement) {
-                newParent.appendChild(postit);
-                const isMatrix = newParent.classList.contains('matrix-dropzone');
-                if (AppState.postits[id]) {
-                    AppState.postits[id].isMatrix = isMatrix;
-                    AppState.postits[id].isWeekPlan = newParent.classList.contains('week-cell');
-                    AppState.postits[id].section = newParent.closest('.grid-stack-item')?.getAttribute('gs-id');
-                }
-            }
-
-            if (newParent.classList.contains('week-cell')) {
-                postit.style.transform = '';
-                postit.style.left = '10px';
-                postit.style.top = '10px';
-            } else {
-                const rect = newParent.getBoundingClientRect();
-                const x = e.clientX - rect.left - 76;
-                const y = e.clientY - rect.top - 12;
-                postit.style.left = Math.max(0, x) + 'px';
-                postit.style.top = Math.max(0, y) + 'px';
-            }
-        }
-
-        const newX = parseInt(postit.style.left);
-        const newY = parseInt(postit.style.top);
-
-        if (AppState.postits[id]) {
-            AppState.postits[id].x = newX;
-            AppState.postits[id].y = newY;
-            const matrixDropzone = postit.closest('.matrix-dropzone');
-            if (matrixDropzone) {
-                updateMatrixPositionFromDrag(postit, matrixDropzone);
-            }
-        }
-
-        const columnContext = getColumnContext(postit);
-        const logDetails = { x: newX, y: newY };
-        if (columnContext.type === 'kanban') {
-            logDetails.kanbanColumn = columnContext.details.column;
-        } else if (columnContext.type === 'weekplan') {
-            logDetails.week = columnContext.details.week;
-            logDetails.track = columnContext.details.track;
-        } else if (columnContext.type === 'matrix') {
-            logDetails.quadrant = columnContext.details.quadrant;
-            if (AppState.postits[id]) {
-                const data = AppState.postits[id];
-                logDetails.riskScore = data.xValue * data.yValue;
-                logDetails.xAxis = `${columnContext.details.xLabel}: ${data.xValue}`;
-                logDetails.yAxis = `${columnContext.details.yLabel}: ${data.yValue}`;
-            }
-        }
-
-        logEvent('move', id, 'postit', logDetails);
     };
 
     postit.addEventListener('mousedown', (e) => {
         if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
-        if (!e.target.classList.contains('postit-handle') &&
-            !e.target.classList.contains('postit') &&
-            !e.target.closest('.postit-inner')) return;
+        // Allow dragging from anywhere on the postit now
+        if (!e.target.classList.contains('postit') && !e.target.closest('.postit')) return;
 
         isDragging = true;
-        postit.classList.add('dragging');
+        didDrag = false;
         startX = e.clientX;
         startY = e.clientY;
         origLeft = postit.offsetLeft;
         origTop = postit.offsetTop;
 
-        // Attach global listeners only while dragging
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
 
-        e.preventDefault();
+        // Prevent partial text selection while dragging
+        // e.preventDefault(); // Leaving this out to allow focus if needed? No, standard for drag.
     });
+}
+
+function handleDrop(postit, e) {
+    const id = postit.id;
+    // SNAP TO CELL LOGIC
+    postit.hidden = true;
+    const elemBelow = document.elementFromPoint(e.clientX, e.clientY);
+    postit.hidden = false;
+
+    let newParent = elemBelow?.closest('.postit-dropzone');
+    if (!newParent && elemBelow?.closest('.postit')) {
+        newParent = elemBelow.closest('.postit').parentElement;
+    }
+
+    if (newParent) {
+        if (newParent !== postit.parentElement) {
+            newParent.appendChild(postit);
+            const isMatrix = newParent.classList.contains('matrix-dropzone');
+            if (AppState.postits[id]) {
+                AppState.postits[id].isMatrix = isMatrix;
+                AppState.postits[id].isWeekPlan = newParent.classList.contains('week-cell');
+                AppState.postits[id].section = newParent.closest('.grid-stack-item')?.getAttribute('gs-id');
+            }
+        }
+
+        if (newParent.classList.contains('week-cell')) {
+            postit.style.transform = '';
+            postit.style.left = '10px';
+            postit.style.top = '10px';
+        } else {
+            const rect = newParent.getBoundingClientRect();
+            const x = e.clientX - rect.left - 21; // Adjusted offset for center drag feel
+            const y = e.clientY - rect.top - 21;
+            postit.style.left = Math.max(0, x) + 'px';
+            postit.style.top = Math.max(0, y) + 'px';
+        }
+    }
+
+    const newX = parseInt(postit.style.left);
+    const newY = parseInt(postit.style.top);
+
+    if (AppState.postits[id]) {
+        AppState.postits[id].x = newX;
+        AppState.postits[id].y = newY;
+        const matrixDropzone = postit.closest('.matrix-dropzone');
+        if (matrixDropzone) {
+            updateMatrixPositionFromDrag(postit, matrixDropzone);
+        }
+    }
+
+    const columnContext = getColumnContext(postit);
+    const logDetails = { x: newX, y: newY };
+    if (columnContext.type === 'kanban') {
+        logDetails.kanbanColumn = columnContext.details.column;
+    } else if (columnContext.type === 'weekplan') {
+        logDetails.week = columnContext.details.week;
+        logDetails.track = columnContext.details.track;
+    } else if (columnContext.type === 'matrix') {
+        logDetails.quadrant = columnContext.details.quadrant;
+        if (AppState.postits[id]) {
+            const data = AppState.postits[id];
+            logDetails.riskScore = data.xValue * data.yValue;
+            logDetails.xAxis = `${columnContext.details.xLabel}: ${data.xValue}`;
+            logDetails.yAxis = `${columnContext.details.yLabel}: ${data.yValue}`;
+        }
+    }
+
+    logEvent('move', id, 'postit', logDetails);
+}
+
+function enterInlineEdit(postit) {
+    const view = postit.querySelector('.postit-view');
+    const inner = postit.querySelector('.postit-inner');
+    const textarea = postit.querySelector('textarea');
+
+    view.style.display = 'none';
+    inner.style.display = 'block';
+    textarea.focus();
 }
 
 function deletePostit(id) {
@@ -1314,6 +1351,7 @@ function savePostitForm() {
     const postit = document.getElementById(id);
     if (postit) {
         postit.querySelector('textarea').value = data.content;
+        postit.querySelector('.postit-view').textContent = data.content;
 
         // Update done status
         if (data.status === 'done') {
