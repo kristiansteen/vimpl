@@ -61,7 +61,7 @@ function logMatrixPosition(postitId, sectionId, xLabel, xValue, yLabel, yValue, 
 }
 
 function snapToGrid(value) {
-    return Math.round(value / AppState.gridSize) * AppState.gridSize;
+    return Math.round(value); // No grid snap, just pixel precision
 }
 
 function getPostitColor(colorName) {
@@ -988,10 +988,10 @@ function createPostit(color, x, y, parentElement, data = {}) {
     postit.setAttribute('data-rotation', rotation); // Store it
 
     postit.innerHTML = `
-                <div class="postit-view" style="font-family: 'Kalam', cursive; font-size: 14px; line-height: 1.1;">${data.content || ''}</div>
+                <div class="postit-view" style="font-family: 'Kalam', cursive; font-size: 10px; line-height: 1.1;">${data.content || ''}</div>
                 <div class="postit-inner" style="display:none;">
                     <div class="postit-front">
-                        <textarea placeholder="..." style="font-family: 'Kalam', cursive; font-size: 14px; line-height: 1.1;">${data.content || ''}</textarea>
+                        <textarea placeholder="..." style="font-family: 'Kalam', cursive; font-size: 10px; line-height: 1.1;">${data.content || ''}</textarea>
                     </div>
                 </div>
                 <button class="postit-delete">&times;</button>
@@ -1190,8 +1190,9 @@ function handleDrop(postit, e) {
             postit.style.top = '10px';
         } else {
             const rect = newParent.getBoundingClientRect();
-            const x = e.clientX - rect.left - 21; // Adjusted offset for center drag feel
-            const y = e.clientY - rect.top - 21;
+            // Post-it is now 60px, so center offset is 30px
+            const x = e.clientX - rect.left - 30;
+            const y = e.clientY - rect.top - 30;
             postit.style.left = Math.max(0, x) + 'px';
             postit.style.top = Math.max(0, y) + 'px';
         }
@@ -1395,7 +1396,7 @@ function updatePostitPositionInMatrix(id) {
     if (!matrix) return;
 
     const matrixRect = matrix.getBoundingClientRect();
-    const postitSize = 42;
+    const postitSize = 60; // Updated size
 
     // Convert percentage to position
     const x = (data.xValue / 100) * matrixRect.width - postitSize / 2;
@@ -1551,8 +1552,8 @@ function handleDropzoneClick(e) {
 
     const dropzone = e.currentTarget;
     const rect = dropzone.getBoundingClientRect();
-    const x = e.clientX - rect.left - 21;
-    const y = e.clientY - rect.top - 21;
+    const x = e.clientX - rect.left - 30; // 60px/2
+    const y = e.clientY - rect.top - 30;
 
     createPostit(AppState.selectedColor, Math.max(0, x), Math.max(0, y), dropzone);
 
