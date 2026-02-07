@@ -20,15 +20,13 @@
 
             --grid-size: 20px;
 
-            /* Post-it Colors - Realistic (Preserved) */
-            --postit-yellow: #fffeb3;
+            /* Post-it Colors - Realistic */
+            --postit-yellow: #fff59d;
+            --postit-green: #a5d6a7;
+            --postit-red: #ef9a9a;
+            --postit-blue: #90caf9;
+            --postit-grey: #e0e0e0;
             --postit-shadow: rgba(0, 0, 0, 0.15);
-            /* Legacy colors mapping to yellow if needed */
-            --postit-pink: #fffeb3;
-            --postit-blue: #fffeb3;
-            --postit-green: #fffeb3;
-            --postit-orange: #fffeb3;
-            --postit-red: #fffeb3;
         }
 
         /* Owner Badge for Team Section */
@@ -797,9 +795,24 @@
         .postit.blue,
         .postit.green,
         .postit.orange,
-        .postit.red {
+        .postit.yellow {
             background: var(--postit-yellow);
-            /* Maybe slight tint variations for "aged" paper if we wanted, but sticking to guidelines of only yellow */
+        }
+
+        .postit.green {
+            background: var(--postit-green);
+        }
+
+        .postit.red {
+            background: var(--postit-red);
+        }
+
+        .postit.blue {
+            background: var(--postit-blue);
+        }
+
+        .postit.grey {
+            background: var(--postit-grey);
         }
 
         .postit:hover {
@@ -1011,6 +1024,10 @@
 
         .color-opt.green {
             background: var(--postit-green);
+        }
+
+        .color-opt.grey {
+            background: var(--postit-grey);
         }
 
 
