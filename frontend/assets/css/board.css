@@ -1,8 +1,8 @@
         :root {
             /* Modern Color Palette (Restored) */
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
+            --primary: #65c434;
+            --primary-dark: #52a12a;
+            --primary-light: #92d66d;
             --secondary: #0ea5e9;
             --accent: #f59e0b;
             --success: #10b981;
@@ -279,7 +279,7 @@
             outline: none;
             background: white;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(101, 196, 52, 0.1);
         }
 
         .project-title-input::placeholder {
@@ -319,7 +319,7 @@
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(101, 196, 52, 0.3);
         }
 
         .btn-primary:active {
@@ -477,8 +477,8 @@
             bottom: 0;
             background-color: transparent;
             background-image:
-                linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+                linear-gradient(rgba(101, 196, 52, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(101, 196, 52, 0.08) 1px, transparent 1px);
             background-size: var(--grid-size) var(--grid-size);
             pointer-events: none;
             z-index: 0;
@@ -574,7 +574,7 @@
 
         /* Dropzone highlight */
         .section-content.drag-over {
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(101, 196, 52, 0.05);
             outline: 2px dashed var(--primary);
         }
 
@@ -671,7 +671,7 @@
         }
 
         .kanban-dropzone.drag-over {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(101, 196, 52, 0.1);
             outline: 2px dashed var(--primary);
         }
 
@@ -757,7 +757,7 @@
         }
 
         .week-cell.drag-over {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(101, 196, 52, 0.1);
         }
 
         /* Highlighted Week */
@@ -856,7 +856,7 @@
         /* bottom-right - low consequence, high probability */
 
         .matrix-quadrant.drag-over {
-            background: rgba(99, 102, 241, 0.2);
+            background: rgba(101, 196, 52, 0.2);
         }
 
         .matrix-x-label {
@@ -1233,7 +1233,7 @@
         .kpi-add:hover {
             border-color: var(--primary);
             color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(101, 196, 52, 0.05);
         }
 
         /* Actions Table */
@@ -1272,7 +1272,7 @@
         }
 
         .actions-table .add-row:hover {
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(101, 196, 52, 0.05);
         }
 
         /* Team Table */
@@ -1329,7 +1329,7 @@
         }
 
         .team-table .add-team-row:hover {
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(101, 196, 52, 0.05);
         }
 
         .team-table .add-team-row td {
@@ -1513,7 +1513,7 @@
 
         .section-type-card:hover {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(101, 196, 52, 0.05);
             transform: translateY(-2px);
         }
 
@@ -1629,7 +1629,7 @@
 
         /* Show resize handles on hover for better UX */
         .grid-stack-item:hover .gs-resizable-handle {
-            background-color: rgba(99, 102, 241, 0.2) !important;
+            background-color: rgba(101, 196, 52, 0.2) !important;
         }
 
         /* Enlarge touch targets for handles */
@@ -1755,7 +1755,7 @@
 
             /* Show handle highlighting on hover only in edit mode */
             body.edit-mode .grid-stack-item:hover .gs-resizable-handle {
-                background-color: rgba(99, 102, 241, 0.2) !important;
+                background-color: rgba(101, 196, 52, 0.2) !important;
             }
 
             /* Section controls container adjustments */
