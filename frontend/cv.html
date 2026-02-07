@@ -195,6 +195,32 @@
             gap: 8px;
         }
 
+        .skill-tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-keyword-tag {
+            background: white;
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-light);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .skill-keyword-tag:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(101, 196, 52, 0.2);
+        }
+
         @media (max-width: 768px) {
             .cv-title {
                 font-size: 2rem;
@@ -377,6 +403,35 @@
                         <li>Danish Marine Home Guard (2022)</li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <!-- Expertise Tags -->
+        <div class="cv-section">
+            <h2 style="margin-bottom: 24px; border-left: 4px solid var(--primary); padding-left: 16px;">Core Expertise &
+                Skills</h2>
+            <div class="skill-tag-container">
+                <span class="skill-keyword-tag">AI Strategy</span>
+                <span class="skill-keyword-tag">Digital Transformation</span>
+                <span class="skill-keyword-tag">Innovation Management</span>
+                <span class="skill-keyword-tag">Lean Management</span>
+                <span class="skill-keyword-tag">Six Sigma Black Belt</span>
+                <span class="skill-keyword-tag">People Management</span>
+                <span class="skill-keyword-tag">Operational Excellence</span>
+                <span class="skill-keyword-tag">Intelligent Automation</span>
+                <span class="skill-keyword-tag">Enterprise Architecture</span>
+                <span class="skill-keyword-tag">Agile (SCRUM/SAFe)</span>
+                <span class="skill-keyword-tag">Change Management</span>
+                <span class="skill-keyword-tag">Process Mining</span>
+                <span class="skill-keyword-tag">AI Governance</span>
+                <span class="skill-keyword-tag">Product Leadership</span>
+                <span class="skill-keyword-tag">ERP Implementation</span>
+                <span class="skill-keyword-tag">P&L Responsibility</span>
+                <span class="skill-keyword-tag">Predictive Modeling</span>
+                <span class="skill-keyword-tag">Machine Learning</span>
+                <span class="skill-keyword-tag">Visual Planning</span>
+                <span class="skill-keyword-tag">Strategic Consulting</span>
+                <span class="skill-keyword-tag">Cross-functional Leadership</span>
             </div>
         </div>
 
