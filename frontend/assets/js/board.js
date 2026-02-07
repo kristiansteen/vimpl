@@ -452,6 +452,7 @@ async function loadBoardState() {
             attachSectionEventListeners();
             updateAllOwnerDropdowns();
             fixLegacyKPISections();
+            syncBoardMembersToTeamSection(board);
         }, 300);
 
         return true;
@@ -460,6 +461,77 @@ async function loadBoardState() {
         // Fallback or error handling
         return false;
     }
+}
+
+// Sync board collaborators to Team section
+function syncBoardMembersToTeamSection(board) {
+    const tbody = document.querySelector('.team-members-body');
+    if (!tbody) return;
+
+    // Clear existing rows except add-team-row
+    tbody.querySelectorAll('.team-member-row').forEach(row => row.remove());
+    const addRow = tbody.querySelector('.add-team-row');
+
+    // Add owner first (with crown indicator)
+    if (board.user) {
+        const ownerRow = createTeamMemberRow({
+            id: board.userId,
+            name: board.user.name || board.user.email?.split('@')[0] || 'Owner',
+            email: board.user.email || '',
+            isOwner: true
+        });
+        tbody.insertBefore(ownerRow, addRow);
+    }
+
+    // Add collaborators
+    if (board.collaborators && board.collaborators.length > 0) {
+        board.collaborators.forEach(collab => {
+            const memberRow = createTeamMemberRow({
+                id: collab.userId,
+                name: collab.user?.name || collab.user?.email?.split('@')[0] || 'Member',
+                email: collab.user?.email || '',
+                isOwner: false
+            });
+            tbody.insertBefore(memberRow, addRow);
+        });
+    }
+
+    // Re-attach event listeners
+    attachTeamMemberEvents();
+}
+
+function createTeamMemberRow(member) {
+    const row = document.createElement('tr');
+    row.className = 'team-member-row';
+    row.setAttribute('data-member-id', member.id);
+    if (member.isOwner) row.classList.add('owner-row');
+
+    const ownerBadge = member.isOwner ? '<span class="owner-badge" title="Board Owner"><i class="fas fa-crown"></i></span>' : '';
+    const deleteBtn = member.isOwner ? '' : '<button class="section-btn team-delete-btn"><i class="fas fa-times"></i></button>';
+
+    row.innerHTML = `
+        <td>${ownerBadge}<input type="text" class="team-name" placeholder="Name" value="${member.name}" /></td>
+        <td><input type="email" class="team-email" placeholder="email@example.com" value="${member.email}" readonly /></td>
+        <td>${deleteBtn}</td>
+    `;
+    return row;
+}
+
+function attachTeamMemberEvents() {
+    document.querySelectorAll('.team-member-row').forEach(row => {
+        const nameInput = row.querySelector('.team-name');
+        const deleteBtn = row.querySelector('.team-delete-btn');
+
+        if (nameInput) {
+            nameInput.addEventListener('input', () => scheduleAutoSave());
+        }
+        if (deleteBtn) {
+            deleteBtn.onclick = function () {
+                row.remove();
+                scheduleAutoSave();
+            };
+        }
+    });
 }
 
 function applyRoleRestrictions() {

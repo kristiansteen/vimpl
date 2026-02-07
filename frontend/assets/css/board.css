@@ -31,6 +31,37 @@
             --postit-red: #fffeb3;
         }
 
+        /* Owner Badge for Team Section */
+        .owner-badge {
+            color: #f59e0b;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .owner-row {
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        .team-name {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid transparent;
+            padding: 4px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .team-name:hover,
+        .team-name:focus {
+            border-bottom: 1px solid var(--gray-300);
+            outline: none;
+        }
+
+        .team-email[readonly] {
+            color: var(--gray-500);
+            cursor: default;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
