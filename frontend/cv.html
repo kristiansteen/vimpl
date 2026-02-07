@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kristian Steen - CV</title>
-    <meta name="description" content="CV of Kristian Steen, Founder of vimpl.">
+    <meta name="description" content="CV of Kristian Steen, Founder of vimpl and AI Transformation Leader.">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
@@ -44,10 +44,20 @@
         }
 
         .cv-subtitle {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: var(--primary);
             font-weight: 600;
-            margin-bottom: 32px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cv-tagline {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            max-width: 700px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
         }
 
         .cv-card {
@@ -96,37 +106,62 @@
             display: block;
         }
 
+        .accomplishment-box {
+            background: rgba(101, 196, 52, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .accomplishment-box strong {
+            display: block;
+            color: var(--primary-dark);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
         .skill-item {
             background: white;
-            padding: 20px;
+            padding: 24px;
             border-radius: 12px;
             border: 1px solid var(--gray-100);
         }
 
         .skill-item h4 {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             color: var(--dark);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 8px;
+            display: inline-block;
         }
 
-        .skill-tags {
+        .skill-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .skill-list li {
+            padding: 4px 0;
+            font-size: 0.95rem;
+            color: var(--gray-600);
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 8px;
         }
 
-        .skill-tag {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 500;
+        .skill-list li:before {
+            content: "▪";
+            color: var(--primary);
+            font-weight: bold;
         }
 
         .back-link {
@@ -144,6 +179,22 @@
             color: var(--primary);
         }
 
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        .contact-info span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         @media (max-width: 768px) {
             .cv-title {
                 font-size: 2rem;
@@ -152,6 +203,12 @@
             .experience-header {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
             }
         }
     </style>
@@ -174,79 +231,165 @@
     <div class="cv-hero">
         <div class="cv-container" style="padding-bottom: 0;">
             <a href="about.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to About</a>
+            <p class="cv-subtitle">AI Transformation | Digital Innovation | Operational Excellence</p>
             <h1 class="cv-title">Kristian Steen</h1>
-            <p class="cv-subtitle">Software Engineer & Founder of vimpl</p>
+            <p class="cv-tagline">Results-driven leader with 20+ years transforming organisations through AI,
+                digitalisation, and operational excellence.</p>
+            <div class="contact-info">
+                <span><i class="fas fa-envelope"></i> kristian.steen@vimpl.com</span>
+                <span><i class="fas fa-phone"></i> +45 29 86 88 39</span>
+                <span><i class="fas fa-map-marker-alt"></i> Copenhagen, Denmark</span>
+            </div>
         </div>
     </div>
 
     <div class="cv-container">
         <!-- Experience -->
         <div class="cv-section">
-            <h2 style="margin-bottom: 24px;">Experience</h2>
+            <h2 style="margin-bottom: 32px; border-left: 4px solid var(--primary); padding-left: 16px;">Professional
+                Experience</h2>
 
             <div class="cv-card">
                 <div class="experience-header">
                     <span class="company-name">vimpl</span>
-                    <span class="job-duration">2024 - Present</span>
+                    <span class="job-duration">2024 - Present | Global</span>
                 </div>
                 <span class="job-title">Founder & Lead Developer</span>
                 <p style="color: var(--gray-600);">Building a high-performance visual planning tool using Node.js,
                     Express, and PostgreSQL. Focused on creating a premium "tactile" whiteboard experience in the
-                    browser.</p>
+                    browser to simplify complex project leadership.</p>
             </div>
 
             <div class="cv-card">
                 <div class="experience-header">
-                    <span class="company-name">Senior Product Engineer</span>
-                    <span class="job-duration">Copenhagen, Denmark</span>
+                    <span class="company-name">Sprint365</span>
+                    <span class="job-duration">Dec 2023 – Present | Copenhagen</span>
                 </div>
-                <span class="job-title">Various Tech Leads & Consulting</span>
-                <p style="color: var(--gray-600);">Extensive experience in leading product teams and architectural
-                    design for scalable SaaS applications. Expert in agile methodologies and visual management systems.
+                <span class="job-title">Head of Product & AI</span>
+                <p style="color: var(--gray-600);">Leading product development and AI innovation for ERP implementation
+                    platform. Managing team of 11, driving solutions to optimise business process implementations.</p>
+                <div class="accomplishment-box">
+                    <strong>Key Accomplishments</strong>
+                    Reduced project implementation time by 40% through AI automation • Developed predictive models via
+                    process mining • Established AI governance framework.
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <div class="experience-header">
+                    <span class="company-name">A.P. Møller - Maersk</span>
+                    <span class="job-duration">Sep 2019 – Oct 2021 | Copenhagen</span>
+                </div>
+                <span class="job-title">Transformation Partner</span>
+                <p style="color: var(--gray-600);">Led global digital transformation initiative for enterprise
+                    capability architecture. Orchestrated deployment of RPA and machine learning technologies at scale.
                 </p>
+                <div class="accomplishment-box">
+                    <strong>Key Accomplishments</strong>
+                    Increased Order-to-Cash digitalisation from 65% to 75% within two years • Created global process
+                    taxonomy • Established board-level reporting.
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <div class="experience-header">
+                    <span class="company-name">Vimpl Consulting</span>
+                    <span class="job-duration">June 2012 – Dec 2023 | Copenhagen</span>
+                </div>
+                <span class="job-title">Senior Management Consultant → Partner</span>
+                <p style="color: var(--gray-600);">Led operational excellence service line with full P&L responsibility.
+                    Delivered high-impact digital transformation projects for Maersk, Danske Bank, SDC, and Norlys.</p>
+                <div class="accomplishment-box">
+                    <strong>Key Accomplishments</strong>
+                    Delivered critical OpenShift migration for SOS Rejseforsikring • Designed corporate transformation
+                    strategy for Maersk • Led digital innovation strategy for Danske Bank.
+                </div>
+            </div>
+
+            <div class="cv-card">
+                <div class="experience-header">
+                    <span class="company-name">Implement Consulting Group</span>
+                    <span class="job-duration">Oct 2008 – Jan 2011 | Hørsholm</span>
+                </div>
+                <span class="job-title">Senior Management Consultant</span>
+                <p style="color: var(--gray-600);">Specialised in Lean and Six Sigma implementations. Led process
+                    optimisation initiatives in prosecution services, defence, and wind energy manufacturing.</p>
+                <div class="accomplishment-box">
+                    <strong>Key Accomplishments</strong>
+                    Reduced end-to-end prosecution lead time by 25% at Copenhagen Police • Decreased Engineering Change
+                    Request process time by 40% at Siemens Wind Power.
+                </div>
             </div>
         </div>
 
-        <!-- Skills -->
+        <!-- Education -->
         <div class="cv-section">
-            <h2 style="margin-bottom: 24px;">Technical Skills</h2>
+            <h2 style="margin-bottom: 32px; border-left: 4px solid var(--primary); padding-left: 16px;">Education</h2>
+            <div class="skills-grid" style="grid-template-columns: 1fr;">
+                <div class="cv-card" style="padding: 24px; margin-bottom: 16px;">
+                    <div class="experience-header" style="margin-bottom: 8px;">
+                        <span class="company-name">Copenhagen Business School</span>
+                        <span class="job-duration">2001 – 2004</span>
+                    </div>
+                    <span class="job-title" style="margin-bottom: 4px;">MSc in Business Administration & Computer
+                        Science (Cand.merc.dat)</span>
+                    <p style="color: var(--gray-500); font-size: 0.9rem;">Top 10% of cohort</p>
+                </div>
+                <div class="cv-card" style="padding: 24px; margin-bottom: 16px;">
+                    <div class="experience-header" style="margin-bottom: 8px;">
+                        <span class="company-name">Simon Fraser University</span>
+                        <span class="job-duration">Fall 2003</span>
+                    </div>
+                    <span class="job-title">Specialist MBA Programme – Organisational Change</span>
+                    <p style="color: var(--gray-500); font-size: 0.9rem;">Vancouver, Canada</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qualifications -->
+        <div class="cv-section">
+            <h2 style="margin-bottom: 32px; border-left: 4px solid var(--primary); padding-left: 16px;">Certifications &
+                Expertise</h2>
             <div class="skills-grid">
                 <div class="skill-item">
-                    <h4>Frontend</h4>
-                    <div class="skill-tags">
-                        <span class="skill-tag">HTML5/CSS3</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">UI/UX Design</span>
-                    </div>
+                    <h4>Professional Certifications</h4>
+                    <ul class="skill-list">
+                        <li>Six Sigma Black Belt (Motorola)</li>
+                        <li>Prince 2 Practitioner</li>
+                        <li>Certified Whole Brain Practitioner</li>
+                        <li>PI Predictive Index Interviewer</li>
+                    </ul>
                 </div>
                 <div class="skill-item">
-                    <h4>Backend</h4>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Node.js</span>
-                        <span class="skill-tag">Express</span>
-                        <span class="skill-tag">PostgreSQL</span>
-                        <span class="skill-tag">API Design</span>
-                    </div>
+                    <h4>Key Competencies</h4>
+                    <ul class="skill-list">
+                        <li>AI Strategy & Intelligent Automation</li>
+                        <li>Enterprise Architecture</li>
+                        <li>Agile Portfolio Management</li>
+                        <li>Visual Planning & Lean Operations</li>
+                    </ul>
                 </div>
                 <div class="skill-item">
-                    <h4>Leadership</h4>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Product Vision</span>
-                        <span class="skill-tag">Agile Management</span>
-                        <span class="skill-tag">Team Coaching</span>
-                    </div>
+                    <h4>Languages & Personal</h4>
+                    <ul class="skill-list">
+                        <li>Danish (Native) | English (Fluent)</li>
+                        <li>Author: "Perfect Processes" (2014)</li>
+                        <li>Danish Marine Home Guard (2022)</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <!-- Contact CTA -->
         <div
-            style="text-align: center; background: white; border: 2px dashed var(--gray-200); padding: 40px; border-radius: 20px;">
-            <h3>Let's work together</h3>
-            <p style="margin-bottom: 24px;">I'm always open to discussing new projects and creative ideas.</p>
+            style="text-align: center; background: white; border: 2px dashed var(--gray-200); padding: 50px; border-radius: 24px;">
+            <h3 style="font-size: 2rem; margin-bottom: 16px;">Let's make it happen</h3>
+            <p
+                style="margin-bottom: 32px; color: var(--gray-600); max-width: 500px; margin-left: auto; margin-right: auto;">
+                I'm always open to discussing digital transformation, AI initiatives, or product innovation.</p>
             <div style="display: flex; justify-content: center; gap: 16px;">
-                <a href="mailto:kristian.steen@vimpl.com" class="btn-primary">
-                    <i class="fas fa-envelope"></i> Email Me
+                <a href="mailto:kristian.steen@vimpl.com" class="btn-primary" style="text-decoration: none;">
+                    <i class="fas fa-envelope"></i> Reach Out via Email
                 </a>
             </div>
         </div>
