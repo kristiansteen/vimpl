@@ -753,14 +753,20 @@
             createBtn.textContent = 'Creating...';
 
             try {
-                const board = await apiClient.createBoard(title, description);
+                const response = await apiClient.createBoard(title, description);
+                const board = response.board || response;
                 closeCreateBoardModal();
 
                 // Redirect to new board
-                window.location.href = `board.html?id=${board.id}`;
+                if (board && board.id) {
+                    window.location.href = `board.html?id=${board.id}`;
+                } else {
+                    throw new Error('Invalid server response - no board ID');
+                }
             } catch (error) {
                 console.error('Failed to create board:', error);
-                alert('Failed to create board. Please try again.');
+                console.error('Failed to create board:', error);
+                alert(`Failed to create board: ${error.message || 'Unknown error'}`);
 
                 createBtn.disabled = false;
                 createBtn.textContent = 'Create Board';

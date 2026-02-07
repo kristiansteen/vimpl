@@ -2050,13 +2050,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             // We'll use the 'New' button to create a generic new board.
             if (confirm("Create a new empty board?")) {
                 try {
+                    // Start from current user
                     const user = await apiClient.getCurrentUser();
                     const userId = user.user ? user.user.id : (user.id || 'user_1'); // Fallback
-                    const { board } = await apiClient.createBoard('New Board', 'Created from board view');
-                    window.location.href = `board.html?id=${board.id}`;
+
+                    const response = await apiClient.createBoard('New Board', 'Created from board view');
+                    const board = response.board || response;
+
+                    if (board && board.id) {
+                        window.location.href = `board.html?id=${board.id}`;
+                    } else {
+                        throw new Error('Invalid server response');
+                    }
                 } catch (e) {
                     console.error(e);
-                    alert("Failed to create board");
+                    alert(`Failed to create board: ${e.message || 'Unknown error'}`);
                 }
             }
         });
