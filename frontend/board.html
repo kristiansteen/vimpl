@@ -99,27 +99,36 @@
                     <span class="autosave-dot"></span>
                     <span class="autosave-text">All changes saved</span>
                 </div>
-                <a href="dashboard.html" class="btn btn-secondary" id="goDashboard" title="Back to Dashboard">
-                    <i class="fas fa-th-large"></i> Dashboard
-                </a>
-                <button class="btn btn-secondary" id="newBoard">
-                    <i class="fas fa-file"></i> New
-                </button>
-                <button class="btn btn-secondary" id="editLayout" style="display:none;">
-                    <i class="fas fa-pen-to-square"></i> Edit Layout
-                </button>
-                <button class="btn btn-secondary" id="toggleGrid">
-                    <i class="fas fa-th"></i> Grid
-                </button>
-                <button class="btn btn-secondary" id="showBackend">
-                    <i class="fas fa-database"></i> Events
-                </button>
-                <button class="btn btn-primary" id="exportBoard">
-                    <i class="fas fa-download"></i> Export
-                </button>
-                <button class="btn btn-secondary" id="logoutBtn" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+
+                <div class="settings-menu" id="settingsMenu">
+                    <button class="settings-burger" id="settingsBurger" title="Settings">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="settings-dropdown" id="settingsDropdown">
+                        <a href="dashboard.html" class="menu-item" id="goDashboard">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                        <button class="menu-item" id="newBoard">
+                            <i class="fas fa-file"></i> New Board
+                        </button>
+                        <button class="menu-item" id="editLayout" style="display:none;">
+                            <i class="fas fa-pen-to-square"></i> Edit Layout
+                        </button>
+                        <button class="menu-item" id="toggleGrid">
+                            <i class="fas fa-th"></i> Toggle Grid
+                        </button>
+                        <button class="menu-item" id="showBackend">
+                            <i class="fas fa-database"></i> Event Log
+                        </button>
+                        <button class="menu-item primary" id="exportBoard">
+                            <i class="fas fa-download"></i> Export JSON
+                        </button>
+                        <div class="menu-divider"></div>
+                        <button class="menu-item logout" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 

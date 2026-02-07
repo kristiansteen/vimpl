@@ -243,9 +243,11 @@ async function saveBoardState() {
         });
         console.log("Saving Board State:", { title: projectTitle, sections: state.grid.length, postits: Object.keys(state.postits).length });
 
-        // Update our version from server response
-        if (response && response.version !== undefined) {
-            currentBoardVersion = response.version;
+        // Update our version from server response (Backend returns { message, board })
+        if (response && response.board && response.board.version !== undefined) {
+            currentBoardVersion = response.board.version;
+        } else if (response && response.version !== undefined) {
+            currentBoardVersion = response.version; // Fallback
         }
 
         return { success: true };
@@ -2106,6 +2108,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Settings Burger Menu
+    const settingsBurger = document.getElementById('settingsBurger');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+
+    if (settingsBurger && settingsDropdown) {
+        settingsBurger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsBurger.classList.toggle('active');
+            settingsDropdown.classList.toggle('active');
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (settingsBurger.classList.contains('active')) {
+                if (!settingsBurger.contains(e.target) && !settingsDropdown.contains(e.target)) {
+                    settingsBurger.classList.remove('active');
+                    settingsDropdown.classList.remove('active');
+                }
+            }
+        });
+
+        // Close when a menu item is clicked
+        settingsDropdown.addEventListener('click', (e) => {
+            if (e.target.closest('.menu-item')) {
+                settingsBurger.classList.remove('active');
+                settingsDropdown.classList.remove('active');
+            }
+        });
+    }
+
+    // Logout Button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                logout();
+            }
+        });
+    }
+
     setTimeout(() => {
         initializeDropzones();
         attachSectionEventListeners();
@@ -2317,6 +2360,11 @@ function saveSectionData(item) {
             });
         });
         return { type: 'kanban', columns };
+    }
+    else if (content.querySelector('.matrix-container')) {
+        // Matrix Axis Labels are handled by the main loop, 
+        // but we return the type to avoid returning null.
+        return { type: 'matrix' };
     }
 
     return null;

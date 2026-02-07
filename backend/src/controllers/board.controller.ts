@@ -150,6 +150,15 @@ class BoardController {
     } catch (error: any) {
       logger.error('Update board error:', error);
 
+      if (error.statusCode) {
+        res.status(error.statusCode).json({
+          error: error.statusCode === 409 ? 'Conflict' : 'Error',
+          message: error.message,
+          currentVersion: error.currentVersion
+        });
+        return;
+      }
+
       if (error.message.includes('Unauthorized')) {
         res.status(403).json({
           error: 'Forbidden',
