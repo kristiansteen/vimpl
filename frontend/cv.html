@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kristian Steen - CV</title>
+    <meta name="description" content="CV of Kristian Steen, Founder of vimpl.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2365c434' rx='20' width='100' height='100'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>v</text></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+
+    <style>
+        .cv-hero {
+            padding: 100px 0 60px;
+            background: white;
+            text-align: center;
+        }
+
+        .cv-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px 100px;
+        }
+
+        .cv-section {
+            margin-bottom: 60px;
+        }
+
+        .cv-title {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .cv-subtitle {
+            font-size: 1.25rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .cv-card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-100);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cv-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+            border-color: var(--primary-light);
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .company-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .job-duration {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            background: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .job-title {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-100);
+        }
+
+        .skill-item h4 {
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-500);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 40px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .cv-title {
+                font-size: 2rem;
+            }
+
+            .experience-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation (Simplified) -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">vimpl<span>.com</span></a>
+            <div class="nav-links">
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <div class="nav-auth">
+                <a href="mailto:kristian.steen@vimpl.com" class="btn-primary-small">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cv-hero">
+        <div class="cv-container" style="padding-bottom: 0;">
+            <a href="about.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to About</a>
+            <h1 class="cv-title">Kristian Steen</h1>
+            <p class="cv-subtitle">Software Engineer & Founder of vimpl</p>
+        </div>
+    </div>
+
+    <div class="cv-container">
+        <!-- Experience -->
+        <div class="cv-section">
+            <h2 style="margin-bottom: 24px;">Experience</h2>
+
+            <div class="cv-card">
+                <div class="experience-header">
+                    <span class="company-name">vimpl</span>
+                    <span class="job-duration">2024 - Present</span>
+                </div>
+                <span class="job-title">Founder & Lead Developer</span>
+                <p style="color: var(--gray-600);">Building a high-performance visual planning tool using Node.js,
+                    Express, and PostgreSQL. Focused on creating a premium "tactile" whiteboard experience in the
+                    browser.</p>
+            </div>
+
+            <div class="cv-card">
+                <div class="experience-header">
+                    <span class="company-name">Senior Product Engineer</span>
+                    <span class="job-duration">Copenhagen, Denmark</span>
+                </div>
+                <span class="job-title">Various Tech Leads & Consulting</span>
+                <p style="color: var(--gray-600);">Extensive experience in leading product teams and architectural
+                    design for scalable SaaS applications. Expert in agile methodologies and visual management systems.
+                </p>
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="cv-section">
+            <h2 style="margin-bottom: 24px;">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <h4>Frontend</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">HTML5/CSS3</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">UI/UX Design</span>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <h4>Backend</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Express</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">API Design</span>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <h4>Leadership</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Product Vision</span>
+                        <span class="skill-tag">Agile Management</span>
+                        <span class="skill-tag">Team Coaching</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact CTA -->
+        <div
+            style="text-align: center; background: white; border: 2px dashed var(--gray-200); padding: 40px; border-radius: 20px;">
+            <h3>Let's work together</h3>
+            <p style="margin-bottom: 24px;">I'm always open to discussing new projects and creative ideas.</p>
+            <div style="display: flex; justify-content: center; gap: 16px;">
+                <a href="mailto:kristian.steen@vimpl.com" class="btn-primary">
+                    <i class="fas fa-envelope"></i> Email Me
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">vimpl<span>.com</span></div>
+            <div class="footer-copy">© 2025 Kristian Steen. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+
+</html>
