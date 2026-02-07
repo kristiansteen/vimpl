@@ -21,28 +21,43 @@ class EmailService {
         }
     }
 
-    async sendInviteEmail(to: string, boardTitle: string, boardUrl: string): Promise<boolean> {
-        const subject = `You've been invited to collab on ${boardTitle}`;
-        const text = `Hi,
+    async sendInviteEmail(to: string, boardTitle: string, boardUrl: string, recipientName: string = '', boardOwner: string = ''): Promise<boolean> {
+        const subject = `You've been invited to collaborate on a vimpl board`;
+        const name = recipientName || 'there';
+        const owner = boardOwner || 'Someone';
 
-You have been invited to collaborate on the planning board "${boardTitle}".
+        const text = `Hi ${name},
 
-You can access the board here: ${boardUrl}
+${owner} has invited you to collaborate on their vimpl board – where simple project leadership meets real progress.
 
-Happy planning!
-The Vimpl Team`;
+No complicated processes or jargon. Just a clear, hands-on way to work together and get things done.
+
+Join the board: ${boardUrl}
+
+Jump in, see what's happening, and help make it happen. Keep your eyes on the ball and create real momentum together.
+
+Need help or have questions? We're here: help@vimpl.com
+
+Let's make it happen!
+
+Best regards,
+The vimpl team`;
 
         const html = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-        <h2 style="color: #4f46e5;">You've been invited!</h2>
-        <p>Hi,</p>
-        <p>You have been invited to collaborate on the planning board <strong>"${boardTitle}"</strong>.</p>
-        <div style="margin: 30px 0;">
-          <a href="${boardUrl}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Board</a>
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background: #fafafa; border-radius: 12px;">
+        <h2 style="color: #4f46e5; margin-bottom: 20px;">You've been invited!</h2>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Hi ${name},</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;"><strong>${owner}</strong> has invited you to collaborate on their vimpl board – where simple project leadership meets real progress.</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">No complicated processes or jargon. Just a clear, hands-on way to work together and get things done.</p>
+        <div style="margin: 30px 0; text-align: center;">
+          <a href="${boardUrl}" style="background-color: #4f46e5; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Join the Board</a>
         </div>
-        <p>Happy planning!<br>The Vimpl Team</p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #666;">This invite was sent from <a href="https://vimpl.com">vimpl.com</a>. If you weren't expecting this, you can safely ignore this email.</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Jump in, see what's happening, and help make it happen. Keep your eyes on the ball and create real momentum together.</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Need help or have questions? We're here: <a href="mailto:help@vimpl.com" style="color: #4f46e5;">help@vimpl.com</a></p>
+        <p style="font-size: 18px; line-height: 1.6; color: #4f46e5; font-weight: bold; margin-top: 30px;">Let's make it happen!</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">Best regards,<br><strong>The vimpl team</strong></p>
+        <hr style="border: 0; border-top: 1px solid #ddd; margin: 30px 0;">
+        <p style="font-size: 12px; color: #888;">Sent from <a href="https://vimpl.com" style="color: #4f46e5;">vimpl.com</a>. If you weren't expecting this, you can safely ignore this email.</p>
       </div>
     `;
 
