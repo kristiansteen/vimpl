@@ -203,6 +203,13 @@ function gatherBoardState() {
             if (xLabel) sectionContent[id].xLabel = xLabel.value;
             if (yLabel) sectionContent[id].yLabel = yLabel.value;
         }
+
+        // Save Custom Data (KPI, WeekPlan, Actions, Kanban)
+        const customData = saveSectionData(item);
+        if (customData) {
+            sectionContent[id] = sectionContent[id] || {};
+            sectionContent[id].custom = customData;
+        }
     });
 
     const projectTitle = document.getElementById('projectTitle')?.value || 'Project name';
@@ -235,6 +242,7 @@ async function saveBoardState() {
             gridData: state,
             expectedVersion: currentBoardVersion
         });
+        console.log("Saving Board State:", { title: projectTitle, sections: state.grid.length, postits: Object.keys(state.postits).length });
 
         // Update our version from server response
         if (response && response.version !== undefined) {
@@ -346,8 +354,12 @@ async function loadBoardState() {
             return false; // Triggers createDefaultBoard in init
         }
 
-        AppState.grid.load(state.grid || []); // Handle empty grid
+        if (state.grid) {
+            console.log("Loading Grid:", state.grid.length, "items");
+            AppState.grid.load(state.grid || []); // Handle empty grid
+        }
         AppState.postits = state.postits || {};
+        console.log("Loading Postits:", Object.keys(AppState.postits).length);
         AppState.eventLog = state.eventLog || [];
         AppState.matrixLog = state.matrixLog || [];
         AppState.lockedSections = new Set(state.lockedSections || []);
@@ -382,6 +394,11 @@ async function loadBoardState() {
                         if (yLabel && state.sectionContent[id].yLabel) {
                             yLabel.value = state.sectionContent[id].yLabel;
                         }
+
+                        // Restore Custom Data
+                        if (state.sectionContent[id].custom) {
+                            restoreSectionData(item, state.sectionContent[id].custom);
+                        }
                     }
                 });
             }
@@ -408,12 +425,22 @@ async function loadBoardState() {
 
             // Restore post-its
             Object.values(AppState.postits).forEach(postitData => {
-                const section = document.querySelector(`[gs-id="${postitData.section}"]`);
+                // Try finding by gs-id (GridStack 10+)
+                let section = document.querySelector(`[gs-id="${postitData.section}"]`);
+                if (!section) {
+                    // Fallback try finding by data-gs-id or just id reference if we saved it differently?
+                    // console.warn("Section not found for postit:", postitData.id, postitData.section);
+                }
+
                 if (section) {
                     const dropzone = section.querySelector('.postit-dropzone');
                     if (dropzone) {
                         restorePostit(postitData, dropzone);
+                    } else {
+                        console.warn("Dropzone not found in section:", postitData.section);
                     }
+                } else {
+                    console.error("Orphaned Post-it (Section missing):", postitData.id, "Section:", postitData.section);
                 }
             });
 
@@ -1769,6 +1796,7 @@ function addSection(type, options = {}) {
 
     AppState.grid.addWidget({ id, w, h, content });
     logEvent('create', id, 'section', { type });
+    scheduleAutoSave(); // Save immediately after addition
 
     // If team section, attach events after creation
     if (type === 'team') {
@@ -2153,3 +2181,177 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Project title auto-save
     document.getElementById('projectTitle').addEventListener('input', scheduleAutoSave);
 });
+
+// ========================================
+// CUSTOM SECTION PERSISTENCE
+// ========================================
+
+function saveSectionData(item) {
+    const content = item.querySelector('.section-content');
+    if (!content) return null;
+
+    if (content.querySelector('.kpi-container')) {
+        // KPI Section
+        const kpis = [];
+        content.querySelectorAll('.kpi-item').forEach(kpi => {
+            kpis.push({
+                text: kpi.querySelector('input').value,
+                status: kpi.querySelector('.kpi-indicator').getAttribute('data-status')
+            });
+        });
+        return { type: 'kpi', kpis };
+    }
+    else if (content.querySelector('.week-planner')) {
+        // Week Plan Section
+        const tracks = [];
+        content.querySelectorAll('.track-item input').forEach(input => {
+            tracks.push(input.value);
+        });
+
+        const weeks = content.querySelectorAll('.week-column').length;
+        const startDate = content.querySelector('.week-start-date')?.value;
+
+        return { type: 'weekplan', tracks, weeks, startDate };
+    }
+    else if (content.querySelector('.actions-table')) {
+        // Actions Section
+        const rows = [];
+        content.querySelectorAll('.actions-table tbody tr:not(.add-row)').forEach(tr => {
+            const inputs = tr.querySelectorAll('input, select');
+            if (inputs.length >= 4) {
+                rows.push({
+                    action: inputs[0].value,
+                    date: inputs[1].value,
+                    owner: inputs[2].value,
+                    status: inputs[3].value
+                });
+            }
+        });
+        return { type: 'actions', rows };
+    }
+    else if (content.querySelector('.kanban-container')) {
+        // Kanban Section
+        const columns = [];
+        content.querySelectorAll('.kanban-column').forEach(col => {
+            const header = col.querySelector('.kanban-column-header');
+            // Check if it's an input (dynamic) or div (static default)
+            let title = header.innerText;
+            const input = header.querySelector('input');
+            if (input) title = input.value;
+
+            // Extract class for default styling if needed, but we mainly care about title and order
+            columns.push({
+                title: title.trim(),
+                id: col.className // store classes to preserve default colors if feasible
+            });
+        });
+        return { type: 'kanban', columns };
+    }
+
+    return null;
+}
+
+function restoreSectionData(item, data) {
+    const content = item.querySelector('.section-content');
+    if (!content) return;
+
+    if (data.type === 'kpi') {
+        const container = content.querySelector('.kpi-container');
+        container.innerHTML = ''; // Clear default
+        data.kpis.forEach(kpi => {
+            const el = document.createElement('div');
+            el.className = 'kpi-item';
+            el.innerHTML = `
+                <div class="kpi-indicator ${kpi.status}" data-status="${kpi.status}" onclick="cycleKPIStatus(this)"></div>
+                <input type="text" value="${kpi.text}" />
+                <button class="section-btn kpi-delete-btn"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(el);
+            el.querySelector('.kpi-delete-btn').onclick = function () { el.remove(); scheduleAutoSave(); };
+        });
+    }
+    else if (data.type === 'weekplan') {
+        // Rebuild Week Plan
+        const planner = content.querySelector('.week-planner');
+        const trackCol = planner.querySelector('.track-column');
+        const weeksCont = planner.querySelector('.weeks-container');
+        const startDateInput = content.querySelector('.week-start-date');
+
+        if (startDateInput && data.startDate) startDateInput.value = data.startDate;
+
+        // Restore Tracks
+        // Clear existing tracks (except header)
+        const trackHeader = trackCol.querySelector('.track-header');
+        trackCol.innerHTML = '';
+        trackCol.appendChild(trackHeader);
+
+        data.tracks.forEach(trackText => {
+            const div = document.createElement('div');
+            div.className = 'track-item';
+            div.innerHTML = `<input type="text" value="${trackText}" />`;
+            trackCol.appendChild(div);
+        });
+
+        // Restore Weeks
+        weeksCont.innerHTML = '';
+        for (let i = 0; i < data.weeks; i++) {
+            let cellsHtml = '';
+            for (let t = 0; t < data.tracks.length; t++) {
+                cellsHtml += `<div class="week-cell postit-dropzone"></div>`;
+            }
+            const weekDiv = document.createElement('div');
+            weekDiv.className = 'week-column';
+            weekDiv.setAttribute('data-week-index', i);
+            weekDiv.innerHTML = `<div class="week-header">Week ${i + 1}</div>${cellsHtml}`;
+            weeksCont.appendChild(weekDiv);
+        }
+
+        if (startDateInput) updateWeekNumbers(startDateInput);
+    }
+    else if (data.type === 'actions') {
+        const tbody = content.querySelector('.actions-table tbody');
+        // Remove existing rows except add-row
+        const addRow = tbody.querySelector('.add-row');
+        tbody.querySelectorAll('tr:not(.add-row)').forEach(tr => tr.remove());
+
+        data.rows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" placeholder="Enter action..." value="${row.action}" /></td>
+                <td><input type="date" value="${row.date}" /></td>
+                <td><select class="action-owner-select"><option value="">-- Select --</option></select></td>
+                <td>
+                    <select>
+                        <option value="todo" ${row.status === 'todo' ? 'selected' : ''}>To Do</option>
+                        <option value="inprogress" ${row.status === 'inprogress' ? 'selected' : ''}>In Progress</option>
+                        <option value="done" ${row.status === 'done' ? 'selected' : ''}>Done</option>
+                    </select>
+                </td>
+            `;
+            // Set owner value after appending (since option might not exist yet if not updated, but we will update dropdowns later)
+            // But we can set the value attribute on select
+            tr.querySelector('.action-owner-select').setAttribute('data-value', row.owner);
+            tbody.insertBefore(tr, addRow);
+        });
+    }
+    else if (data.type === 'kanban') {
+        const container = content.querySelector('.kanban-container');
+        container.innerHTML = '';
+        data.columns.forEach(col => {
+            const isDefault = col.id.includes('todo') || col.id.includes('inprogress') || col.id.includes('done');
+            const div = document.createElement('div');
+            // Restore classes
+            div.className = col.id.includes('kanban-column') ? col.id : 'kanban-column';
+            // If default classes missing/mangled
+            if (!div.className.includes('kanban-column')) div.className = 'kanban-column';
+
+            const headerContent = isDefault ? col.title : `<input type="text" value="${col.title}" style="background:transparent;border:none;color:white;font-weight:bold;width:100%;text-align:center;" onclick="event.stopPropagation()">`;
+
+            div.innerHTML = `
+                <div class="kanban-column-header">${headerContent}</div>
+                <div class="kanban-dropzone postit-dropzone"></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+}
