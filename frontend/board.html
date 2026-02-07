@@ -117,6 +117,9 @@
                 <button class="btn btn-primary" id="exportBoard">
                     <i class="fas fa-download"></i> Export
                 </button>
+                <button class="btn btn-secondary" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </header>
 
@@ -258,6 +261,7 @@
                                     <th>Week / Column</th>
                                     <th>Track / Row</th>
                                     <th>ID</th>
+                                    Subtasks:
                                 </tr>
                             </thead>
                             <tbody id="postitLogBody"></tbody>
@@ -343,19 +347,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gridstack@10.0.0/dist/gridstack-all.js"></script>
     <script src="assets/js/api-client.js"></script>
     <script src="assets/js/auth.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const authContainer = document.getElementById('auth-container');
-            const user = getCurrentUser();
-
-            if (user) {
-                authContainer.innerHTML = `
-            <span class="nav-user" style="color: #fff; margin-right: 1rem;">Hello, ${user.name}</span>
-            <a href="#" onclick="logout()" class="btn btn-secondary">Logout</a>
-          `;
-            }
-        });
-    </script>
     <script src="assets/js/board.js"></script>
 </body>
 

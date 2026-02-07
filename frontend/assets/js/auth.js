@@ -61,6 +61,7 @@ function loginWithMicrosoft() {
 function logout() {
     localStorage.removeItem('vimpl-user');
     localStorage.removeItem('vimpl_provider'); // Also clear provider just in case
+    localStorage.removeItem('accessToken'); // Clear API token
     // For local testing, redirecting to index.html is more reliable than origin
     window.location.href = 'index.html';
 }
