@@ -66,12 +66,11 @@ function snapToGrid(value) {
 
 function getPostitColor(colorName) {
     const colors = {
-        yellow: 'var(--postit-yellow)',
-        pink: 'var(--postit-pink)',
-        blue: 'var(--postit-blue)',
-        green: 'var(--postit-green)',
-        orange: 'var(--postit-orange)',
-        red: 'var(--postit-red)'
+        yellow: '#fff59d',  // Default yellow
+        green: '#a5d6a7',   // Green
+        red: '#ef9a9a',     // Red
+        blue: '#90caf9',    // Blue
+        grey: '#e0e0e0'     // Grey
     };
     return colors[colorName] || colors.yellow;
 }
