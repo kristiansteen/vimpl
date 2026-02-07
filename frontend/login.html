@@ -18,7 +18,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -138,14 +138,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #65c434 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             margin-top: 24px;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(101, 196, 52, 0.4);
         }
 
         .btn-primary:disabled {
@@ -311,6 +311,13 @@
             .register-link {
                 font-size: 13px;
             }
+        }
+    </style>
+    <style>
+        :root {
+            --primary: #65c434;
+            --primary-dark: #3d7a1f;
+            --primary-light: #a3e085;
         }
     </style>
 </head>
