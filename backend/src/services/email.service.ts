@@ -21,7 +21,7 @@ class EmailService {
         }
     }
 
-    async sendInviteEmail(to: string, boardTitle: string, boardUrl: string, recipientName: string = '', boardOwner: string = ''): Promise<boolean> {
+    async sendInviteEmail(to: string, _boardTitle: string, boardUrl: string, recipientName: string = '', boardOwner: string = ''): Promise<boolean> {
         const subject = `You've been invited to collaborate on a vimpl board`;
         const name = recipientName || 'there';
         const owner = boardOwner || 'Someone';
