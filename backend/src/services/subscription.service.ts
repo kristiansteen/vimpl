@@ -31,6 +31,22 @@ export const SUBSCRIPTION_TIERS = {
       'Priority support',
       'Advanced analytics'
     ]
+  },
+  ENTERPRISE: {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: null, // "Let's talk"
+    boardLimit: null, // unlimited
+    features: [
+      'Everything in Commercial',
+      'Advanced Reporting',
+      'API Integration',
+      'SSRS & Custom Dashboards',
+      'SSO & SAML Authentication',
+      'Dedicated Account Manager',
+      '24/7 Phone Support',
+      'Custom SLA'
+    ]
   }
 } as const;
 
@@ -39,6 +55,7 @@ class SubscriptionService {
    * Get subscription tier details
    */
   getTierDetails(tier: string) {
+    if (tier === 'enterprise') return SUBSCRIPTION_TIERS.ENTERPRISE;
     return tier === 'commercial' ? SUBSCRIPTION_TIERS.COMMERCIAL : SUBSCRIPTION_TIERS.STUDENT;
   }
 
@@ -60,7 +77,7 @@ class SubscriptionService {
     }
 
     const tier = this.getTierDetails(user.subscriptionTier);
-    
+
     // Commercial tier has unlimited boards
     if (tier.boardLimit === null) {
       return { allowed: true };
@@ -126,6 +143,25 @@ class SubscriptionService {
     });
 
     logger.info(`User ${userId} upgraded to commercial tier`);
+
+    return user;
+  }
+
+  /**
+   * Upgrade user to enterprise tier
+   */
+  async upgradeToEnterprise(userId: string): Promise<User> {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        subscriptionTier: 'enterprise',
+        subscriptionStatus: 'active',
+        subscriptionStartDate: new Date(),
+        subscriptionEndDate: null // Enterprise usually manual billing or custom
+      }
+    });
+
+    logger.info(`User ${userId} upgraded to enterprise tier`);
 
     return user;
   }

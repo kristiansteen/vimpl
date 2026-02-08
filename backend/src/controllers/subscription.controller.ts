@@ -107,6 +107,36 @@ class SubscriptionController {
   }
 
   /**
+   * Upgrade to enterprise
+   * POST /api/v1/subscription/upgrade-enterprise
+   */
+  async upgradeToEnterprise(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const user = await subscriptionService.upgradeToEnterprise(req.user.userId);
+
+      res.json({
+        message: 'Successfully upgraded to Enterprise plan',
+        subscription: {
+          tier: user.subscriptionTier,
+          status: user.subscriptionStatus,
+          endDate: user.subscriptionEndDate
+        }
+      });
+    } catch (error) {
+      logger.error('Upgrade subscription to enterprise error:', error);
+      res.status(500).json({
+        error: 'Server Error',
+        message: 'Failed to upgrade subscription to enterprise',
+      });
+    }
+  }
+
+  /**
    * Downgrade to student
    * POST /api/v1/subscription/downgrade
    */

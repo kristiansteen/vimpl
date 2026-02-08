@@ -187,6 +187,29 @@
             margin-top: 8px;
         }
 
+        .price-beta-tag {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+            vertical-align: middle;
+            text-transform: uppercase;
+        }
+
+        .price-original {
+            text-decoration: line-through;
+            opacity: 0.6;
+            margin-right: 8px;
+        }
+
+        .pricing-container {
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 1200px;
+        }
+
         .comparison-section {
             max-width: 1000px;
             margin: 80px auto;
@@ -392,11 +415,14 @@
             <div class="pricing-header">
                 <div class="pricing-name">Commercial</div>
                 <div class="pricing-price">
+                    <span class="pricing-currency price-original">£</span>
+                    <span class="pricing-amount price-original">2</span>
                     <span class="pricing-currency">£</span>
-                    <span class="pricing-amount">2</span>
+                    <span class="pricing-amount">0</span>
+                    <span class="price-beta-tag">Beta</span>
                     <span class="pricing-period">/month</span>
                 </div>
-                <div class="pricing-description">For professionals and teams</div>
+                <div class="pricing-description">For professionals and teams. Free during Beta!</div>
             </div>
 
             <ul class="pricing-features">
@@ -415,6 +441,33 @@
             </a>
             <p class="pricing-note">Cancel anytime</p>
         </div>
+
+        <!-- Enterprise Plan -->
+        <div class="pricing-card">
+            <div class="pricing-header">
+                <div class="pricing-name">Enterprise</div>
+                <div class="pricing-price">
+                    <span class="pricing-amount" style="font-size: 36px;">Let's talk</span>
+                </div>
+                <div class="pricing-description">For large organizations with custom needs</div>
+            </div>
+
+            <ul class="pricing-features">
+                <li><i class="fas fa-check-circle"></i> Everything in Commercial</li>
+                <li><i class="fas fa-check-circle"></i> <strong>Advanced Reporting</strong></li>
+                <li><i class="fas fa-check-circle"></i> <strong>API Integration</strong></li>
+                <li><i class="fas fa-check-circle"></i> SSRS & Custom Dashboards</li>
+                <li><i class="fas fa-check-circle"></i> SSO & SAML Authentication</li>
+                <li><i class="fas fa-check-circle"></i> Dedicated Account Manager</li>
+                <li><i class="fas fa-check-circle"></i> 24/7 Phone Support</li>
+                <li><i class="fas fa-check-circle"></i> Custom SLA</li>
+            </ul>
+
+            <a href="mailto:sales@vimpl.com" class="pricing-cta secondary">
+                Contact Sales
+            </a>
+            <p class="pricing-note">Custom onboarding included</p>
+        </div>
     </div>
 
     <!-- Comparison Table -->
@@ -427,6 +480,7 @@
                         <th>Feature</th>
                         <th style="text-align: center;">Student</th>
                         <th style="text-align: center;">Commercial</th>
+                        <th style="text-align: center;">Enterprise</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -434,14 +488,17 @@
                         <td><strong>Number of boards</strong></td>
                         <td style="text-align: center;">1</td>
                         <td style="text-align: center;">Unlimited</td>
+                        <td style="text-align: center;">Unlimited</td>
                     </tr>
                     <tr>
                         <td><strong>Portfolio dashboard</strong></td>
                         <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
                     <tr>
                         <td><strong>All section types</strong></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
@@ -449,9 +506,11 @@
                         <td><strong>Unlimited post-its</strong></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
                     <tr>
                         <td><strong>Risk matrices</strong></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
@@ -459,14 +518,17 @@
                         <td><strong>Week planner</strong></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
                     <tr>
                         <td><strong>Board sharing</strong></td>
                         <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
                     <tr>
                         <td><strong>Export to JSON</strong></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
@@ -474,11 +536,25 @@
                         <td><strong>Advanced analytics</strong></td>
                         <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
                         <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Advanced Reporting</strong></td>
+                        <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Integration</strong></td>
+                        <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-times comparison-cross"></i></td>
+                        <td style="text-align: center;"><i class="fas fa-check comparison-check"></i></td>
                     </tr>
                     <tr>
                         <td><strong>Support</strong></td>
                         <td style="text-align: center;">Basic</td>
                         <td style="text-align: center;">Priority</td>
+                        <td style="text-align: center;">24/7 Phone</td>
                     </tr>
                 </tbody>
             </table>

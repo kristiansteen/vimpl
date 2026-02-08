@@ -25,7 +25,7 @@ model User {
   resetPasswordExpires DateTime? @map("reset_password_expires")
   
   // Subscription fields
-  subscriptionTier String    @default("student") @map("subscription_tier") // 'student' or 'commercial'
+  subscriptionTier String    @default("student") @map("subscription_tier") // 'student', 'commercial', or 'enterprise'
   subscriptionStatus String  @default("active") @map("subscription_status") // 'active', 'cancelled', 'expired'
   subscriptionStartDate DateTime? @map("subscription_start_date")
   subscriptionEndDate DateTime? @map("subscription_end_date")

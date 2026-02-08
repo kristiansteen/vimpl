@@ -11,6 +11,7 @@ router.get('/tiers', subscriptionController.getTiers);
 router.get('/current', authenticate, subscriptionController.getCurrentSubscription);
 router.get('/can-create-board', authenticate, subscriptionController.canCreateBoard);
 router.post('/upgrade', authenticate, subscriptionController.upgradeToCommercial);
+router.post('/upgrade-enterprise', authenticate, subscriptionController.upgradeToEnterprise);
 router.post('/downgrade', authenticate, subscriptionController.downgradeToStudent);
 
 export default router;
