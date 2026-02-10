@@ -14,6 +14,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/index.css">
+    <!-- Stripe Buy Button -->
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
     <style>
         .pricing-hero {
             padding: 120px 24px 60px;
@@ -436,9 +438,11 @@
                 <li><i class="fas fa-check-circle"></i> <strong>Advanced analytics</strong></li>
             </ul>
 
-            <a href="board.html?upgrade=true" class="pricing-cta primary">
-                Upgrade to Commercial
-            </a>
+            <div style="margin: 20px 0;">
+                <stripe-buy-button buy-button-id="buy_btn_1SzGBvQaI3WUOKaCMHaM4PHe"
+                    publishable-key="pk_test_51SzFITQaI3WUOKaCsS0FQ5kyiyDH7b8yWGrTTHyGtiA8fQ47dsVRiFWgAzS7tUZKfyPUDLQ7Mnx4iRMYpSan3VAy00H1dp9EnD">
+                </stripe-buy-button>
+            </div>
             <p class="pricing-note">Cancel anytime</p>
         </div>
 
