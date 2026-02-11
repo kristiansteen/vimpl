@@ -561,6 +561,19 @@
             .death-section::before {
                 display: none;
             }
+
+            .container {
+                padding: 0 2rem;
+            }
+
+            .hero-tabs {
+                left: 2rem;
+                gap: 2rem;
+            }
+
+            .playback-controls {
+                right: 2rem;
+            }
         }
 
         @media (max-width: 768px) {
@@ -569,12 +582,61 @@
             }
 
             .hero {
-                padding: 6rem 0 4rem;
+                padding-bottom: 140px;
+                /* Space for tabs and controls */
+                justify-content: center;
+            }
+
+            .hero-content {
+                padding-left: 1.5rem;
+                border-left-width: 4px;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.2rem, 8vw, 3.5rem);
+                margin-bottom: 1rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .hero-tabs {
+                bottom: 1.5rem;
+                left: 0;
+                width: 100%;
+                padding: 0 1.5rem;
+                gap: 1.5rem;
+                overflow-x: auto;
+                justify-content: flex-start;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                /* Firefox */
+            }
+
+            .hero-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab-item {
+                font-size: 0.75rem;
+                flex-shrink: 0;
+            }
+
+            .playback-controls {
+                bottom: auto;
+                top: 50%;
+                right: 1rem;
+                flex-direction: column;
+                transform: translateY(-50%);
+                gap: 1rem;
             }
 
             .hero-image-container {
-                width: 400px;
-                height: 400px;
+                width: 100%;
+                height: 300px;
             }
 
             .value-grid {
@@ -587,11 +649,20 @@
             }
 
             .comparison-column {
-                padding: 2rem;
+                padding: 1.5rem;
             }
 
             .nav-right {
-                gap: 1rem;
+                gap: 0.5rem;
+            }
+
+            .cta-button {
+                padding: 1rem 2rem;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 0 1.5rem;
             }
         }
 

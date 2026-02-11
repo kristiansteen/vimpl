@@ -280,8 +280,97 @@
             display: block;
         }
 
-        html[lang="en"] [data-lang="da"] {
-            display: none;
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .death-section::before {
+                display: none;
+            }
+
+            .container {
+                padding: 0 2rem;
+            }
+
+            .hero-tabs {
+                left: 2rem;
+                gap: 2rem;
+            }
+
+            .playback-controls {
+                right: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding-bottom: 140px;
+                /* Space for tabs and controls */
+                justify-content: center;
+            }
+
+            .hero-content {
+                padding-left: 1.5rem;
+                border-left-width: 4px;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.2rem, 8vw, 3.5rem);
+                margin-bottom: 1rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .hero-tabs {
+                bottom: 1.5rem;
+                left: 0;
+                width: 100%;
+                padding: 0 1.5rem;
+                gap: 1.5rem;
+                overflow-x: auto;
+                justify-content: flex-start;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                /* Firefox */
+            }
+
+            .hero-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab-item {
+                font-size: 0.75rem;
+                flex-shrink: 0;
+            }
+
+            .playback-controls {
+                bottom: auto;
+                top: 50%;
+                right: 1rem;
+                flex-direction: column;
+                transform: translateY(-50%);
+                gap: 1rem;
+            }
+
+            .cta-button {
+                padding: 1rem 2rem;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
         }
 
         /* Smooth scroll */
