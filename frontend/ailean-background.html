@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AILEAN - Radikal administrativ lean gennem E2E-digitalisering</title>
+    <title>AILEAN - Our background</title>
     <style>
         * {
             margin: 0;
@@ -701,10 +701,10 @@
         </div>
 
         <div class="hero-tabs">
-            <a href="vision-2025.html" class="tab-item">Our AI philosophy</a>
-            <a href="ailean.html" class="tab-item active">Our background</a>
-            <a href="global-strategy.html" class="tab-item">Our Cases</a>
-            <a href="ai-integration.html" class="tab-item">Our "One week blitz"</a>
+            <a href="ailean-philosophy.html" class="tab-item">Our AI philosophy</a>
+            <a href="ailean-background.html" class="tab-item active">Our background</a>
+            <a href="ailean-cases.html" class="tab-item">Our Cases</a>
+            <a href="ailean-blitz.html" class="tab-item">Our "One week blitz"</a>
         </div>
 
         <div class="playback-controls">
@@ -1009,12 +1009,12 @@
 
         // Playback Controls Navigation
         const pages = [
-            'vision-2025.html',
-            'ailean.html',
-            'global-strategy.html',
-            'ai-integration.html'
+            'ailean-philosophy.html',
+            'ailean-background.html',
+            'ailean-cases.html',
+            'ailean-blitz.html'
         ];
-        const currentPage = window.location.pathname.split('/').pop() || 'ailean.html';
+        const currentPage = window.location.pathname.split('/').pop() || 'ailean-background.html';
         const currentIndex = pages.indexOf(currentPage) === -1 ? 1 : pages.indexOf(currentPage);
 
         document.querySelectorAll('.control-btn').forEach((btn, idx) => {

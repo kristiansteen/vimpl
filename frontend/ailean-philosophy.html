@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AILEAN - Global Strategy</title>
+    <title>AILEAN - Our AI philosophy</title>
     <style>
         * {
             margin: 0;
@@ -308,35 +308,33 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-background-wrapper">
-            <img src="assets/images/ailean-burst-strategy.jpg" alt="Global Strategy Backdrop" class="hero-bg-image">
+            <img src="assets/images/ailean-burst-vision.jpg" alt="Roadmap 2025 Backdrop" class="hero-bg-image">
             <div class="hero-overlay"></div>
         </div>
 
         <div class="container">
             <div class="hero-content">
-                <div class="hero-category">Global Strategy</div>
+                <div class="hero-category">Roadmap 2025</div>
 
-                <h1 data-lang="da">Vores cases</h1>
-                <h1 data-lang="en">Our Cases</h1>
+                <h1 data-lang="da">Vores AI-filosofi</h1>
+                <h1 data-lang="en">Our AI philosophy</h1>
 
                 <div class="hero-description">
-                    <p data-lang="da">Transformation på global skala kræver mere end blot nye værktøjer—det kræver et
-                        nyt industrielt teknisk mindset. Vi bygger arkitekturen, der understøtter fremtidens adaptive
-                        virksomhed.</p>
-                    <p data-lang="en">Transformation on a global scale requires more than just new tools—it requires a
-                        new industrial tech mindset. We build the architecture that supports the adaptive enterprise of
-                        the future.</p>
+                    <p data-lang="da">Vores vision for 2025 er klar: Vi fjerner legacy-friktion for at skabe sømløse,
+                        intelligente organisationer gennem radikal administrativ lean.</p>
+                    <p data-lang="en">Our vision for 2025 is clear: We remove legacy friction to create seamless,
+                        intelligent organisations through radical administrative lean.</p>
                 </div>
 
-                <a href="register.html" class="cta-button">Udforsk strategien</a>
+                <a href="register.html" class="cta-button">Se visionen</a>
             </div>
         </div>
 
         <div class="hero-tabs">
-            <a href="vision-2025.html" class="tab-item">Our AI philosophy</a>
-            <a href="ailean.html" class="tab-item">Our background</a>
-            <a href="global-strategy.html" class="tab-item active">Our Cases</a>
-            <a href="ai-integration.html" class="tab-item">Our "One week blitz"</a>
+            <a href="ailean-philosophy.html" class="tab-item active">Our AI philosophy</a>
+            <a href="ailean-background.html" class="tab-item">Our background</a>
+            <a href="ailean-cases.html" class="tab-item">Our Cases</a>
+            <a href="ailean-blitz.html" class="tab-item">Our "One week blitz"</a>
         </div>
 
         <div class="playback-controls">
@@ -349,8 +347,8 @@
     <footer
         style="background: #1a2328; padding: 3rem 0; text-align: center; border-top: 1px solid rgba(101, 196, 52, 0.2);">
         <div class="container">
-            <p data-lang="da">&copy; 2025 AILEAN. Global Strategy: Adaptiv arkitektur gennem E2E-digitalisering.</p>
-            <p data-lang="en">&copy; 2025 AILEAN. Global Strategy: Adaptive architecture through E2E digitisation.</p>
+            <p data-lang="da">&copy; 2025 AILEAN. Vision 2025: Proceseliminering gennem E2E-digitalisering.</p>
+            <p data-lang="en">&copy; 2025 AILEAN. Vision 2025: Process elimination through E2E digitisation.</p>
         </div>
     </footer>
 
@@ -366,22 +364,22 @@
                 langButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 if (lang === 'da') {
-                    document.title = 'AILEAN - Global Strategy';
+                    document.title = 'AILEAN - Vision 2025';
                 } else {
-                    document.title = 'AILEAN - Global Strategy';
+                    document.title = 'AILEAN - Vision 2025';
                 }
             });
         });
 
         // Playback Controls Navigation
         const pages = [
-            'vision-2025.html',
-            'ailean.html',
-            'global-strategy.html',
-            'ai-integration.html'
+            'ailean-philosophy.html',
+            'ailean-background.html',
+            'ailean-cases.html',
+            'ailean-blitz.html'
         ];
-        const currentPage = window.location.pathname.split('/').pop() || 'global-strategy.html';
-        const currentIndex = pages.indexOf(currentPage) === -1 ? 2 : pages.indexOf(currentPage);
+        const currentPage = window.location.pathname.split('/').pop() || 'ailean-philosophy.html';
+        const currentIndex = pages.indexOf(currentPage) === -1 ? 0 : pages.indexOf(currentPage);
 
         document.querySelectorAll('.control-btn').forEach((btn, idx) => {
             btn.addEventListener('click', () => {
