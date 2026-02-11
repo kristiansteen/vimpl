@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AILEAN - Vision 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #65c434;
+            --primary-dark: #3d7a1f;
+            --primary-light: #a3e085;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --dark-grey: #000000;
+            --dark-surface: #0a0a0a;
+            --light-grey: #ECEFF1;
+            --white: #FFFFFF;
+            --red: #EF4444;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--dark-grey);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 4rem;
+        }
+
+        /* Navigation - Transparent & Minimal */
+        nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 2.5rem 0;
+            background: transparent;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .lang-btn {
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--white);
+            color: var(--dark-grey);
+            border-color: var(--white);
+        }
+
+        /* Hero Section - Ailean-style Cinematic */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            padding-bottom: 12vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-bg-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            filter: brightness(0.6) contrast(1.2) saturate(1.1);
+            animation: slowOrbit 30s linear infinite alternate;
+        }
+
+        @keyframes slowOrbit {
+            from {
+                transform: scale(1.1) translate(-2%, -2%) rotate(0deg);
+            }
+
+            to {
+                transform: scale(1.2) translate(1%, 1%) rotate(1deg);
+            }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%),
+                linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 40%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1100px;
+            padding-left: 3rem;
+            border-left: 6px solid var(--primary);
+        }
+
+        .hero-category {
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 6vw, 5.5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 2rem;
+            letter-spacing: -0.04em;
+            text-transform: none;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: var(--primary);
+            color: var(--dark-grey);
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: none;
+        }
+
+        .cta-button:hover {
+            background: var(--white);
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Bottom Status Tabs */
+        .hero-tabs {
+            position: absolute;
+            bottom: 3rem;
+            left: 4rem;
+            display: flex;
+            gap: 4rem;
+            z-index: 20;
+        }
+
+        .tab-item {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            padding-bottom: 0.6rem;
+            position: relative;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .tab-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .tab-item.active {
+            color: var(--white);
+        }
+
+        .tab-item.active::after {
+            width: 100%;
+        }
+
+        .playback-controls {
+            position: absolute;
+            bottom: 3rem;
+            right: 4rem;
+            display: flex;
+            gap: 1.5rem;
+            z-index: 20;
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Language-specific content */
+        [data-lang="en"] {
+            display: none;
+        }
+
+        [data-lang="da"] {
+            display: block;
+        }
+
+        html[lang="en"] [data-lang="en"] {
+            display: block;
+        }
+
+        html[lang="en"] [data-lang="da"] {
+            display: none;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">AILEAN</div>
+            <div class="nav-right">
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang-switch="da">DA</button>
+                    <button class="lang-btn" data-lang-switch="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background-wrapper">
+            <img src="assets/images/ailean-burst-vision.jpg" alt="Roadmap 2025 Backdrop" class="hero-bg-image">
+            <div class="hero-overlay"></div>
+        </div>
+
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-category">Roadmap 2025</div>
+
+                <h1 data-lang="da">Fra procesoptimering til<br><span
+                        style="color: var(--primary);">proceseliminering</span></h1>
+                <h1 data-lang="en">From process optimisation to<br><span style="color: var(--primary);">process
+                        elimination</span></h1>
+
+                <div class="hero-description">
+                    <p data-lang="da">Vores vision for 2025 er klar: Vi fjerner legacy-friktion for at skabe sømløse,
+                        intelligente organisationer gennem radikal administrativ lean.</p>
+                    <p data-lang="en">Our vision for 2025 is clear: We remove legacy friction to create seamless,
+                        intelligent organisations through radical administrative lean.</p>
+                </div>
+
+                <a href="register.html" class="cta-button">Se visionen</a>
+            </div>
+        </div>
+
+        <div class="hero-tabs">
+            <a href="vision-2025.html" class="tab-item active">Vision 2025</a>
+            <a href="ailean.html" class="tab-item">Transaction Trends</a>
+            <a href="global-strategy.html" class="tab-item">Global Strategy</a>
+            <a href="ai-integration.html" class="tab-item">AI Integration</a>
+        </div>
+
+        <div class="playback-controls">
+            <div class="control-btn">←</div>
+            <div class="control-btn">→</div>
+            <div class="control-btn">||</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+        style="background: #1a2328; padding: 3rem 0; text-align: center; border-top: 1px solid rgba(101, 196, 52, 0.2);">
+        <div class="container">
+            <p data-lang="da">&copy; 2025 AILEAN. Vision 2025: Proceseliminering gennem E2E-digitalisering.</p>
+            <p data-lang="en">&copy; 2025 AILEAN. Vision 2025: Process elimination through E2E digitisation.</p>
+        </div>
+    </footer>
+
+    <script>
+        const htmlElement = document.documentElement;
+        const langButtons = document.querySelectorAll('.lang-btn');
+        htmlElement.setAttribute('lang', 'da');
+
+        langButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const lang = button.getAttribute('data-lang-switch');
+                htmlElement.setAttribute('lang', lang);
+                langButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                if (lang === 'da') {
+                    document.title = 'AILEAN - Vision 2025';
+                } else {
+                    document.title = 'AILEAN - Vision 2025';
+                }
+            });
+        });
+
+        // Playback Controls Navigation
+        const pages = [
+            'vision-2025.html',
+            'ailean.html',
+            'global-strategy.html',
+            'ai-integration.html'
+        ];
+        const currentPage = window.location.pathname.split('/').pop() || 'vision-2025.html';
+        const currentIndex = pages.indexOf(currentPage) === -1 ? 0 : pages.indexOf(currentPage);
+
+        document.querySelectorAll('.control-btn').forEach((btn, idx) => {
+            btn.addEventListener('click', () => {
+                if (btn.textContent === '←') {
+                    const prevIndex = (currentIndex - 1 + pages.length) % pages.length;
+                    window.location.href = pages[prevIndex];
+                } else if (btn.textContent === '→') {
+                    const nextIndex = (currentIndex + 1) % pages.length;
+                    window.location.href = pages[nextIndex];
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
