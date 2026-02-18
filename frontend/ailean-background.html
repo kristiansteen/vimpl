@@ -861,95 +861,239 @@
                 <p data-lang="en">Meet the team behind the transformation.</p>
             </div>
 
-            <div class="visual-grid"
-                style="align-items: height; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
-                <!-- Technology -->
-                <div class="value-card" style="text-align: left; padding: 2rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem;">
+
+                <!-- Card 1: Technology -->
+                <div class="value-card" style="text-align: center; padding: 2.5rem 2rem;">
+                    <!-- Avatar -->
                     <div
-                        style="width: 100%; height: 200px; background: #2a3338; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)"
-                            stroke-width="1.5">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
+                        style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; color: var(--dark-grey); font-size: 2.5rem; font-weight: 900; border: 3px solid rgba(101,196,52,0.3);">
+                        T
                     </div>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="da">Teknologi
+                    <!-- Name & Role -->
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="da">[Navn]
                     </h3>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="en">Technology
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="en">[Name]
                     </h3>
-                    <p style="color: var(--light-grey); line-height: 1.6; font-size: 0.95rem;">
-                        <span data-lang="da">Banebrydende teknologiske løsninger, der eliminerer manuelle
-                            processer.</span>
-                        <span data-lang="en">Cutting-edge technological solutions that eliminate manual
-                            processes.</span>
-                    </p>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="da">Teknologi</p>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="en">Technology</p>
+                    <!-- Description -->
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="da">Banebrydende teknologiske løsninger, der eliminerer manuelle processer og skaber
+                        skalerbare systemer.</p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="en">Cutting-edge technological solutions that eliminate manual processes and create
+                        scalable systems.</p>
+                    <!-- GitHub -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <a href="https://github.com/" target="_blank"
+                            style="color: rgba(255,255,255,0.4); font-size: 1.5rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--primary)'"
+                            onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <!-- Buttons -->
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <a href="cv.html"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-grey); text-decoration: none; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; transition: all 0.3s;"
+                            onmouseover="this.style.background='var(--white)'"
+                            onmouseout="this.style.background='var(--primary)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            <span data-lang="da">Se CV</span><span data-lang="en">See CV</span>
+                        </a>
+                        <a href="mailto:contact@ailean.dk?subject=Contact%20from%20AILEAN"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--white); text-decoration: none; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                            onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--white)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <span data-lang="da">Skriv til mig</span><span data-lang="en">Email Me</span>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Lean Mindset -->
-                <div class="value-card" style="text-align: left; padding: 2rem;">
+                <!-- Card 2: Lean Mindset -->
+                <div class="value-card" style="text-align: center; padding: 2.5rem 2rem;">
                     <div
-                        style="width: 100%; height: 200px; background: #2a3338; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)"
-                            stroke-width="1.5">
-                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z">
-                            </path>
-                            <path d="M12 6v6l4 2"></path>
-                        </svg>
+                        style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; color: var(--dark-grey); font-size: 2.5rem; font-weight: 900; border: 3px solid rgba(101,196,52,0.3);">
+                        L
                     </div>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="da">Lean
-                        Mindset</h3>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="en">Lean
-                        Mindset</h3>
-                    <p style="color: var(--light-grey); line-height: 1.6; font-size: 0.95rem;">
-                        <span data-lang="da">Fokus på værdiskabelse og eliminering af spild i alle led.</span>
-                        <span data-lang="en">Focus on value creation and waste elimination in every step.</span>
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="da">[Navn]
+                    </h3>
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="en">[Name]
+                    </h3>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="da">Lean Mindset</p>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="en">Lean Mindset</p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="da">Fokus på værdiskabelse og eliminering af spild i alle led af organisationen.</p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="en">Focus on value creation and waste elimination in every layer of the organisation.
                     </p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <a href="https://github.com/" target="_blank"
+                            style="color: rgba(255,255,255,0.4); font-size: 1.5rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--primary)'"
+                            onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <a href="cv.html"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-grey); text-decoration: none; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; transition: all 0.3s;"
+                            onmouseover="this.style.background='var(--white)'"
+                            onmouseout="this.style.background='var(--primary)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            <span data-lang="da">Se CV</span><span data-lang="en">See CV</span>
+                        </a>
+                        <a href="mailto:contact@ailean.dk?subject=Contact%20from%20AILEAN"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--white); text-decoration: none; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                            onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--white)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <span data-lang="da">Skriv til mig</span><span data-lang="en">Email Me</span>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Facilitation -->
-                <div class="value-card" style="text-align: left; padding: 2rem;">
+                <!-- Card 3: Facilitation -->
+                <div class="value-card" style="text-align: center; padding: 2.5rem 2rem;">
                     <div
-                        style="width: 100%; height: 200px; background: #2a3338; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)"
-                            stroke-width="1.5">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                        style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; color: var(--dark-grey); font-size: 2.5rem; font-weight: 900; border: 3px solid rgba(101,196,52,0.3);">
+                        F
                     </div>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="da">
-                        Facilitering</h3>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="en">
-                        Facilitation</h3>
-                    <p style="color: var(--light-grey); line-height: 1.6; font-size: 0.95rem;">
-                        <span data-lang="da">Effektiv ledelse af forandringsprocesser og workshops.</span>
-                        <span data-lang="en">Effective management of change processes and workshops.</span>
-                    </p>
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="da">[Navn]
+                    </h3>
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="en">[Name]
+                    </h3>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="da">Facilitering</p>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="en">Facilitation</p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="da">Effektiv ledelse af forandringsprocesser, workshops og organisatorisk
+                        transformation.</p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="en">Effective management of change processes, workshops, and organisational
+                        transformation.</p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <a href="https://github.com/" target="_blank"
+                            style="color: rgba(255,255,255,0.4); font-size: 1.5rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--primary)'"
+                            onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <a href="cv.html"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-grey); text-decoration: none; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; transition: all 0.3s;"
+                            onmouseover="this.style.background='var(--white)'"
+                            onmouseout="this.style.background='var(--primary)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            <span data-lang="da">Se CV</span><span data-lang="en">See CV</span>
+                        </a>
+                        <a href="mailto:contact@ailean.dk?subject=Contact%20from%20AILEAN"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--white); text-decoration: none; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                            onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--white)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <span data-lang="da">Skriv til mig</span><span data-lang="en">Email Me</span>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Lean Operation -->
-                <div class="value-card" style="text-align: left; padding: 2rem;">
+                <!-- Card 4: Lean Operation -->
+                <div class="value-card" style="text-align: center; padding: 2.5rem 2rem;">
                     <div
-                        style="width: 100%; height: 200px; background: #2a3338; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)"
-                            stroke-width="1.5">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path
-                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                            </path>
-                        </svg>
+                        style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; color: var(--dark-grey); font-size: 2.5rem; font-weight: 900; border: 3px solid rgba(101,196,52,0.3);">
+                        O
                     </div>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="da">Lean
-                        Operation</h3>
-                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;" data-lang="en">Lean
-                        Operation</h3>
-                    <p style="color: var(--light-grey); line-height: 1.6; font-size: 0.95rem;">
-                        <span data-lang="da">Optimering af daglige operationer for maksimal effektivitet.</span>
-                        <span data-lang="en">Optimisation of daily operations for maximum efficiency.</span>
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="da">[Navn]
+                    </h3>
+                    <h3 style="color: var(--white); font-size: 1.3rem; margin-bottom: 0.4rem;" data-lang="en">[Name]
+                    </h3>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="da">Lean Operation</p>
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;"
+                        data-lang="en">Lean Operation</p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="da">Optimering af daglige operationer for maksimal effektivitet og minimalt spild.
                     </p>
+                    <p style="color: var(--light-grey); line-height: 1.7; font-size: 0.9rem; margin-bottom: 1.5rem;"
+                        data-lang="en">Optimisation of daily operations for maximum efficiency and minimum waste.</p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <a href="https://github.com/" target="_blank"
+                            style="color: rgba(255,255,255,0.4); font-size: 1.5rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--primary)'"
+                            onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <a href="cv.html"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-grey); text-decoration: none; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; transition: all 0.3s;"
+                            onmouseover="this.style.background='var(--white)'"
+                            onmouseout="this.style.background='var(--primary)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            <span data-lang="da">Se CV</span><span data-lang="en">See CV</span>
+                        </a>
+                        <a href="mailto:contact@ailean.dk?subject=Contact%20from%20AILEAN"
+                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--white); text-decoration: none; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                            onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--white)'">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <span data-lang="da">Skriv til mig</span><span data-lang="en">Email Me</span>
+                        </a>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
