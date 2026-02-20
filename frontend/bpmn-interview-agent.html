@@ -7,33 +7,34 @@
   <title>Process Interview → BPMN Agent</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;600;700;900&display=swap"
     rel="stylesheet">
+  <link href="assets/css/ailean.css" rel="stylesheet">
   <script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-navigated-viewer.production.min.js"></script>
   <style>
     :root {
-      --bg-deep: #0a0b0f;
-      --bg-panel: #12131a;
-      --bg-surface: #1a1b24;
-      --bg-elevated: #22232e;
-      --border: #2a2b38;
-      --border-active: #4a6cf7;
-      --text-primary: #e8e9f0;
-      --text-secondary: #8b8d9e;
-      --text-muted: #5a5c6e;
-      --accent: #4a6cf7;
-      --accent-glow: rgba(74, 108, 247, .15);
-      --success: #34d399;
-      --success-glow: rgba(52, 211, 153, .15);
-      --warning: #fbbf24;
-      --danger: #f87171;
-      --role-color: #a78bfa;
-      --activity-color: #38bdf8;
-      --gateway-color: #fb923c;
+      --bg-deep: #000000;
+      --bg-panel: #0a0a0a;
+      --bg-surface: #121212;
+      --bg-elevated: #1a1a1a;
+      --border: #222222;
+      --border-active: #65c434;
+      --text-primary: #FFFFFF;
+      --text-secondary: #ECEFF1;
+      --text-muted: #8b8d9e;
+      --accent: #65c434;
+      --accent-glow: rgba(101, 196, 52, .15);
+      --success: #65c434;
+      --success-glow: rgba(101, 196, 52, .15);
+      --warning: #f59e0b;
+      --danger: #EF4444;
+      --role-color: #a3e085;
+      --activity-color: #0ea5e9;
+      --gateway-color: #f59e0b;
       --variant-color: #f472b6;
-      --catalog-color: #6ee7b7;
+      --catalog-color: #a3e085;
       --font-mono: 'JetBrains Mono', monospace;
-      --font-body: 'DM Sans', sans-serif
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif
     }
 
     * {
@@ -652,7 +653,8 @@
     .powered-by-badge {
       position: fixed;
       top: 20px;
-      right: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 2000;
       display: flex;
       align-items: center;
@@ -668,7 +670,7 @@
     }
 
     .powered-by-badge:hover {
-      transform: translateY(-2px);
+      transform: translateX(-50%) translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       background: white;
       border-color: #4a6cf7;
@@ -697,12 +699,70 @@
     @media (max-width: 768px) {
       .powered-by-badge {
         top: 12px;
-        right: 12px;
         padding: 4px 10px;
       }
 
       .powered-by-badge span:first-child {
         display: none;
+      }
+    }
+
+    /* Record Button Redesign */
+    #btn-record {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      border-radius: 50%;
+      padding: 0;
+      background: #ef4444;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      cursor: pointer;
+    }
+
+    #btn-record::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    #btn-record:hover {
+      background: #f87171;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+    }
+
+    #btn-record.recording {
+      animation: pulse 1.5s infinite;
+      background: #ef4444;
+    }
+
+    #btn-record.recording::after {
+      width: 8px;
+      height: 8px;
+      border-radius: 1px;
+      /* Square inside circle when recording */
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
       }
     }
   </style>
@@ -774,9 +834,7 @@ Click 'Demo' to see it in action, or 'Role Catalog' to browse all roles." oninpu
         </div>
       </div>
       <div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
-        <button class="btn btn-primary" id="btn-record" onclick="toggleRecording()"
-          style="flex:1;justify-content:center"><span class="icon">🎤</span> <span id="btn-record-label">Start
-            Recording</span></button>
+        <button class="btn" id="btn-record" onclick="toggleRecording()" title="Toggle Recording"></button>
         <button class="btn" onclick="debouncedParse()" style="justify-content:center"><span class="icon">⟳</span>
           Re-parse</button>
       </div>
@@ -1455,9 +1513,7 @@ Click 'Demo' to see it in action, or 'Role Catalog' to browse all roles." oninpu
         isRecording = true;
         document.getElementById('rec-dot').classList.add('active');
         document.getElementById('rec-status').textContent = 'Recording...';
-        document.getElementById('btn-record-label').textContent = 'Stop Recording';
-        document.getElementById('btn-record').classList.remove('btn-primary');
-        document.getElementById('btn-record').classList.add('btn-danger');
+        document.getElementById('btn-record').classList.add('recording');
         document.getElementById('live-speech').style.display = 'flex';
         showToast('\ud83c\udf99 Recording started', 'success');
       };
@@ -1489,9 +1545,7 @@ Click 'Demo' to see it in action, or 'Role Catalog' to browse all roles." oninpu
       if (recognition) { recognition.stop(); recognition = null; }
       document.getElementById('rec-dot').classList.remove('active');
       document.getElementById('rec-status').textContent = 'Idle';
-      document.getElementById('btn-record-label').textContent = 'Start Recording';
-      document.getElementById('btn-record').classList.add('btn-primary');
-      document.getElementById('btn-record').classList.remove('btn-danger');
+      document.getElementById('btn-record').classList.remove('recording');
       document.getElementById('live-speech').style.display = 'none';
       showToast('Recording stopped', 'success');
     }
