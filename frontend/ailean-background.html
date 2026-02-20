@@ -200,10 +200,12 @@
         .hero-tabs {
             position: absolute;
             bottom: 3rem;
-            left: 4rem;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 4rem;
             z-index: 20;
+            width: max-content;
         }
 
         .tab-item {
@@ -767,7 +769,10 @@
                         end-to-end digitisation that eliminates friction at the root.</p>
                 </div>
 
-                <a href="register.html" class="cta-button">Start transformationen</a>
+                <a href="register.html" class="cta-button">
+                    <span data-lang="da">Book et møde</span>
+                    <span data-lang="en">Book a meeting</span>
+                </a>
             </div>
         </div>
 
