@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process Interview → BPMN Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-navigated-viewer.production.min.js"></script>
+<style>
+:root{--bg-deep:#0a0b0f;--bg-panel:#12131a;--bg-surface:#1a1b24;--bg-elevated:#22232e;--border:#2a2b38;--border-active:#4a6cf7;--text-primary:#e8e9f0;--text-secondary:#8b8d9e;--text-muted:#5a5c6e;--accent:#4a6cf7;--accent-glow:rgba(74,108,247,.15);--success:#34d399;--success-glow:rgba(52,211,153,.15);--warning:#fbbf24;--danger:#f87171;--role-color:#a78bfa;--activity-color:#38bdf8;--gateway-color:#fb923c;--variant-color:#f472b6;--catalog-color:#6ee7b7;--font-mono:'JetBrains Mono',monospace;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg-deep);color:var(--text-primary);height:100vh;overflow:hidden}
+.header{height:56px;background:var(--bg-panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;box-shadow:0 0 20px var(--accent-glow)}
+.header-title{font-weight:600;font-size:15px;letter-spacing:-.3px}
+.header-title span{color:var(--text-muted);font-weight:400}
+.header-actions{display:flex;gap:8px}
+.btn{font-family:var(--font-body);padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-primary);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--bg-elevated);border-color:var(--border-active)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#3b5ce0}
+.btn-danger{border-color:var(--danger);color:var(--danger)}
+.btn-danger:hover{background:rgba(248,113,113,.1)}
+.btn-success{border-color:var(--success);color:var(--success)}
+.btn-success:hover{background:var(--success-glow)}
+.btn .icon{font-size:16px}
+.main{display:flex;height:calc(100vh - 56px)}
+.panel-transcript{width:42%;min-width:360px;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg-panel)}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.panel-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);font-weight:600}
+.recording-indicator{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary)}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);transition:background .3s}
+.rec-dot.active{background:var(--danger);animation:pulse-rec 1.2s ease-in-out infinite}
+@keyframes pulse-rec{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.5)}50%{box-shadow:0 0 0 6px rgba(248,113,113,0)}}
+.transcript-body{flex:1;overflow-y:auto;padding:16px 18px}
+.transcript-body::-webkit-scrollbar{width:6px}
+.transcript-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#transcript-editor{width:100%;min-height:100%;background:transparent;border:none;color:var(--text-primary);font-family:var(--font-mono);font-size:13px;line-height:1.8;resize:none;outline:none}
+#transcript-editor::placeholder{color:var(--text-muted)}
+.live-speech{padding:10px 18px;border-top:1px solid var(--border);background:var(--bg-surface);font-family:var(--font-mono);font-size:12px;color:var(--accent);min-height:40px;flex-shrink:0;display:flex;align-items:center;gap:8px}
+.entity-bar{padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0;max-height:200px;overflow-y:auto}
+.entity-bar::-webkit-scrollbar{width:4px}
+.entity-bar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.entity-section{margin-bottom:10px}
+.entity-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.entity-label .dot{width:6px;height:6px;border-radius:50%}
+.entity-label.roles .dot{background:var(--role-color)}.entity-label.roles{color:var(--role-color)}
+.entity-label.activities .dot{background:var(--activity-color)}.entity-label.activities{color:var(--activity-color)}
+.entity-label.gateways .dot{background:var(--gateway-color)}.entity-label.gateways{color:var(--gateway-color)}
+.entity-label.variants .dot{background:var(--variant-color)}.entity-label.variants{color:var(--variant-color)}
+.entity-chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-family:var(--font-mono);font-size:11px;padding:3px 8px;border-radius:4px;border:1px solid;cursor:default}
+.chip.role{border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.08);color:var(--role-color)}
+.chip.role .dept-tag{font-size:9px;opacity:.6;margin-left:4px;font-style:italic}
+.chip.activity{border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.08);color:var(--activity-color)}
+.chip.gateway{border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.08);color:var(--gateway-color)}
+.chip.variant{border-color:rgba(244,114,182,.3);background:rgba(244,114,182,.08);color:var(--variant-color)}
+.panel-bpmn{flex:1;display:flex;flex-direction:column;background:var(--bg-deep);position:relative}
+#bpmn-canvas{flex:1;position:relative}
+#bpmn-canvas .bjs-container{background:var(--bg-deep)!important}
+.bpmn-toolbar{padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-panel);flex-shrink:0}
+.bpmn-stats{display:flex;gap:16px;font-size:12px;color:var(--text-secondary);font-family:var(--font-mono)}
+.bpmn-stats .stat-val{color:var(--text-primary);font-weight:600}
+.resize-handle{width:5px;cursor:col-resize;background:transparent;position:relative;z-index:10;flex-shrink:0}
+.resize-handle:hover,.resize-handle.active{background:var(--accent)}
+.empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted);gap:12px;pointer-events:none}
+.empty-state .icon-large{font-size:48px;opacity:.3}
+.empty-state p{font-size:14px;max-width:300px;text-align:center;line-height:1.6}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:700px;width:90%;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:16px;font-size:16px}
+.modal pre{background:var(--bg-deep);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:var(--font-mono);font-size:11px;line-height:1.6;overflow-x:auto;color:var(--text-secondary);max-height:400px;overflow-y:auto}
+.modal .btn{margin-top:16px}
+.catalog-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+.catalog-dept{background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px}
+.catalog-dept h4{font-size:12px;color:var(--accent);margin-bottom:4px;font-weight:600}
+.catalog-dept h5{font-size:10px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px}
+.catalog-dept .role-list{font-family:var(--font-mono);font-size:10px;line-height:1.8;color:var(--text-secondary)}
+.catalog-dept .role-list .matched{color:var(--role-color);font-weight:600;background:rgba(167,139,250,.1);padding:1px 4px;border-radius:2px}
+.catalog-search{width:100%;padding:10px 14px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:var(--font-mono);font-size:13px;outline:none;margin-bottom:12px}
+.catalog-search:focus{border-color:var(--accent)}
+.catalog-search::placeholder{color:var(--text-muted)}
+.catalog-stat{font-size:12px;color:var(--text-muted);margin-bottom:12px;font-family:var(--font-mono)}
+.catalog-stat strong{color:var(--catalog-color)}
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{padding:10px 16px;border-radius:8px;background:var(--bg-elevated);border:1px solid var(--border);font-size:13px;animation:toast-in .3s ease;display:flex;align-items:center;gap:8px}
+.toast.success{border-color:var(--success)}.toast.error{border-color:var(--danger)}
+@keyframes toast-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.main{flex-direction:column}.panel-transcript{width:100%;min-width:unset;height:50%;border-right:none;border-bottom:1px solid var(--border)}.resize-handle{display:none}.catalog-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">⬡</div>
+    <div class="header-title">Process Interview Agent <span>· BPMN Extractor</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="showCatalogModal()"><span class="icon">📖</span> Role Catalog</button>
+    <button class="btn" onclick="loadDemo()"><span class="icon">◧</span> Demo</button>
+    <button class="btn" onclick="showXmlModal()"><span class="icon">⟨/⟩</span> XML</button>
+    <button class="btn btn-success" onclick="downloadBpmn()"><span class="icon">↓</span> Export</button>
+    <button class="btn btn-danger" onclick="resetAll()"><span class="icon">⟲</span> Reset</button>
+  </div>
+</div>
+<div class="main">
+  <div class="panel-transcript" id="panel-left">
+    <div class="panel-header">
+      <span class="panel-label">Interview Transcript</span>
+      <div class="recording-indicator"><div class="rec-dot" id="rec-dot"></div><span id="rec-status">Idle</span></div>
+    </div>
+    <div class="transcript-body">
+      <textarea id="transcript-editor" placeholder="Start the interview by clicking 🎤 Record, or type/paste a process description here...
+
+The agent matches against 200+ role archetypes from the Job Catalog:
+• Frontend Engineer, Data Scientist, DevOps Engineer, SRE
+• Brand Manager, SEO Specialist, PR Manager
+• Account Executive, Customer Success Manager, CSM
+• Procurement Manager, Plant Manager, QC Inspector
+• Corporate Controller, General Counsel, Compliance Officer
+• HR Business Partner, L&amp;D Manager, Technical Recruiter
+
+Click 'Demo' to see it in action, or 'Role Catalog' to browse all roles." oninput="debouncedParse()"></textarea>
+    </div>
+    <div class="live-speech" id="live-speech" style="display:none"><span class="icon">◉</span><span id="interim-text"></span></div>
+    <div class="entity-bar">
+      <div class="entity-section">
+        <div class="entity-label roles"><span class="dot"></span> Roles / Swimlanes <span style="font-size:9px;opacity:.5;text-transform:none;letter-spacing:0">(matched from Job Catalog)</span></div>
+        <div class="entity-chips" id="chips-roles"><span style="color:var(--text-muted);font-size:11px">None detected</span></div>
+      </div>
+      <div class="entity-section">
+        <div class="entity-label activities"><span class="dot"></span> Activities</div>
+        <div class="entity-chips" id="chips-activities"><span style="color:var(--text-muted);font-size:11px">None detected</span></div>
+      </div>
+      <div class="entity-section">
+        <div class="entity-label gateways"><span class="dot"></span> Gateways / Exceptions</div>
+        <div class="entity-chips" id="chips-gateways"><span style="color:var(--text-muted);font-size:11px">None detected</span></div>
+      </div>
+      <div class="entity-section">
+        <div class="entity-label variants"><span class="dot"></span> Process Variants</div>
+        <div class="entity-chips" id="chips-variants"><span style="color:var(--text-muted);font-size:11px">None detected</span></div>
+      </div>
+    </div>
+    <div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
+      <button class="btn btn-primary" id="btn-record" onclick="toggleRecording()" style="flex:1;justify-content:center"><span class="icon">🎤</span> <span id="btn-record-label">Start Recording</span></button>
+      <button class="btn" onclick="debouncedParse()" style="justify-content:center"><span class="icon">⟳</span> Re-parse</button>
+    </div>
+  </div>
+  <div class="resize-handle" id="resize-handle"></div>
+  <div class="panel-bpmn" id="panel-right">
+    <div class="panel-header">
+      <span class="panel-label">BPMN Diagram</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="zoomFit()">⬜ Fit</button>
+        <button class="btn" onclick="zoomIn()">+</button>
+        <button class="btn" onclick="zoomOut()">−</button>
+      </div>
+    </div>
+    <div id="bpmn-canvas">
+      <div class="empty-state" id="empty-state"><div class="icon-large">⬡</div><p>Your BPMN diagram will appear here as you describe the process.</p></div>
+    </div>
+    <div class="bpmn-toolbar">
+      <div class="bpmn-stats">
+        <span>Roles: <span class="stat-val" id="stat-roles">0</span></span>
+        <span>Tasks: <span class="stat-val" id="stat-tasks">0</span></span>
+        <span>Gateways: <span class="stat-val" id="stat-gateways">0</span></span>
+        <span>Flows: <span class="stat-val" id="stat-flows">0</span></span>
+      </div>
+      <span style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono)" id="parse-time"></span>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="xml-modal"><div class="modal"><h3>BPMN 2.0 XML</h3><pre id="xml-content">No diagram generated yet.</pre><div style="display:flex;gap:8px"><button class="btn" onclick="copyXml()">📋 Copy</button><button class="btn" onclick="closeXmlModal()">Close</button></div></div></div>
+<div class="modal-overlay" id="catalog-modal"><div class="modal" style="max-width:900px"><h3>📖 Role Catalog <span style="font-weight:400;color:var(--text-muted);font-size:13px">— The Job Catalog the agent listens for</span></h3><input type="text" class="catalog-search" id="catalog-search" placeholder="Search roles..." oninput="filterCatalog()"><div class="catalog-stat" id="catalog-stat"></div><div class="catalog-grid" id="catalog-grid"></div><button class="btn" onclick="closeCatalogModal()" style="margin-top:16px">Close</button></div></div>
+<div class="toast-container" id="toast-container"></div>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// JOB CATALOG — The Role Dictionary (from uploaded CSV)
+// ═══════════════════════════════════════════════════════════════
+
+const JOB_CATALOG = {
+  "Technology & Engineering": {
+    "Software & Architecture": [
+      "Frontend Engineer","Backend Engineer","Fullstack Engineer",
+      "Mobile Engineer","iOS Engineer","Android Engineer",
+      "Embedded Systems Engineer","Firmware Engineer","Firmware Architect",
+      "Systems Architect","Solutions Architect","Enterprise Architect",
+      "Cloud Architect","Infrastructure Architect","API Engineer",
+      "Integration Specialist","Logic Designer","Graphics Engineer"
+    ],
+    "Data & AI": [
+      "Data Scientist","Machine Learning Engineer","AI Research Scientist",
+      "NLP Engineer","Computer Vision Engineer","Data Engineer",
+      "Analytics Engineer","Database Administrator","DBA",
+      "BI Developer","Data Architect","Big Data Engineer",
+      "AI Ethicist","MLOps Engineer","Data Governance Officer",
+      "Data Visualization Specialist"
+    ],
+    "Infrastructure & Ops": [
+      "DevOps Engineer","Site Reliability Engineer","SRE",
+      "Platform Engineer","Cloud Engineer","Network Engineer",
+      "Systems Administrator","Security Engineer","SOC Analyst",
+      "Pentester","Application Security Engineer","DevSecOps Lead",
+      "Network Architect","Data Center Technician","NOC Technician"
+    ],
+    "Quality & Product": [
+      "QA Automation Engineer","SDET","Manual Tester",
+      "Performance Engineer","QA Lead","Product Manager",
+      "Technical Product Manager","Growth Product Manager","Platform Product Manager",
+      "Product Owner","Associate Product Manager",
+      "UX Researcher","UI Designer","Product Designer",
+      "UX Writer","Interaction Designer"
+    ]
+  },
+  "Marketing & Growth": {
+    "Brand & Creative": [
+      "Brand Manager","Creative Director","Art Director",
+      "Copywriter","Content Strategist","Video Producer",
+      "Motion Graphics Designer","Graphic Designer","Production Artist",
+      "Creative Operations Manager","Photographer","Multimedia Specialist",
+      "Creative Strategist"
+    ],
+    "Digital & Performance": [
+      "SEO Specialist","SEM Manager","Performance Marketing Manager",
+      "Paid Social Specialist","Growth Marketer","Email Marketing Specialist",
+      "CRM Manager","Lifecycle Marketer","Marketing Analytics Manager",
+      "Webmaster","Conversion Rate Optimization Specialist","CRO Specialist"
+    ],
+    "Communications": [
+      "PR Manager","Internal Communications Manager",
+      "Media Relations Specialist","Corporate Affairs Manager",
+      "Speechwriter","Social Media Manager","Influencer Relations Lead",
+      "Community Manager","Brand Ambassador","Crisis Comms Specialist"
+    ]
+  },
+  "Sales & Revenue": {
+    "Direct Sales": [
+      "Account Executive","Strategic Account Manager",
+      "Business Development Representative","BDR",
+      "Sales Development Representative","SDR",
+      "Field Sales Rep","Inside Sales Rep","Territory Manager"
+    ],
+    "Sales Ops & Support": [
+      "Sales Operations Analyst","Sales Enablement Manager",
+      "Solutions Consultant","Pre-Sales Engineer",
+      "Deal Desk Manager","Sales Trainer",
+      "CRM Administrator","Sales Coordinator","Bid Manager"
+    ],
+    "Customer Success": [
+      "Customer Success Manager","CSM","Implementation Manager",
+      "Onboarding Specialist","Renewals Manager",
+      "Technical Account Manager","TAM",
+      "Customer Support Representative","Customer Support Engineer",
+      "Head of Support"
+    ]
+  },
+  "Operations & Supply Chain": {
+    "Logistics & Sourcing": [
+      "Procurement Manager","Strategic Sourcing Specialist",
+      "Purchasing Agent","Buyer","Vendor Relations Manager",
+      "Supply Chain Analyst","Logistics Coordinator",
+      "Warehouse Manager","Inventory Controller",
+      "Import Export Clerk","Customs Broker"
+    ],
+    "Manufacturing": [
+      "Plant Manager","Production Supervisor",
+      "Manufacturing Engineer","Industrial Engineer",
+      "Quality Control Inspector","QC Inspector",
+      "Quality Assurance Tech","QA Tech",
+      "Maintenance Technician","Facilities Engineer",
+      "HSE Manager","Lean Six Sigma Black Belt"
+    ]
+  },
+  "Finance & Legal": {
+    "Accounting & Finance": [
+      "Corporate Controller","Tax Manager","Internal Auditor",
+      "External Auditor","Accounts Payable Specialist",
+      "Accounts Receivable Specialist","Payroll Manager",
+      "Billing Coordinator","Financial Analyst",
+      "Treasury Manager","Revenue Accountant"
+    ],
+    "Legal & Risk": [
+      "General Counsel","Associate Counsel","Paralegal",
+      "Contract Administrator","Compliance Officer",
+      "Privacy Officer","DPO","Risk Manager",
+      "Insurance Manager","Corporate Secretary",
+      "Regulatory Affairs Specialist"
+    ]
+  },
+  "People & Admin": {
+    "HR & Talent": [
+      "HR Business Partner","HRBP","HR Generalist",
+      "Technical Recruiter","Sourcer",
+      "Recruiting Coordinator","Talent Operations Manager",
+      "Employer Brand Specialist","DEI Program Manager",
+      "HRIS Analyst","People Analyst"
+    ],
+    "Rewards & L&D": [
+      "Compensation Manager","Benefits Administrator",
+      "Total Rewards Director",
+      "Instructional Designer","Corporate Trainer",
+      "Culture Manager","Employee Experience Lead",
+      "Office Manager","Executive Assistant","Receptionist"
+    ]
+  }
+};
+
+// ── Build search index ──
+const ROLE_INDEX = [];
+const ROLE_ABBREVS = {};
+let TOTAL_ROLES = 0;
+
+(function buildRoleIndex() {
+  for (const [dept, areas] of Object.entries(JOB_CATALOG)) {
+    for (const [area, roles] of Object.entries(areas)) {
+      for (const role of roles) {
+        TOTAL_ROLES++;
+        const lower = role.toLowerCase();
+        const tokens = lower.split(/[\s\/\-&]+/).filter(t => t.length > 1);
+        ROLE_INDEX.push({ canonical: role, lower, dept, area, tokens });
+        // Abbreviation map
+        if (role === role.toUpperCase() && role.length <= 5) {
+          ROLE_ABBREVS[lower] = role;
+        }
+        if (tokens.length >= 2) {
+          const abbr = tokens.filter(t => !['and','of','the','for'].includes(t)).map(t => t[0]).join('');
+          if (abbr.length >= 2 && abbr.length <= 5) ROLE_ABBREVS[abbr] = role;
+        }
+      }
+    }
+  }
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// ROLE MATCHER — Dictionary-based matching engine
+// ═══════════════════════════════════════════════════════════════
+
+function matchRolesInText(text) {
+  const found = new Map();
+  const sorted = [...ROLE_INDEX].sort((a, b) => b.lower.length - a.lower.length);
+
+  // Strategy 1: Exact full-role match (longest first)
+  for (const entry of sorted) {
+    if (found.has(entry.canonical)) continue;
+    const escaped = entry.lower.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
+    const regex = new RegExp('\\b' + escaped + '(?:s)?\\b', 'gi');
+    if (regex.test(text)) {
+      found.set(entry.canonical, { role: entry.canonical, dept: entry.dept, area: entry.area });
+    }
+  }
+
+  // Strategy 2: Abbreviation matching
+  for (const [abbr, canonical] of Object.entries(ROLE_ABBREVS)) {
+    if (found.has(canonical)) continue;
+    const regex = new RegExp('\\b' + abbr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
+    if (regex.test(text)) {
+      const entry = ROLE_INDEX.find(e => e.canonical === canonical);
+      if (entry) found.set(canonical, { role: canonical, dept: entry.dept, area: entry.area });
+    }
+  }
+
+  // Strategy 3: Fuzzy partial match via token overlap
+  const contextPat = /\b(?:the|a|an|our|their|my|your|as)\s+([a-z]+(?:\s+[a-z]+){0,3})\b/gi;
+  let ctxM;
+  while ((ctxM = contextPat.exec(text.toLowerCase())) !== null) {
+    const phraseTokens = ctxM[1].split(/\s+/).filter(t => t.length > 2);
+    for (const entry of ROLE_INDEX) {
+      if (found.has(entry.canonical)) continue;
+      const sigTokens = entry.tokens.filter(t => t.length > 2);
+      const matched = sigTokens.filter(t => phraseTokens.some(pt => pt === t || pt === t + 's' || pt + 's' === t));
+      if (matched.length >= Math.max(1, Math.ceil(sigTokens.length * 0.6))) {
+        found.set(entry.canonical, { role: entry.canonical, dept: entry.dept, area: entry.area });
+      }
+    }
+  }
+
+  return found;
+}
+
+function findRoleInSentence(sentence, foundRoles) {
+  const lower = sentence.toLowerCase();
+  let best = null, bestPos = Infinity;
+  for (const [canonical] of foundRoles) {
+    const escaped = canonical.toLowerCase().replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
+    const m = lower.match(new RegExp('\\b' + escaped + '(?:s)?\\b', 'i'));
+    if (m && m.index < bestPos) { bestPos = m.index; best = canonical; }
+    for (const [abbr, canon] of Object.entries(ROLE_ABBREVS)) {
+      if (canon === canonical) {
+        const am = lower.match(new RegExp('\\b' + abbr + '\\b', 'i'));
+        if (am && am.index < bestPos) { bestPos = am.index; best = canonical; }
+      }
+    }
+  }
+  return best;
+}
+
+
+
+// ═══════════════════════════════════════════════════════════════
+// BPMN SKILL COMPLIANCE HELPERS (§1.1, §1.3, §4, §7)
+// ═══════════════════════════════════════════════════════════════
+
+// §1.1 / Anti-Pattern #17: Extract trigger name for Start Event
+function extractTriggerName(sentences) {
+  if (!sentences.length) return 'Process Initiated';
+  var first = sentences[0].trim();
+  var m = first.match(/\b(?:submits?|creates?|sends?|receives?|initiates?|starts?|triggers?|requests?|opens?|registers?|places?|sets?\\s+up)\s+((?:(?:the|a|an)\s+)?[a-z]+(?:\s+[a-z]+){0,3})/i);
+  if (m) {
+    var obj = m[1].replace(/^(the|a|an)\s+/i, '').replace(/\s+(and|or|but|for|in|on|to|by)\s.*$/i, '').trim();
+    if (obj.length > 2 && obj.length < 40) return capFirst(obj) + ' Initiated';
+  }
+  return 'Process Initiated';
+}
+
+// §1.1 / Anti-Pattern #17: Extract outcome name for End Event
+function extractOutcomeName(sentences) {
+  if (!sentences.length) return 'Process Completed';
+  var last = sentences[sentences.length - 1].trim();
+  var m = last.match(/\b(?:completes?|delivers?|ships?|confirms?|signs?|closes?|publishes?|deploys?|approves?|notifies?|updates?|releases?|reviews?)\s+((?:(?:the|a|an)\s+)?[a-z]+(?:\s+[a-z]+){0,3})/i);
+  if (m) {
+    var obj = m[1].replace(/^(the|a|an)\s+/i, '').replace(/\s+(and|or|but|for|in|on|to|by)\s.*$/i, '').trim();
+    if (obj.length > 2 && obj.length < 40) return capFirst(obj) + ' Completed';
+  }
+  return 'Process Completed';
+}
+
+// §1.3 Rule 4 / Anti-Pattern #5: Gateway condition → question form
+function toGatewayQuestion(condition) {
+  var c = condition.trim();
+  if (c.endsWith('?')) return c;
+  c = c.replace(/^(the|a|an)\s+/i, '');
+  if (c.length > 50) c = c.substring(0, 50);
+  return capFirst(c) + '?';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CORE AGENT
+// ═══════════════════════════════════════════════════════════════
+
+let bpmnViewer = null, currentXml = '', isRecording = false, recognition = null, lastFoundRoles = new Map();
+
+function initViewer() { bpmnViewer = new BpmnJS({ container: '#bpmn-canvas' }); }
+
+const VERB_PAT_STR = '(submits?|creates?|sends?|receives?|reviews?|approves?|rejects?|verifies?|checks?|processes?|handles?|prepares?|completes?|initiates?|performs?|assigns?|delegates?|escalates?|notifies?|updates?|raises?|ships?|delivers?|confirms?|signs?|authorizes?|validates?|forwards?|transfers?|routes?|dispatches?|enters?|logs?|records?|requests?|orders?|purchases?|pays?|invoices?|responds?|evaluates?|closes?|opens?|registers?|cancels?|modifies?|generates?|schedules?|coordinates?|monitors?|tracks?|reports?|accepts?|declines?|executes?|files?|uploads?|downloads?|deploys?|runs?|tests?|builds?|merges?|configures?|provisions?|investigates?|resolves?|triages?|promotes?|releases?|launches?|publishes?|archives?|audits?|inspects?|onboards?|recruits?|hires?|terminates?|trains?|certifies?|negotiates?|procures?|sources?|allocates?|budgets?|forecasts?|scans?|sets\\s+up)';
+
+function parseTranscript(text) {
+  const t0 = performance.now();
+  const result = { roles: [], activities: [], gateways: [], variants: [], sequence: [] };
+  if (!text || text.trim().length < 10) return result;
+
+  const clean = text.replace(/\s+/g, ' ').trim();
+  const sentences = clean.split(/(?<=[.!?;])\s+|(?:,\s*(?:and\s+)?then\s+)/i).filter(s => s.trim());
+
+  // ROLES via Job Catalog
+  const foundRoles = matchRolesInText(clean);
+  lastFoundRoles = foundRoles;
+  result.roles = [...foundRoles.values()];
+
+  // ACTIVITIES
+  const actSet = new Set();
+  const verbPat = new RegExp('\\b' + VERB_PAT_STR + '\\s+((?:(?:the|a|an)\\s+)?[a-z]+(?:\\s+[a-z]+){0,3})', 'gi');
+  sentences.forEach(s => {
+    let m;
+    while ((m = verbPat.exec(s)) !== null) {
+      const verb = m[1].replace(/s$/i, '').replace(/es$/i, 'e');
+      let obj = m[2].replace(/^(the|a|an)\s+/i, '').replace(/\s+(to|from|by|for|in|on|at|of|with|and|or|but)$/i, '').trim();
+      if (obj.length > 1 && obj.length < 35) actSet.add(capFirst(verb) + ' ' + obj);
+    }
+  });
+  result.activities = [...actSet];
+
+  // GATEWAYS
+  const gwSet = new Set();
+  [/\bif\s+(.+?)(?:,|\bthen\b)/gi, /\bwhen\s+(.+?)(?:,|\bthen\b)/gi, /\bin\s+case\s+(?:of\s+)?(.+?)(?:,|\bthen\b)/gi,
+   /\b(?:whether|either)\s+(.+?)\s+or\s+/gi, /\bexception\b.*?[:,.]\s*(.+?)(?:[.;]|$)/gi,
+   /\bdiscrepancy\b/gi, /\berror\b.*?[:,.]\s*(.+?)(?:[.;]|$)/gi,
+   /\brejected?\b/gi, /\bfails?\s+(?:to\s+)?(.+?)(?:[.;]|$)/gi, /\botherwise\b/gi
+  ].forEach(pat => {
+    let m;
+    while ((m = pat.exec(clean)) !== null) {
+      let c = (m[1] || m[0]).trim().replace(/^(the|a|an)\s+/i, '');
+      if (c.length > 3 && c.length < 80) gwSet.add(c.substring(0, 60));
+    }
+  });
+  result.gateways = [...gwSet];
+
+  // VARIANTS
+  const varSet = new Set();
+  [/\b(?:for|in)\s+((?:the\s+)?(?:US|UK|EU|EMEA|APAC|domestic|international|local|global|internal|external|online|offline)[a-z\s]*)/gi,
+   /\b(?:if|when)\s+(?:the\s+)?(?:amount|value|cost|price|quantity|total|budget)\s+(?:is\s+)?(?:above|below|over|under|more\s+than|less\s+than|exceeds?)\s+[\$\u20ac\u00a3]?[\d,]+/gi,
+   /\b(?:depending\s+on|based\s+on|varies?\s+by)\s+(?:the\s+)?(\w+(?:\s+\w+){0,2})/gi,
+   /\b(above|below|over|under|more\s+than|less\s+than|exceeds?)\s+[\$\u20ac\u00a3]?[\d,]+/gi
+  ].forEach(pat => {
+    let m;
+    while ((m = pat.exec(clean)) !== null) {
+      let v = (m[1] || m[0]).trim();
+      if (v.length > 2 && v.length < 60) varSet.add(v);
+    }
+  });
+  result.variants = [...varSet];
+
+  // SEQUENCE
+  result.sequence = buildSeq(sentences, foundRoles);
+
+  // BPMN Skill §1.1: meaningful Start/End event names
+  result.triggerName = extractTriggerName(sentences);
+  result.outcomeName = extractOutcomeName(sentences);
+
+  const ms = (performance.now() - t0).toFixed(1);
+  document.getElementById('parse-time').textContent = 'Parsed in ' + ms + 'ms \u00b7 ' + TOTAL_ROLES + ' roles indexed';
+  return result;
+}
+
+function capFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+
+function buildSeq(sentences, foundRoles) {
+  const steps = [];
+  const verbRe = new RegExp('\\b' + VERB_PAT_STR + '\\s+((?:(?:the|a|an)\\s+)?[a-z]+(?:\\s+[a-z]+){0,3})', 'i');
+
+  sentences.forEach(s => {
+    if (s.trim().length < 5) return;
+    const role = findRoleInSentence(s, foundRoles);
+    const isGW = /\b(if|when|in case|whether|either|unless|otherwise|alternatively)\b/i.test(s);
+    const isExc = /\b(exception|discrepancy|error|reject|fail|denied|issue|problem)\b/i.test(s);
+
+    if (isGW || isExc) {
+      const cm = s.match(/\b(?:if|when|in\s+case)\s+(.+?)(?:,|\bthen\b)/i);
+      const cond = cm ? cm[1].trim() : (isExc ? 'Exception occurs' : 'Condition check');
+      const tm = s.match(/(?:then|,)\s*(?:the\s+)?(.+?)(?:\.|$)/i);
+      steps.push({ type: 'gateway', role: role, label: cond.substring(0, 50), yesBranch: tm ? tm[1].trim().substring(0, 40) : 'Proceed' });
+    } else {
+      const vm = s.match(verbRe);
+      if (vm) {
+        const verb = vm[1].replace(/s$/i, '').replace(/es$/i, 'e');
+        const obj = vm[2].replace(/^(the|a|an)\s+/i, '').trim();
+        steps.push({ type: 'task', role: role, label: (capFirst(verb) + ' ' + obj).substring(0, 45) });
+      }
+    }
+  });
+  return steps;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// BPMN XML GENERATOR
+// ═══════════════════════════════════════════════════════════════
+
+function generateBpmnXml(parsed) {
+  const { roles, sequence } = parsed;
+  if (!sequence.length) return null;
+
+  const roleNames = roles.map(r => r.role || r);
+  const defaultRole = roleNames[0] || 'Process';
+  const useLanes = roleNames.length > 0;
+  let idC = 0;
+  const nid = function(p) { return p + '_' + String(++idC).padStart(4, '0'); };
+
+  const LH = 150, TW = 130, TH = 80, GS = 50, ES = 36, XS = 200, XG = 180, YS = 80;
+  const nodes = [];
+  let x = XS;
+
+  nodes.push({ id: nid('StartEvent'), type: 'startEvent', label: parsed.triggerName || 'Process Initiated', x: x, role: sequence[0] ? sequence[0].role || defaultRole : defaultRole });
+  x += XG - 40;
+
+  sequence.forEach(function(step) {
+    if (step.type === 'gateway') {
+      // BPMN Skill §1.3 Rule 1: split gateway
+      nodes.push({ id: nid('Gateway'), type: 'exclusiveGateway', label: toGatewayQuestion(step.label), x: x, role: step.role || defaultRole, isSplit: true });
+      x += XG;
+      if (step.yesBranch && step.yesBranch !== 'Proceed') {
+        var splitGw = nodes[nodes.length - 1].id;
+        nodes.push({ id: nid('Task'), type: 'task', label: step.yesBranch.substring(0, 40), x: x, role: step.role || defaultRole, fromGW: splitGw, cond: 'Yes' });
+        x += XG;
+        // BPMN Skill §1.3 Rule 1: matching join gateway
+        nodes.push({ id: nid('Gateway'), type: 'exclusiveGateway', label: '', x: x, role: step.role || defaultRole, isJoin: true });
+        x += XG;
+      }
+    } else {
+      nodes.push({ id: nid('Task'), type: 'task', label: step.label, x: x, role: step.role || defaultRole });
+      x += XG;
+    }
+  });
+  nodes.push({ id: nid('EndEvent'), type: 'endEvent', label: parsed.outcomeName || 'Process Completed', x: x, role: sequence[sequence.length - 1] ? sequence[sequence.length - 1].role || defaultRole : defaultRole });
+
+  var lanes = useLanes ? roleNames : [defaultRole];
+  var yMap = {};
+  lanes.forEach(function(r, i) { yMap[r.toLowerCase()] = YS + i * LH + LH / 2; });
+  nodes.forEach(function(el) { el.y = yMap[(el.role || defaultRole).toLowerCase()] || (YS + LH / 2); });
+
+  // BPMN Skill §7.1: Build flows first so we can add incoming/outgoing refs to elements
+  var flows = [], laneRefs = {};
+  for (var i = 0; i < nodes.length - 1; i++) {
+    var fid = nid('Flow');
+    flows.push({ id: fid, src: nodes[i], tgt: nodes[i + 1] });
+  }
+
+  // Build incoming/outgoing maps for each node (§7.1 structural validity)
+  var nodeIncoming = {}, nodeOutgoing = {};
+  flows.forEach(function(f) {
+    if (!nodeOutgoing[f.src.id]) nodeOutgoing[f.src.id] = [];
+    nodeOutgoing[f.src.id].push(f.id);
+    if (!nodeIncoming[f.tgt.id]) nodeIncoming[f.tgt.id] = [];
+    nodeIncoming[f.tgt.id].push(f.id);
+  });
+
+  var procXml = '';
+  nodes.forEach(function(el) {
+    var rk = el.role || defaultRole;
+    if (!laneRefs[rk]) laneRefs[rk] = [];
+    laneRefs[rk].push(el.id);
+    var n = escXml(el.label);
+    var tag, selfClose = false;
+    if (el.type === 'startEvent') tag = 'bpmn:startEvent';
+    else if (el.type === 'endEvent') tag = 'bpmn:endEvent';
+    else if (el.type === 'task') tag = 'bpmn:task';
+    else tag = 'bpmn:exclusiveGateway';
+
+    var inRefs = nodeIncoming[el.id] || [];
+    var outRefs = nodeOutgoing[el.id] || [];
+    if (inRefs.length === 0 && outRefs.length === 0) {
+      procXml += '    <' + tag + ' id="' + el.id + '" name="' + n + '" />\n';
+    } else {
+      procXml += '    <' + tag + ' id="' + el.id + '" name="' + n + '">\n';
+      inRefs.forEach(function(fId) { procXml += '      <bpmn:incoming>' + fId + '</bpmn:incoming>\n'; });
+      outRefs.forEach(function(fId) { procXml += '      <bpmn:outgoing>' + fId + '</bpmn:outgoing>\n'; });
+      procXml += '    </' + tag + '>\n';
+    }
+  });
+
+  // §1.3 Rule 4 / Anti-Pattern #6: Label XOR outgoing flows with condition answers
+  var flowsXml = '';
+  flows.forEach(function(f) {
+    var condAttr = '';
+    if (f.tgt.fromGW && f.tgt.cond) {
+      condAttr = ' name="' + escXml(f.tgt.cond) + '"';
+    } else if (f.src.isSplit && f.tgt.isJoin) {
+      condAttr = ' name="No"';
+    }
+    flowsXml += '    <bpmn:sequenceFlow id="' + f.id + '" sourceRef="' + f.src.id + '" targetRef="' + f.tgt.id + '"' + condAttr + ' />\n';
+  });
+
+  var lsXml = '', laneIds = {};
+  if (useLanes) {
+    lsXml = '    <bpmn:laneSet id="LaneSet_1">\n';
+    lanes.forEach(function(r) {
+      var lid = nid('Lane');
+      laneIds[r] = lid;
+      lsXml += '      <bpmn:lane id="' + lid + '" name="' + escXml(r) + '">\n';
+      (laneRefs[r] || []).forEach(function(ref) { lsXml += '        <bpmn:flowNodeRef>' + ref + '</bpmn:flowNodeRef>\n'; });
+      lsXml += '      </bpmn:lane>\n';
+    });
+    lsXml += '    </bpmn:laneSet>\n';
+  }
+
+  var tw = x + 100;
+  var di = '';
+  if (useLanes) {
+    di += '      <bpmndi:BPMNShape id="Participant_1_di" bpmnElement="Participant_1" isHorizontal="true">\n        <dc:Bounds x="120" y="' + (YS - 20) + '" width="' + (tw - 80) + '" height="' + (lanes.length * LH + 40) + '" />\n      </bpmndi:BPMNShape>\n';
+    lanes.forEach(function(r, i) {
+      var lid = laneIds[r];
+      if (lid) di += '      <bpmndi:BPMNShape id="' + lid + '_di" bpmnElement="' + lid + '" isHorizontal="true">\n        <dc:Bounds x="150" y="' + (YS - 20 + i * LH) + '" width="' + (tw - 110) + '" height="' + LH + '" />\n      </bpmndi:BPMNShape>\n';
+    });
+  }
+
+  nodes.forEach(function(el) {
+    var w, h;
+    if (el.type === 'startEvent' || el.type === 'endEvent') { w = ES; h = ES; }
+    else if (el.type === 'exclusiveGateway') { w = GS; h = GS; }
+    else { w = TW; h = TH; }
+    di += '      <bpmndi:BPMNShape id="' + el.id + '_di" bpmnElement="' + el.id + '">\n        <dc:Bounds x="' + (el.x - w / 2) + '" y="' + (el.y - h / 2) + '" width="' + w + '" height="' + h + '" />\n        <bpmndi:BPMNLabel />\n      </bpmndi:BPMNShape>\n';
+  });
+
+  // §5.1: Cross-lane flows use midpoint waypoints for clean routing
+  flows.forEach(function(f) {
+    var so = f.src.type === 'startEvent' ? ES / 2 : f.src.type === 'exclusiveGateway' ? GS / 2 : TW / 2;
+    var to = f.tgt.type === 'endEvent' ? ES / 2 : f.tgt.type === 'exclusiveGateway' ? GS / 2 : TW / 2;
+    var sx = f.src.x + so, sy = f.src.y, tx = f.tgt.x - to, ty = f.tgt.y;
+    di += '      <bpmndi:BPMNEdge id="' + f.id + '_di" bpmnElement="' + f.id + '">\n';
+    if (Math.abs(sy - ty) > 10) {
+      // Cross-lane: add midpoint for clean L-shaped routing
+      var mx = (sx + tx) / 2;
+      di += '        <di:waypoint x="' + sx + '" y="' + sy + '" />\n';
+      di += '        <di:waypoint x="' + mx + '" y="' + sy + '" />\n';
+      di += '        <di:waypoint x="' + mx + '" y="' + ty + '" />\n';
+      di += '        <di:waypoint x="' + tx + '" y="' + ty + '" />\n';
+    } else {
+      di += '        <di:waypoint x="' + sx + '" y="' + sy + '" />\n';
+      di += '        <di:waypoint x="' + tx + '" y="' + ty + '" />\n';
+    }
+    di += '      </bpmndi:BPMNEdge>\n';
+  });
+
+  var collab = useLanes ? '  <bpmn:collaboration id="Collaboration_1">\n    <bpmn:participant id="Participant_1" name="Organization" processRef="Process_1" />\n  </bpmn:collaboration>\n' : '';
+  var planeEl = useLanes ? 'Collaboration_1' : 'Process_1';
+
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"\n' +
+    '                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"\n' +
+    '                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"\n' +
+    '                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"\n' +
+    '                  id="Definitions_1"\n' +
+    '                  targetNamespace="http://bpmn.io/schema/bpmn">\n' +
+    collab +
+    '  <bpmn:process id="Process_1" isExecutable="false">\n' +
+    lsXml + procXml + flowsXml +
+    '  </bpmn:process>\n' +
+    '  <bpmndi:BPMNDiagram id="BPMNDiagram_1">\n' +
+    '    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="' + planeEl + '">\n' +
+    di +
+    '    </bpmndi:BPMNPlane>\n' +
+    '  </bpmndi:BPMNDiagram>\n' +
+    '</bpmn:definitions>';
+}
+
+function escXml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// UI UPDATES
+// ═══════════════════════════════════════════════════════════════
+
+function updateEntityChips(parsed) {
+  var rolesEl = document.getElementById('chips-roles');
+  if (parsed.roles.length === 0) {
+    rolesEl.innerHTML = '<span style="color:var(--text-muted);font-size:11px">None detected \u2014 try mentioning roles from the Job Catalog</span>';
+  } else {
+    rolesEl.innerHTML = parsed.roles.map(function(r) {
+      var deptShort = (r.dept || '').split('&')[0].trim();
+      return '<span class="chip role">' + escHtml(r.role) + '<span class="dept-tag">' + escHtml(deptShort) + '</span></span>';
+    }).join('');
+  }
+  renderChips('chips-activities', parsed.activities, 'activity');
+  renderChips('chips-gateways', parsed.gateways, 'gateway');
+  renderChips('chips-variants', parsed.variants, 'variant');
+  document.getElementById('stat-roles').textContent = parsed.roles.length;
+  document.getElementById('stat-tasks').textContent = parsed.activities.length;
+  document.getElementById('stat-gateways').textContent = parsed.gateways.length;
+  document.getElementById('stat-flows').textContent = Math.max(0, parsed.sequence.length - 1);
+}
+
+function renderChips(containerId, items, cls) {
+  var el = document.getElementById(containerId);
+  if (items.length === 0) { el.innerHTML = '<span style="color:var(--text-muted);font-size:11px">None detected</span>'; return; }
+  el.innerHTML = items.map(function(item) {
+    var txt = typeof item === 'string' ? item : (item.role || item);
+    return '<span class="chip ' + cls + '">' + escHtml(txt) + '</span>';
+  }).join('');
+}
+
+function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function renderBpmn(xml) {
+  if (!xml) return;
+  currentXml = xml;
+  try {
+    await bpmnViewer.importXML(xml);
+    document.getElementById('empty-state').style.display = 'none';
+    zoomFit();
+  } catch (err) {
+    console.warn('BPMN render error:', err);
+  }
+}
+
+async function parseAndRender() {
+  var text = document.getElementById('transcript-editor').value;
+  var parsed = parseTranscript(text);
+  updateEntityChips(parsed);
+  if (parsed.sequence.length > 0) {
+    var xml = generateBpmnXml(parsed);
+    if (xml) await renderBpmn(xml);
+  }
+}
+
+var debounceTimer = null;
+function debouncedParse() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(parseAndRender, 600);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// SPEECH RECOGNITION
+// ═══════════════════════════════════════════════════════════════
+
+function toggleRecording() { isRecording ? stopRecording() : startRecording(); }
+
+function startRecording() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('Speech recognition not supported. Use Chrome.', 'error'); return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  recognition.onstart = function() {
+    isRecording = true;
+    document.getElementById('rec-dot').classList.add('active');
+    document.getElementById('rec-status').textContent = 'Recording...';
+    document.getElementById('btn-record-label').textContent = 'Stop Recording';
+    document.getElementById('btn-record').classList.remove('btn-primary');
+    document.getElementById('btn-record').classList.add('btn-danger');
+    document.getElementById('live-speech').style.display = 'flex';
+    showToast('\ud83c\udf99 Recording started', 'success');
+  };
+
+  recognition.onresult = function(event) {
+    var interim = '', final = '';
+    for (var i = event.resultIndex; i < event.results.length; i++) {
+      var t = event.results[i][0].transcript;
+      if (event.results[i].isFinal) final += t + ' ';
+      else interim += t;
+    }
+    document.getElementById('interim-text').textContent = interim;
+    if (final.trim()) {
+      var editor = document.getElementById('transcript-editor');
+      editor.value += (editor.value ? '\n' : '') + final.trim();
+      debouncedParse();
+    }
+  };
+
+  recognition.onerror = function(event) {
+    if (event.error !== 'no-speech') showToast('Speech error: ' + event.error, 'error');
+  };
+  recognition.onend = function() { if (isRecording) try { recognition.start(); } catch(e) {} };
+  recognition.start();
+}
+
+function stopRecording() {
+  isRecording = false;
+  if (recognition) { recognition.stop(); recognition = null; }
+  document.getElementById('rec-dot').classList.remove('active');
+  document.getElementById('rec-status').textContent = 'Idle';
+  document.getElementById('btn-record-label').textContent = 'Start Recording';
+  document.getElementById('btn-record').classList.add('btn-primary');
+  document.getElementById('btn-record').classList.remove('btn-danger');
+  document.getElementById('live-speech').style.display = 'none';
+  showToast('Recording stopped', 'success');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// ZOOM & CONTROLS
+// ═══════════════════════════════════════════════════════════════
+
+function zoomFit() { if (bpmnViewer) bpmnViewer.get('canvas').zoom('fit-viewport', 'auto'); }
+function zoomIn() { if (bpmnViewer) { var c = bpmnViewer.get('canvas'); c.zoom(c.zoom() * 1.2); } }
+function zoomOut() { if (bpmnViewer) { var c = bpmnViewer.get('canvas'); c.zoom(c.zoom() / 1.2); } }
+
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT & UTILITIES
+// ═══════════════════════════════════════════════════════════════
+
+function downloadBpmn() {
+  if (!currentXml) { showToast('No diagram to export', 'error'); return; }
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([currentXml], { type: 'application/xml' }));
+  a.download = 'process-diagram.bpmn'; a.click();
+  showToast('BPMN file downloaded', 'success');
+}
+
+function showXmlModal() {
+  document.getElementById('xml-content').textContent = currentXml || 'No diagram generated yet.';
+  document.getElementById('xml-modal').classList.add('active');
+}
+function closeXmlModal() { document.getElementById('xml-modal').classList.remove('active'); }
+
+function copyXml() {
+  if (currentXml) { navigator.clipboard.writeText(currentXml); showToast('XML copied', 'success'); }
+}
+
+function resetAll() {
+  document.getElementById('transcript-editor').value = '';
+  currentXml = '';
+  if (bpmnViewer) bpmnViewer.clear();
+  document.getElementById('empty-state').style.display = 'flex';
+  updateEntityChips({ roles: [], activities: [], gateways: [], variants: [] });
+  ['stat-roles','stat-tasks','stat-gateways','stat-flows'].forEach(function(id) { document.getElementById(id).textContent = '0'; });
+  document.getElementById('parse-time').textContent = '';
+  showToast('Reset complete', 'success');
+}
+
+function loadDemo() {
+  document.getElementById('transcript-editor').value =
+    'The DevOps Engineer sets up the CI/CD pipeline and configures the deployment scripts.\n\n' +
+    'The Backend Engineer writes the API endpoints and commits the code to the repository.\n\n' +
+    'The QA Automation Engineer creates the test suite and runs automated regression tests. If tests fail, the Backend Engineer investigates the issue and pushes a fix.\n\n' +
+    'If tests pass, the Site Reliability Engineer promotes the build to the staging environment.\n\n' +
+    'The Product Manager reviews the staging deployment and signs off on the release.\n\n' +
+    'The Security Engineer performs a vulnerability scan. If a critical vulnerability is found, the Application Security Engineer triages the issue and the Backend Engineer resolves it.\n\n' +
+    'Once the security review passes, the SRE deploys to production.\n\n' +
+    'The Customer Success Manager notifies key accounts about the new release.\n\n' +
+    'The Sales Enablement Manager updates the product documentation for the sales team.\n\n' +
+    'For international deployments, the Compliance Officer reviews data residency requirements before the release is approved.';
+  debouncedParse();
+  showToast('Demo loaded \u2014 watch roles match from the Job Catalog!', 'success');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// CATALOG MODAL
+// ═══════════════════════════════════════════════════════════════
+
+function showCatalogModal() {
+  renderCatalogGrid('');
+  document.getElementById('catalog-modal').classList.add('active');
+  document.getElementById('catalog-search').value = '';
+  document.getElementById('catalog-search').focus();
+}
+function closeCatalogModal() { document.getElementById('catalog-modal').classList.remove('active'); }
+
+function filterCatalog() { renderCatalogGrid(document.getElementById('catalog-search').value); }
+
+function renderCatalogGrid(filter) {
+  var grid = document.getElementById('catalog-grid');
+  var stat = document.getElementById('catalog-stat');
+  var lf = filter.toLowerCase().trim();
+  var totalShown = 0;
+  var matchedSet = new Set();
+  lastFoundRoles.forEach(function(v, k) { matchedSet.add(k.toLowerCase()); });
+  var html = '';
+
+  for (var dept in JOB_CATALOG) {
+    for (var area in JOB_CATALOG[dept]) {
+      var roles = JOB_CATALOG[dept][area];
+      var filtered = lf ? roles.filter(function(r) {
+        return r.toLowerCase().indexOf(lf) !== -1 || dept.toLowerCase().indexOf(lf) !== -1 || area.toLowerCase().indexOf(lf) !== -1;
+      }) : roles;
+      if (!filtered.length) continue;
+      totalShown += filtered.length;
+      html += '<div class="catalog-dept"><h4>' + escHtml(dept) + '</h4><h5>' + escHtml(area) + '</h5><div class="role-list">';
+      html += filtered.map(function(r) {
+        var isM = matchedSet.has(r.toLowerCase());
+        return isM ? '<span class="matched">\u25cf ' + escHtml(r) + '</span>' : escHtml(r);
+      }).join(', ');
+      html += '</div></div>';
+    }
+  }
+  grid.innerHTML = html;
+  stat.innerHTML = '<strong>' + totalShown + '</strong> roles shown' +
+    (lf ? ' matching "' + escHtml(lf) + '"' : ' across ' + Object.keys(JOB_CATALOG).length + ' departments') +
+    ' \u00b7 <strong>' + matchedSet.size + '</strong> currently matched in transcript';
+}
+
+
+// ── Toast ──
+function showToast(msg, type) {
+  var c = document.getElementById('toast-container');
+  var t = document.createElement('div');
+  t.className = 'toast ' + (type || '');
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(function() { t.remove(); }, 3500);
+}
+
+// ── Resizable panels ──
+function initResize() {
+  var handle = document.getElementById('resize-handle');
+  var left = document.getElementById('panel-left');
+  var resizing = false;
+  handle.addEventListener('mousedown', function(e) { resizing = true; handle.classList.add('active'); document.body.style.cursor = 'col-resize'; e.preventDefault(); });
+  document.addEventListener('mousemove', function(e) {
+    if (!resizing) return;
+    var r = document.querySelector('.main').getBoundingClientRect();
+    left.style.width = Math.max(300, Math.min(e.clientX - r.left, r.width - 300)) + 'px';
+  });
+  document.addEventListener('mouseup', function() { resizing = false; handle.classList.remove('active'); document.body.style.cursor = ''; });
+}
+
+// Modal overlay close
+document.getElementById('xml-modal').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeXmlModal(); });
+document.getElementById('catalog-modal').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeCatalogModal(); });
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', function() { initViewer(); initResize(); });
+
+</script>
+</body>
+</html>
