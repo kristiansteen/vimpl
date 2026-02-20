@@ -101,18 +101,11 @@
                 </h3>
                 <div id="linksContainer"></div>
 
-                <a href="dashboard.html" class="submit-btn"
-                    style="display: block; text-align: center; text-decoration: none; margin-top: 1.5rem; background: transparent; border: 1px solid var(--primary); color: var(--primary);">
-                    <span data-lang="da">Gå til Dashboard</span>
-                    <span data-lang="en">Go to Dashboard</span>
-                </a>
             </div>
         </div>
     </div>
 
-    <script src="assets/js/api-client.js"></script>
     <script>
-        const apiClient = new ApiClient();
         let availableArtifacts = [];
         let currentLang = 'da';
 
@@ -134,8 +127,6 @@
                     el.style.display = el.getAttribute('data-lang') === lang ? 'block' : 'none';
                 }
             });
-
-            // Update placeholders if any (optional, keeping concise for now)
         }
 
         // Initialize Language
@@ -145,17 +136,17 @@
         async function loadArtifacts() {
             const container = document.getElementById('artifacts-list');
 
-            // Default artifacts for fallback (if fetch fails due to local file restrictions)
+            // Default artifacts for fallback
             const defaultArtifacts = [
                 {
                     "id": "whitepaper-ai-lean",
                     "title": "AILEAN White Paper - Why AI rhymes with LEAN",
-                    "filename": "ailean-whitepaper.pdf"
+                    "filename": "AILEAN White Paper.pdf"
                 },
                 {
                     "id": "ebook-perfect-processes",
                     "title": "The e-Book - \"Perfect processes\" - On Lean and Six Sigma",
-                    "filename": "perfect-processes-ebook.pdf"
+                    "filename": "Perfect Processes_ENG.pdf"
                 }
             ];
 
@@ -165,7 +156,7 @@
 
                 availableArtifacts = await response.json();
             } catch (error) {
-                console.warn('Could not load external artifacts (likely CORS/file protocol), using defaults.', error);
+                console.warn('Could not load external artifacts, using defaults.', error);
                 availableArtifacts = defaultArtifacts;
             }
 
@@ -195,63 +186,54 @@
 
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
-            // No password field - generate a secure random one
-            const password = 'VimplDownload!' + Math.random().toString(36).slice(-8) + 'X1!';
-
+            const phone = document.getElementById('phone').value;
             const submitBtn = document.getElementById('submitBtn');
 
             // Get selected artifacts
-            const selectedArtifacts = [];
+            const selectedFilenames = [];
             document.querySelectorAll('input[name="artifacts"]:checked').forEach(checkbox => {
-                selectedArtifacts.push(checkbox.value);
+                selectedFilenames.push(checkbox.value);
             });
 
-            if (selectedArtifacts.length === 0) {
+            if (selectedFilenames.length === 0) {
                 const msgDa = 'Vælg venligst mindst ét dokument.';
                 const msgEn = 'Please select at least one document.';
                 showError(currentLang === 'da' ? msgDa : msgEn);
                 return;
             }
 
-            // Disable button
+            // Disable button & Show loading
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> ...';
             hideMessages();
 
-            try {
-                // Register user with generated password
-                await apiClient.register(email, password, name);
+            // Simulate lead recording
+            console.log('Lead Collected:', { name, email, phone, documents: selectedFilenames });
 
-                const successDa = 'Registrering gennemført!';
-                const successEn = 'Registration successful!';
+            setTimeout(() => {
+                const successDa = 'Tak for din interesse! Dine downloads starter nu.';
+                const successEn = 'Thank you for your interest! Your downloads are starting now.';
                 showSuccess(currentLang === 'da' ? successDa : successEn);
 
                 document.getElementById('downloadForm').style.display = 'none';
 
-                // Show download links
-                showDownloadLinks(selectedArtifacts);
+                // Trigger downloads
+                selectedFilenames.forEach((filename, index) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = `assets/documents/${filename}`;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }, index * 800); // Stagger downloads to prevent browser blocking
+                });
 
-            } catch (error) {
-                console.error('Registration error:', error);
-
-                let msgDa = 'Fejl ved registrering. Prøv igen.';
-                let msgEn = 'Registration failed. Please try again.';
-
-                if (error.message && error.message.includes('already exists')) {
-                    msgDa = 'Email er allerede registreret. <a href="login.html" style="color:var(--primary)">Log ind</a> for at få adgang.';
-                    msgEn = 'Email already registered. <a href="login.html" style="color:var(--primary)">Log in</a> to access resources.';
-                    showErrorHTML(currentLang === 'da' ? msgDa : msgEn);
-                } else {
-                    showError(currentLang === 'da' ? msgDa : msgEn);
-                }
+                // Show manual links as fallback
+                showDownloadLinks(selectedFilenames);
 
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `
-                    <span data-lang="da">Hent</span>
-                    <span data-lang="en">Download</span>
-                `;
-                setLanguage(currentLang); // Ensure button text respects lang
-            }
+            }, 1000);
         });
 
         function showDownloadLinks(filenames) {
@@ -275,26 +257,22 @@
                             <polyline points="14 2 14 8 20 8"></polyline>
                             <line x1="16" y1="13" x2="8" y2="13"></line>
                             <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
                     </span>
                     <span>${title}</span>
                 `;
-                container.appendChild(item);
+                container.appendChild(link);
             });
 
             section.style.display = 'block';
+
+            // Re-apply language visibility for the download section
+            setLanguage(currentLang);
         }
 
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
-
-        function showErrorHTML(html) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.innerHTML = html;
             errorDiv.style.display = 'block';
         }
 
