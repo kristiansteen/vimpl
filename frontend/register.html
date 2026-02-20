@@ -8,6 +8,8 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="assets/css/ailean.css" rel="stylesheet">
 
     <style>
         * {
@@ -38,18 +40,69 @@
         .logo {
             text-align: center;
             margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
         .logo h1 {
             font-family: 'Birthstone', cursive;
             font-size: 48px;
             font-weight: 400;
-            background: linear-gradient(135deg, #65c434 0%, #3d7a1f 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -1px;
-            margin-bottom: 8px;
+            margin-bottom: 0;
+        }
+
+        /* Inline Badge Styles */
+        .logo .powered-by-badge {
+            position: static;
+            transform: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            background: rgba(101, 196, 52, 0.1);
+            padding: 4px 12px;
+            border-radius: 50px;
+            border: 1px solid rgba(101, 196, 52, 0.3);
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .logo .powered-by-badge:hover {
+            background: rgba(101, 196, 52, 0.2);
+            transform: translateY(-1px);
+            border-color: var(--primary);
+        }
+
+        .logo .powered-by-badge span:first-child {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .logo .powered-by-badge .lean-logo {
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Inter', sans-serif;
         }
 
         .logo p {
@@ -343,12 +396,14 @@
 
 <body>
     <div class="register-container">
-        <a href="https://vimpl-sl96.vercel.app/ailean-philosophy" class="powered-by-badge" target="_blank">
-            <span>Powered by</span>
-            <span class="lean-logo">AILEAN</span>
-        </a>
         <div class="logo">
-            <h1>vimpl</h1>
+            <div class="logo-main">
+                <h1>vimpl</h1>
+                <a href="https://vimpl-sl96.vercel.app/ailean-philosophy" class="powered-by-badge" target="_blank">
+                    <span>Powered by</span>
+                    <span class="lean-logo">AILEAN</span>
+                </a>
+            </div>
             <p>Create your account and start planning.</p>
         </div>
 
