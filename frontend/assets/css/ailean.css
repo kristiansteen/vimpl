@@ -807,28 +807,19 @@ input:not([type="checkbox"]):focus {
     display: none;
 }
 
-[data-lang="da"] {
+/* Default / Danish active */
+html:not([lang="en"]) [data-lang="da"] {
     display: block;
 }
 
-/* Specific exceptions for inline elements */
-span[data-lang="da"],
-a[data-lang="da"] {
+html:not([lang="en"]) span[data-lang="da"],
+html:not([lang="en"]) a[data-lang="da"] {
     display: inline;
 }
 
-span[data-lang],
-a[data-lang] {
-    display: none;
-}
-
-/* Handling JS toggling */
+/* English active */
 html[lang="en"] [data-lang="en"] {
     display: block;
-}
-
-html[lang="en"] [data-lang="da"] {
-    display: none;
 }
 
 html[lang="en"] span[data-lang="en"],
@@ -836,8 +827,7 @@ html[lang="en"] a[data-lang="en"] {
     display: inline;
 }
 
-html[lang="en"] span[data-lang="da"],
-html[lang="en"] a[data-lang="da"] {
+html[lang="en"] [data-lang="da"] {
     display: none;
 }
 
@@ -981,4 +971,57 @@ html[lang="en"] .comparison-item p[data-lang="en"] {
     .comparison-column {
         padding: 1.5rem;
     }
+}
+
+/* =========================================
+   10. Accordion (Philosophy Page)
+   ========================================= */
+.phil-item {
+    transition: all 0.3s ease;
+}
+
+.phil-item:hover {
+    border-color: rgba(101, 196, 52, 0.3) !important;
+}
+
+.phil-item.open {
+    border-color: rgba(101, 196, 52, 0.4) !important;
+}
+
+.phil-item.open .phil-header {
+    background: rgba(101, 196, 52, 0.05) !important;
+}
+
+.phil-item.open .phil-chevron {
+    transform: rotate(180deg);
+    color: var(--primary) !important;
+}
+
+.phil-item.open .phil-body {
+    max-height: 1000px !important;
+    opacity: 1 !important;
+    padding-bottom: 2rem !important;
+}
+
+.phil-body {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================================
+   11. Footer
+   ========================================= */
+footer {
+    background: #1a2328;
+    padding: 3rem 0;
+    text-align: center;
+    border-top: 1px solid rgba(101, 196, 52, 0.2);
+}
+
+footer p {
+    color: var(--white);
+    opacity: 0.7;
+    font-size: 0.9rem;
 }
