@@ -654,6 +654,7 @@
         .hero-preview {
             animation: float 6s ease-in-out infinite;
         }
+
         /* Powered by LEANAI Badge */
         .powered-by-badge {
             position: fixed;
@@ -697,6 +698,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-family: 'Inter', sans-serif;
+            filter: drop-shadow(0 0 0.5px rgba(101, 196, 52, 0.3));
         }
 
         @media (max-width: 768px) {
@@ -705,8 +707,8 @@
                 right: 12px;
                 padding: 4px 10px;
             }
+
             .powered-by-badge span:first-child {
                 display: none;
             }
         }
-
