@@ -208,3 +208,15 @@ model LoginAudit {
   @@index([createdAt])
   @@map("login_audits")
 }
+
+model Lead {
+  id               String    @id @default(uuid())
+  name             String
+  email            String
+  phone            String?
+  selectedDocuments Json     @map("selected_documents")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  @@index([email])
+  @@map("leads")
+}

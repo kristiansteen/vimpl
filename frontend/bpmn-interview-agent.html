@@ -765,6 +765,129 @@
         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
       }
     }
+
+    /* Interview Guide Panel */
+    .guide-panel {
+      border-bottom: 1px solid var(--border);
+      background: rgba(101, 196, 52, 0.04);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .guide-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 18px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .guide-header:hover {
+      background: rgba(101, 196, 52, 0.06);
+    }
+
+    .guide-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .guide-header-left .guide-icon {
+      font-size: 14px;
+    }
+
+    .guide-toggle {
+      font-size: 11px;
+      color: var(--text-muted);
+      transition: transform 0.25s;
+    }
+
+    .guide-toggle.open {
+      transform: rotate(180deg);
+    }
+
+    .guide-body {
+      padding: 0 18px 14px 18px;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .guide-body.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .guide-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .guide-step {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .guide-step-num {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .guide-step-content {
+      flex: 1;
+    }
+
+    .guide-step-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .guide-step-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .guide-example {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-family: var(--font-mono);
+    }
+
+    .guide-example strong {
+      color: var(--accent);
+      font-family: var(--font-sans, inherit);
+    }
   </style>
 </head>
 
@@ -792,6 +915,118 @@
         <span class="panel-label">Interview Transcript</span>
         <div class="recording-indicator">
           <div class="rec-dot" id="rec-dot"></div><span id="rec-status">Idle</span>
+        </div>
+      </div>
+      <!-- Interview Guide -->
+      <div class="guide-panel" id="guide-panel">
+        <div class="guide-header" onclick="toggleGuide()" title="Toggle interview guide">
+          <div class="guide-header-left">
+            <span class="guide-icon">🎯</span>
+            Interview Guide
+            <span style="font-size:10px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">—
+              answer these to get a better diagram</span>
+          </div>
+          <span class="guide-toggle open" id="guide-toggle">▲</span>
+        </div>
+        <div class="guide-body open" id="guide-body">
+          <div class="guide-steps">
+
+            <div class="guide-step">
+              <div class="guide-step-num">1</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Who are you &amp; what's the process?</div>
+                <div class="guide-step-hint">
+                  &ldquo;My name is [Name], I am a <strong>[Job Title]</strong>. I will describe the <strong>[Process
+                    Name]</strong> process.&rdquo;
+                  <br><em>Why: your job title sets the first swimlane; the process name becomes the diagram title.</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">2</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">What triggers the process?</div>
+                <div class="guide-step-hint">
+                  &ldquo;The process starts when <strong>[a customer submits / an invoice arrives / a request is
+                    made]</strong>...&rdquo;
+                  <br><em>Why: this creates the start event in the BPMN.</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">3</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Who does what — step by step?</div>
+                <div class="guide-step-hint">
+                  Use the pattern: <strong>&ldquo;The [Role] [verb] the [object].&rdquo;</strong><br>
+                  E.g. &ldquo;The Procurement Manager reviews the quote. The Finance Controller approves the
+                  budget.&rdquo;
+                  <br><em>Why: each sentence with a role + verb + object becomes a task in its swimlane.</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">4</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Where are the decisions?</div>
+                <div class="guide-step-hint">
+                  &ldquo;<strong>If</strong> the amount is above €10,000, the CFO must approve. <strong>If not</strong>,
+                  the manager approves directly.&rdquo;
+                  <br>&ldquo;<strong>When</strong> the application is incomplete, it is sent back for revision.&rdquo;
+                  <br><em>Why: if/when/otherwise triggers the creation of gateways (&amp; branches).</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">5</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">What can go wrong?</div>
+                <div class="guide-step-hint">
+                  &ldquo;In case of rejection, the request is returned to the requester.&rdquo;<br>
+                  &ldquo;If the vendor does not respond within 3 days, the buyer escalates.&rdquo;
+                  <br><em>Why: exceptions and errors create error-boundary events and alternative flow paths.</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">6</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Which other teams or systems are involved?</div>
+                <div class="guide-step-hint">
+                  &ldquo;The ERP system generates a purchase order. The Warehouse Manager confirms receipt.&rdquo;
+                  <br><em>Why: additional roles become new swimlanes, systems become pools.</em>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-num">7</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">How does the process end?</div>
+                <div class="guide-step-hint">
+                  &ldquo;The process is complete when <strong>[the order is shipped / the contract is signed / the
+                    report is published]</strong>.&rdquo;
+                  <br><em>Why: this creates the end event.</em>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="guide-example">
+            <strong>Full example:</strong><br>
+            &ldquo;My name is Kristian, I&rsquo;m a Procurement Manager. I&rsquo;m describing our Purchase Order
+            process.
+            It starts when a Buyer submits a purchase request. I review it &mdash; if it&rsquo;s over &euro;10k, the CFO
+            approves it;
+            otherwise I approve it directly. The Finance Controller then creates a PO in the ERP system.
+            If the vendor doesn&rsquo;t confirm within 3 days, the Buyer escalates. Once goods arrive,
+            the Warehouse Manager confirms receipt and the process is complete.&rdquo;
+          </div>
         </div>
       </div>
       <div class="transcript-body">
@@ -1683,6 +1918,20 @@ Click 'Demo' to see it in action, or 'Role Catalog' to browse all roles." oninpu
     // Modal overlay close
     document.getElementById('xml-modal').addEventListener('click', function (e) { if (e.target === e.currentTarget) closeXmlModal(); });
     document.getElementById('catalog-modal').addEventListener('click', function (e) { if (e.target === e.currentTarget) closeCatalogModal(); });
+
+    // ── Interview Guide Toggle ──
+    function toggleGuide() {
+      var body = document.getElementById('guide-body');
+      var toggle = document.getElementById('guide-toggle');
+      var isOpen = body.classList.contains('open');
+      if (isOpen) {
+        body.classList.remove('open');
+        toggle.classList.remove('open');
+      } else {
+        body.classList.add('open');
+        toggle.classList.add('open');
+      }
+    }
 
     // ── INIT ──
     window.addEventListener('DOMContentLoaded', function () { initViewer(); initResize(); });

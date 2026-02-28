@@ -37,6 +37,7 @@ interface Config {
     pass: string;
     from: string;
   };
+  resendApiKey: string;
 }
 
 const config: Config = {
@@ -83,6 +84,7 @@ const config: Config = {
     pass: process.env.SMTP_PASSWORD || '',
     from: process.env.SMTP_FROM || 'hello@vimpl.com',
   },
+  resendApiKey: process.env.RESEND_API_KEY || '',
 };
 
 // Validate required environment variables

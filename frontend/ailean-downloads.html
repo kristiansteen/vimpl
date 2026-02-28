@@ -213,12 +213,33 @@
             submitBtn.innerHTML = '<span class="spinner"></span> ...';
             hideMessages();
 
-            // Simulate lead recording
-            console.log('Lead Collected:', { name, email, phone, documents: selectedFilenames });
+            // Get API Base URL
+            const API_BASE_URL = window.location.origin.includes('localhost')
+                ? 'http://localhost:3001/api/v1'
+                : '/api/v1';
 
-            setTimeout(() => {
-                const successDa = 'Tak for din interesse! Dine downloads starter nu.';
-                const successEn = 'Thank you for your interest! Your downloads are starting now.';
+            try {
+                const response = await fetch(`${API_BASE_URL}/leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone,
+                        selectedDocuments: selectedFilenames
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to submit request');
+                }
+
+                // Show success
+                const successDa = 'Tak for din interesse! Dine downloads starter nu, og vi har sendt dig en velkomstmail.';
+                const successEn = 'Thank you for your interest! Your downloads are starting now, and we have sent you a welcome email.';
                 showSuccess(currentLang === 'da' ? successDa : successEn);
 
                 document.getElementById('downloadForm').style.display = 'none';
@@ -232,14 +253,21 @@
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
-                    }, index * 800); // Stagger downloads to prevent browser blocking
+                    }, index * 800);
                 });
 
-                // Show manual links as fallback
+                // Show manual links
                 showDownloadLinks(selectedFilenames);
 
+            } catch (error) {
+                console.error('Lead capture error:', error);
+                const errorDa = 'Der opstod en fejl. Prøv venligst igen senere.';
+                const errorEn = 'An error occurred. Please try again later.';
+                showError(currentLang === 'da' ? errorDa : errorEn);
+            } finally {
                 submitBtn.disabled = false;
-            }, 1000);
+                submitBtn.innerHTML = currentLang === 'da' ? 'Hent' : 'Download';
+            }
         });
 
         function showDownloadLinks(filenames) {
