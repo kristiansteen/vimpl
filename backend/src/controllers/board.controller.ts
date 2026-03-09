@@ -1,5 +1,7 @@
 import { Response } from 'express';
 import boardService from '../services/board.service';
+import * as sectionService from '../services/section.service';
+import * as postitService from '../services/postit.service';
 import { AuthRequest } from '../middleware/auth.middleware';
 import logger from '../utils/logger';
 
@@ -222,11 +224,7 @@ class BoardController {
       const { boardId } = req.params;
       const sectionData = req.body;
 
-      const section = await boardService.createSection(
-        boardId,
-        req.user.userId,
-        sectionData
-      );
+      const section = await sectionService.createSection(boardId, req.user.userId, sectionData);
 
       res.status(201).json({
         message: 'Section created successfully',
@@ -264,7 +262,7 @@ class BoardController {
       const { id } = req.params;
       const updateData = req.body;
 
-      const section = await boardService.updateSection(id, req.user.userId, updateData);
+      const section = await sectionService.updateSection(id, req.user.userId, updateData);
 
       res.json({
         message: 'Section updated successfully',
@@ -301,7 +299,7 @@ class BoardController {
 
       const { id } = req.params;
 
-      await boardService.deleteSection(id, req.user.userId);
+      await sectionService.deleteSection(id, req.user.userId);
 
       res.json({ message: 'Section deleted successfully' });
     } catch (error: any) {
@@ -336,11 +334,7 @@ class BoardController {
       const { boardId } = req.params;
       const postitData = { ...req.body, boardId };
 
-      const postit = await boardService.createPostit(
-        boardId,
-        req.user.userId,
-        postitData
-      );
+      const postit = await postitService.createPostit(boardId, req.user.userId, postitData);
 
       res.status(201).json({
         message: 'Post-it created successfully',
@@ -378,7 +372,7 @@ class BoardController {
       const { id } = req.params;
       const updateData = req.body;
 
-      const postit = await boardService.updatePostit(id, req.user.userId, updateData);
+      const postit = await postitService.updatePostit(id, req.user.userId, updateData);
 
       res.json({
         message: 'Post-it updated successfully',
@@ -415,7 +409,7 @@ class BoardController {
 
       const { id } = req.params;
 
-      await boardService.deletePostit(id, req.user.userId);
+      await postitService.deletePostit(id, req.user.userId);
 
       res.json({ message: 'Post-it deleted successfully' });
     } catch (error: any) {

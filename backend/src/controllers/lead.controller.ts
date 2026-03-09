@@ -30,7 +30,7 @@ class LeadController {
         }
     }
 
-    async getLeads(req: Request, res: Response) {
+    async getLeads(_req: Request, res: Response) {
         try {
             const leads = await leadService.getAllLeads();
             return res.status(200).json(leads);

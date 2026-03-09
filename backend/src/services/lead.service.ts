@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import emailService from './email.service';
+import { sendLeadWelcomeEmail } from './email.service';
 import logger from '../utils/logger';
 
 const prisma = new PrismaClient();
@@ -20,7 +20,7 @@ class LeadService {
             logger.info(`Lead created: ${lead.email}`);
 
             // 2. Trigger welcome email with attachments
-            const emailSent = await emailService.sendLeadWelcomeEmail(
+            const emailSent = await sendLeadWelcomeEmail(
                 data.email,
                 data.name,
                 data.selectedDocuments

@@ -103,8 +103,50 @@ const options: swaggerJsdoc.Options = {
                     },
                 },
             },
+            responses: {
+                Unauthorized: {
+                    description: 'Authentication required',
+                    content: {
+                        'application/json': {
+                            schema: { '$ref': '#/components/schemas/Error' },
+                        },
+                    },
+                },
+                Forbidden: {
+                    description: 'Access denied',
+                    content: {
+                        'application/json': {
+                            schema: { '$ref': '#/components/schemas/Error' },
+                        },
+                    },
+                },
+                NotFound: {
+                    description: 'Resource not found',
+                    content: {
+                        'application/json': {
+                            schema: { '$ref': '#/components/schemas/Error' },
+                        },
+                    },
+                },
+                BadRequest: {
+                    description: 'Invalid request data',
+                    content: {
+                        'application/json': {
+                            schema: { '$ref': '#/components/schemas/Error' },
+                        },
+                    },
+                },
+            },
         },
         security: [{ bearerAuth: [] }],
+        tags: [
+            { name: 'Auth', description: 'Authentication and user management' },
+            { name: 'Boards', description: 'Board CRUD operations' },
+            { name: 'Sections', description: 'Board section management' },
+            { name: 'Post-its', description: 'Post-it note management' },
+            { name: 'Event Log', description: 'Board activity history' },
+            { name: 'Leads', description: 'Contact / interest form submissions' },
+        ],
     },
     apis: ['./src/routes/*.ts'],
 };

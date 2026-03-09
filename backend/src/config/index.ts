@@ -30,13 +30,6 @@ interface Config {
   session: {
     secret: string;
   };
-  email: {
-    host: string;
-    port: number;
-    user: string;
-    pass: string;
-    from: string;
-  };
   resendApiKey: string;
 }
 
@@ -53,7 +46,7 @@ const config: Config = {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID || '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'https://vimpl.onrender.com/api/v1/auth/google/callback',
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001/api/v1/auth/google/callback',
   },
   frontend: {
     url: (process.env.FRONTEND_URL || 'http://localhost:5173')
@@ -76,13 +69,6 @@ const config: Config = {
   },
   session: {
     secret: process.env.SESSION_SECRET || 'your-session-secret',
-  },
-  email: {
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
-    user: process.env.SMTP_USER || '',
-    pass: process.env.SMTP_PASSWORD || '',
-    from: process.env.SMTP_FROM || 'hello@vimpl.com',
   },
   resendApiKey: process.env.RESEND_API_KEY || '',
 };

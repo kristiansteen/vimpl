@@ -5,11 +5,10 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
-
+import swaggerSpec from './config/swagger';
 import config from './config';
 import logger from './utils/logger';
 import prisma from './config/database';
-import swaggerSpec from './config/swagger';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -106,43 +105,16 @@ app.get('/health', async (_req: Request, res: Response) => {
   }
 });
 
-// Root route - Welcome message
+// Root route
 app.get('/', (_req: Request, res: Response) => {
-  res.json({
-    message: 'vimpl API is running',
-    version: '1.0.0',
-    documentation: '/docs',
-    health: '/health'
-  });
+  res.json({ message: 'vimpl API is running', version: '1.0.0', health: '/health' });
 });
 
-// Swagger API Documentation (vimpl branded)
-const swaggerCss = `
-  .swagger-ui .topbar { background: linear-gradient(135deg, #3d7a1f 0%, #65c434 100%); }
-  .swagger-ui .topbar .download-url-wrapper .select-label select { border-color: #65c434; }
-  .swagger-ui .info .title { color: #3d7a1f; }
-  .swagger-ui .btn.authorize { color: #65c434; border-color: #65c434; }
-  .swagger-ui .btn.authorize svg { fill: #65c434; }
-  .swagger-ui .opblock.opblock-get .opblock-summary-method { background: #65c434; }
-  .swagger-ui .opblock.opblock-post .opblock-summary-method { background: #3d7a1f; }
-  .swagger-ui .opblock.opblock-put .opblock-summary-method { background: #0ea5e9; }
-  .swagger-ui .opblock.opblock-delete .opblock-summary-method { background: #ef4444; }
-  .swagger-ui .scheme-container { background: #f8faf6; border-bottom: 2px solid #a3e085; }
-`;
-
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: swaggerCss,
-  customSiteTitle: 'vimpl API Documentation',
-  customfavIcon: '',
-  swaggerOptions: {
-    persistAuthorization: true,
-  },
-}));
-
-// Serve raw OpenAPI spec as JSON
-app.get('/docs/spec.json', (_req: Request, res: Response) => {
+// API Documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api/docs.json', (_req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  res.json(swaggerSpec);
 });
 
 // API Routes
@@ -209,6 +181,9 @@ async function startServer() {
   }
 }
 
-startServer();
+// Only bind to a port when running locally - Vercel handles this in serverless
+if (!process.env.VERCEL) {
+  startServer();
+}
 
 export default app;

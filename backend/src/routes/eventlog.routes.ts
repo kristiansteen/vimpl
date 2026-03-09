@@ -8,9 +8,8 @@ const router = Router({ mergeParams: true });
  * @swagger
  * /boards/{boardId}/eventlog:
  *   get:
- *     summary: Get event log for a board
- *     description: Returns paginated event log entries for a specific board. Supports filtering by event type and date range.
- *     tags: [EventLog]
+ *     summary: Get the event log for a board
+ *     tags: [Event Log]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -20,31 +19,12 @@ const router = Router({ mergeParams: true });
  *         schema:
  *           type: string
  *           format: uuid
- *         description: The board ID
- *       - in: query
- *         name: eventType
- *         schema:
- *           type: string
- *         description: Filter by event type (e.g. postit_created, section_updated)
- *       - in: query
- *         name: from
- *         schema:
- *           type: string
- *           format: date-time
- *         description: Start date (ISO 8601)
- *       - in: query
- *         name: to
- *         schema:
- *           type: string
- *           format: date-time
- *         description: End date (ISO 8601)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 50
- *           maximum: 200
- *         description: Number of events to return (max 200)
+ *         description: Maximum number of events to return
  *       - in: query
  *         name: offset
  *         schema:
@@ -53,31 +33,17 @@ const router = Router({ mergeParams: true });
  *         description: Number of events to skip
  *     responses:
  *       200:
- *         description: Event log entries
+ *         description: List of events for the board
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 events:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/EventLog'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: integer
- *                     limit:
- *                       type: integer
- *                     offset:
- *                       type: integer
- *                     hasMore:
- *                       type: boolean
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/EventLog'
  *       401:
- *         description: Unauthorized
- *       404:
- *         description: Board not found or access denied
+ *         $ref: '#/components/responses/Unauthorized'
+ *       403:
+ *         $ref: '#/components/responses/Forbidden'
  */
 router.get('/', authenticate, eventLogController.getEventLog);
 
