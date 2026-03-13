@@ -57,8 +57,7 @@ const config: Config = {
       ...(process.env.FRONTEND_URL?.split(',').map(origin => origin.trim().replace(/\/+$/, '')).filter(Boolean) || []),
       ...(process.env.ALLOWED_ORIGINS?.split(',').map(origin => origin.trim().replace(/\/+$/, '')).filter(Boolean) || []),
       'http://localhost:5173',
-      'https://vimpl-sl96.vercel.app',
-      'https://vimpl.vercel.app',
+      'https://frontend-puce-ten-18.vercel.app',
       'https://vimpl.com',
       'https://www.vimpl.com'
     ],
