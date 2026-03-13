@@ -149,6 +149,348 @@ class BoardService {
         logger.info(`Board deleted: ${boardId} by user ${userId}`);
     }
 
+    async importProjectPlan(
+        userId: string,
+        plan: {
+            plan_name: string;
+            process_name?: string;
+            duration_weeks: number;
+            tracks: Array<{ id: string; name: string }>;
+            tasks: Array<{
+                id: string;
+                title: string;
+                track_id: string;
+                week_start: number;
+                week_end: number;
+                owner?: string;
+                improvement_id?: string;
+            }>;
+            risks?: Array<{
+                id: string;
+                title: string;
+                description?: string;
+                probability: number;
+                consequence: number;
+                mitigation?: string;
+                task_id?: string;
+            }>;
+            improvements?: Array<{
+                id: string;
+                title: string;
+                description?: string;
+                benefit?: string;
+                effort_score: number;
+                impact_score: number;
+                category?: string;
+            }>;
+        }
+    ): Promise<{ boardId: string; boardUrl: string; sectionId: string; tasksCreated: number }> {
+        const subscriptionService = (await import('./subscription.service')).default;
+        const { allowed, reason } = await subscriptionService.canCreateBoard(userId);
+        if (!allowed) throw new Error(reason || 'Cannot create board');
+
+        const title = plan.plan_name || plan.process_name || 'Project Plan';
+        const slug = await generateUniqueSlug(title);
+        const TASK_COLOURS = ['yellow', 'blue', 'green', 'pink', 'orange'] as const;
+        const trackIndex: Record<string, number> = {};
+        (plan.tracks || []).forEach((t, i) => { trackIndex[t.id] = i; });
+        const today = new Date().toISOString().split('T')[0];
+        const risks = plan.risks || [];
+        const improvements = plan.improvements || [];
+        const trackNames = (plan.tracks || []).map(t => t.name);
+
+        // Stable short IDs for gridstack items (gs-id)
+        const weekplanGsId = `weekplan_${Math.random().toString(36).slice(2, 9)}`;
+        const matrixGsId = `matrix_${Math.random().toString(36).slice(2, 9)}`;
+        const ideasGsId = `ideas_${Math.random().toString(36).slice(2, 9)}`;
+
+        // ── Build gridData ────────────────────────────────────────────────────
+        const e = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        // Weekplan section HTML
+        const tracksHtml = trackNames.map(t =>
+            `<div class="track-item"><input type="text" value="${e(t)}" /></div>`
+        ).join('');
+        const weeksHtml = Array.from({ length: plan.duration_weeks }, (_, i) => {
+            const cells = trackNames.map(() => `<div class="week-cell postit-dropzone"></div>`).join('');
+            return `<div class="week-column" data-week-index="${i}"><div class="week-header">Week ${i + 1}</div>${cells}</div>`;
+        }).join('');
+        const weekplanHtml = `
+            <div class="section-header">
+                <input type="text" class="section-title" value="${e(title)}" />
+                <div class="section-controls">
+                    <button class="section-btn add-week-btn" title="Add Week"><i class="fas fa-plus"></i></button>
+                    <button class="section-btn add-track-btn" title="Add Track"><i class="fas fa-layer-group"></i></button>
+                    <button class="section-btn calendar-btn" title="Calendar Settings"><i class="fas fa-calendar-alt"></i></button>
+                    <button class="section-btn lock-btn" title="Lock Section"><i class="fas fa-unlock"></i></button>
+                    <button class="section-btn delete-section-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="section-content" style="padding: 0; display: flex; flex-direction: column;">
+                <div class="week-planner-wrapper">
+                    <div class="week-planner-settings">
+                        <label>Start Date:</label>
+                        <input type="date" class="week-start-date" value="${today}" />
+                    </div>
+                    <div class="week-planner">
+                        <div class="track-column">
+                            <div class="track-header">Track</div>
+                            ${tracksHtml}
+                        </div>
+                        <div class="weeks-container">${weeksHtml}</div>
+                    </div>
+                </div>
+            </div>`;
+
+        // Matrix section HTML (only added if risks exist)
+        const matrixHtml = `
+            <div class="section-header">
+                <input type="text" class="section-title" value="Risk Matrix" />
+                <div class="section-controls">
+                    <button class="section-btn lock-btn" title="Lock Section"><i class="fas fa-unlock"></i></button>
+                    <button class="section-btn delete-section-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="section-content matrix-section" data-matrix-id="${matrixGsId}" data-x-label="Probability" data-y-label="Consequence">
+                <div class="matrix-container">
+                    <div class="matrix-y-label">
+                        <input type="text" value="Consequence →" class="y-axis-label" />
+                    </div>
+                    <div class="matrix-grid postit-dropzone matrix-dropzone" data-matrix-id="${matrixGsId}">
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                    </div>
+                    <div class="matrix-x-label">
+                        <input type="text" value="Probability →" class="x-axis-label" />
+                    </div>
+                </div>
+            </div>`;
+
+        // Ideas matrix HTML (only added if improvements exist)
+        const ideasMatrixHtml = `
+            <div class="section-header">
+                <input type="text" class="section-title" value="Ideas Matrix" />
+                <div class="section-controls">
+                    <button class="section-btn lock-btn" title="Lock Section"><i class="fas fa-unlock"></i></button>
+                    <button class="section-btn delete-section-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="section-content matrix-section" data-matrix-id="${ideasGsId}" data-x-label="Effort" data-y-label="Impact">
+                <div class="matrix-container">
+                    <div class="matrix-y-label">
+                        <input type="text" value="Impact →" class="y-axis-label" />
+                    </div>
+                    <div class="matrix-grid postit-dropzone matrix-dropzone" data-matrix-id="${ideasGsId}">
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                        <div class="matrix-quadrant postit-dropzone"></div>
+                    </div>
+                    <div class="matrix-x-label">
+                        <input type="text" value="Effort →" class="x-axis-label" />
+                    </div>
+                </div>
+            </div>`;
+
+        // Grid layout
+        const gridItems: object[] = [
+            { x: 0, y: 0, w: 8, h: 5, id: weekplanGsId, content: weekplanHtml },
+        ];
+        let matrixX = 0;
+        if (risks.length > 0) {
+            gridItems.push({ x: 0, y: 5, w: 4, h: 4, id: matrixGsId, content: matrixHtml });
+            matrixX = 4;
+        }
+        if (improvements.length > 0) {
+            gridItems.push({ x: matrixX, y: 5, w: 4, h: 4, id: ideasGsId, content: ideasMatrixHtml });
+        }
+
+        // Postit state for all tasks
+        const postitState: Record<string, object> = {};
+        for (const task of (plan.tasks || [])) {
+            const colourIdx = trackIndex[task.track_id] ?? 0;
+            const pid = `postit_${Math.random().toString(36).slice(2, 9)}`;
+            postitState[pid] = {
+                id: pid,
+                color: TASK_COLOURS[colourIdx % TASK_COLOURS.length],
+                x: 10, y: 10,
+                content: `${task.title}\nWk ${task.week_start}–${task.week_end}`,
+                owner: task.owner || '',
+                status: 'todo',
+                section: weekplanGsId,
+                isMatrix: false,
+                isWeekPlan: true,
+                weekIndex: (task.week_start ?? 1) - 1,
+                trackIndex: trackIndex[task.track_id] ?? 0,
+                xValue: 50, yValue: 50,
+                mitigation: '',
+                rotation: 0,
+            };
+        }
+
+        // Postit state for risks (colour by severity)
+        for (const risk of risks) {
+            const score = (risk.probability ?? 50) * (risk.consequence ?? 50);
+            const riskColour = score >= 5000 ? 'pink' : score >= 2000 ? 'orange' : 'yellow';
+            const pid = `postit_${Math.random().toString(36).slice(2, 9)}`;
+            postitState[pid] = {
+                id: pid,
+                color: riskColour,
+                x: 0, y: 0,
+                content: `${risk.title}${risk.description ? '\n' + risk.description : ''}`,
+                owner: '',
+                status: 'todo',
+                section: matrixGsId,
+                isMatrix: true,
+                isWeekPlan: false,
+                xValue: risk.probability ?? 50,
+                yValue: risk.consequence ?? 50,
+                mitigation: risk.mitigation || '',
+                rotation: 0,
+            };
+        }
+
+        // Postit state for ideas (colour by category)
+        const IDEA_COLOURS = ['blue', 'green', 'yellow', 'orange', 'pink'] as const;
+        for (const [i, idea] of improvements.entries()) {
+            const pid = `postit_${Math.random().toString(36).slice(2, 9)}`;
+            postitState[pid] = {
+                id: pid,
+                color: IDEA_COLOURS[i % IDEA_COLOURS.length],
+                x: 0, y: 0,
+                content: `${idea.title}${idea.description ? '\n' + idea.description : ''}`,
+                owner: '',
+                status: 'todo',
+                section: ideasGsId,
+                isMatrix: true,
+                isWeekPlan: false,
+                xValue: idea.effort_score ?? 50,
+                yValue: idea.impact_score ?? 50,
+                mitigation: idea.benefit || '',
+                rotation: 0,
+            };
+        }
+
+        const sectionContent: Record<string, object> = {
+            [weekplanGsId]: {
+                title,
+                custom: { type: 'weekplan', tracks: trackNames, weeks: plan.duration_weeks, startDate: today },
+            },
+        };
+        if (risks.length > 0) {
+            sectionContent[matrixGsId] = {
+                title: 'Risk Matrix',
+                xLabel: 'Probability',
+                yLabel: 'Consequence',
+                custom: { type: 'matrix' },
+            };
+        }
+        if (improvements.length > 0) {
+            sectionContent[ideasGsId] = {
+                title: 'Ideas Matrix',
+                xLabel: 'Effort',
+                yLabel: 'Impact',
+                custom: { type: 'matrix' },
+            };
+        }
+
+        const gridData = {
+            grid: gridItems,
+            postits: postitState,
+            sectionContent,
+            eventLog: [],
+            matrixLog: [],
+            lockedSections: [],
+            projectTitle: title,
+            teamMembers: [],
+            version: 2,
+        };
+
+        // ── Persist ───────────────────────────────────────────────────────────
+        const result = await prisma.$transaction(async (tx) => {
+            const board = await tx.board.create({
+                data: { userId, title, slug, gridData: gridData as any, settings: {} },
+            });
+
+            const section = await tx.section.create({
+                data: {
+                    boardId: board.id,
+                    type: 'weekplan',
+                    content: { tracks: plan.tracks, weeks: plan.duration_weeks, startDate: today } as any,
+                },
+            });
+
+            // DB postit records for tasks
+            let tasksCreated = 0;
+            for (const task of (plan.tasks || [])) {
+                const colourIdx = trackIndex[task.track_id] ?? 0;
+                await tx.postit.create({
+                    data: {
+                        boardId: board.id,
+                        sectionId: section.id,
+                        color: TASK_COLOURS[colourIdx % TASK_COLOURS.length],
+                        content: `${task.title}\nWk ${task.week_start}–${task.week_end}`,
+                        owner: task.owner || null,
+                        status: 'todo',
+                    },
+                });
+                tasksCreated++;
+            }
+
+            // DB section + postit records for risks
+            if (risks.length > 0) {
+                const riskSection = await tx.section.create({
+                    data: { boardId: board.id, type: 'matrix', content: {} as any },
+                });
+                for (const risk of risks) {
+                    await tx.postit.create({
+                        data: {
+                            boardId: board.id,
+                            sectionId: riskSection.id,
+                            color: ((risk.probability ?? 50) * (risk.consequence ?? 50)) >= 5000 ? 'pink'
+                                : ((risk.probability ?? 50) * (risk.consequence ?? 50)) >= 2000 ? 'orange' : 'yellow',
+                            content: risk.title,
+                            mitigation: risk.mitigation || null,
+                            riskScore: Math.round((risk.probability ?? 50) * (risk.consequence ?? 50) / 100),
+                            xValue: risk.probability ?? 50,
+                            yValue: risk.consequence ?? 50,
+                            status: 'todo',
+                        },
+                    });
+                }
+            }
+
+            // DB section + postit records for ideas
+            if (improvements.length > 0) {
+                const ideasSection = await tx.section.create({
+                    data: { boardId: board.id, type: 'matrix', content: {} as any },
+                });
+                for (const [i, idea] of improvements.entries()) {
+                    await tx.postit.create({
+                        data: {
+                            boardId: board.id,
+                            sectionId: ideasSection.id,
+                            color: IDEA_COLOURS[i % IDEA_COLOURS.length],
+                            content: idea.title,
+                            mitigation: idea.benefit || null,
+                            xValue: idea.effort_score ?? 50,
+                            yValue: idea.impact_score ?? 50,
+                            status: 'todo',
+                        },
+                    });
+                }
+            }
+
+            return { boardId: board.id, sectionId: section.id, tasksCreated };
+        });
+
+        const boardUrl = `${config.frontend.url}/board.html?id=${result.boardId}`;
+        logger.info(`Project plan imported: board ${result.boardId} with ${result.tasksCreated} tasks by user ${userId}`);
+        return { ...result, boardUrl };
+    }
+
     async shareBoard(boardId: string, currentUserId: string, email: string): Promise<void> {
         const board = await prisma.board.findUnique({ where: { id: boardId }, include: { user: true } });
         if (!board) throw new Error('Board not found');

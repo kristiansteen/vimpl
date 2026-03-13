@@ -430,6 +430,49 @@ class BoardController {
     }
   }
 
+  /**
+   * Import a project plan — creates board, weekplan section, and postits atomically
+   * POST /api/v1/boards/import
+   */
+  async importPlan(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const { plan_name, process_name, duration_weeks, tracks, tasks, risks, improvements } = req.body;
+
+      if (!plan_name && !process_name) {
+        res.status(400).json({ error: 'Validation Error', message: 'plan_name or process_name is required' });
+        return;
+      }
+      if (!Array.isArray(tracks) || tracks.length === 0) {
+        res.status(400).json({ error: 'Validation Error', message: 'tracks must be a non-empty array' });
+        return;
+      }
+      if (!Array.isArray(tasks)) {
+        res.status(400).json({ error: 'Validation Error', message: 'tasks must be an array' });
+        return;
+      }
+
+      const result = await boardService.importProjectPlan(req.user.userId, {
+        plan_name, process_name, duration_weeks: duration_weeks ?? 14, tracks, tasks, risks, improvements,
+      });
+
+      res.status(201).json({
+        message: 'Project plan imported successfully',
+        ...result,
+      });
+    } catch (error: any) {
+      logger.error('Import plan error:', error);
+      res.status(500).json({
+        error: 'Server Error',
+        message: error.message || 'Failed to import project plan',
+      });
+    }
+  }
+
   async shareBoard(req: AuthRequest, res: Response): Promise<void> {
     try {
       if (!req.user) {

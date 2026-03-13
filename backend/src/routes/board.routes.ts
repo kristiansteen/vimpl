@@ -63,6 +63,76 @@ router.post('/', authenticate, boardController.createBoard);
 
 /**
  * @swagger
+ * /boards/import:
+ *   post:
+ *     summary: Import a project plan — creates board, weekplan section, and all tasks atomically
+ *     description: |
+ *       Accepts a `ProjectPlan` object produced by the voice-2-bpmn tool (or any compatible source)
+ *       and creates the following in a single database transaction:
+ *       1. A new Board with the plan name as its title
+ *       2. A `weekplan` Section with tracks, week count, and start date
+ *       3. One Post-it per task, colour-coded by track
+ *
+ *       Returns the board URL so callers can open it directly.
+ *     tags: [Boards]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProjectPlanImportRequest'
+ *           example:
+ *             plan_name: "Invoice Approval Improvement Plan"
+ *             process_name: "Invoice Approval Process"
+ *             duration_weeks: 10
+ *             tracks:
+ *               - id: track_1
+ *                 name: Technology
+ *               - id: track_2
+ *                 name: Process
+ *             tasks:
+ *               - id: task_1
+ *                 title: Automate PO matching
+ *                 track_id: track_1
+ *                 week_start: 1
+ *                 week_end: 3
+ *                 owner: IT Lead
+ *                 improvement_id: imp_1
+ *               - id: task_2
+ *                 title: Update approval policy
+ *                 track_id: track_2
+ *                 week_start: 2
+ *                 week_end: 4
+ *                 owner: Finance Manager
+ *             risks:
+ *               - id: risk_1
+ *                 title: Integration delays
+ *                 probability: 60
+ *                 consequence: 80
+ *     responses:
+ *       201:
+ *         description: Project plan imported. Board, section, and tasks created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProjectPlanImportResult'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *       500:
+ *         description: Server error (e.g. subscription limit reached)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post('/import', authenticate, boardController.importPlan);
+
+/**
+ * @swagger
  * /boards/slug/{slug}:
  *   get:
  *     summary: Get a board by its slug (public or authenticated)

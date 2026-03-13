@@ -97,6 +97,44 @@
             letter-spacing: -1px;
         }
 
+        .header-ailean-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            margin-left: 12px;
+        }
+
+        .header-ailean-badge:hover {
+            background: white;
+            border-color: #a3e085;
+            box-shadow: 0 2px 6px rgba(101, 196, 52, 0.15);
+        }
+
+        .header-ailean-badge span:first-child {
+            font-size: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .header-ailean-badge .lean-logo {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #65c434 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Inter', sans-serif;
+        }
+
         .header-right {
             display: flex;
             align-items: center;
@@ -607,10 +645,6 @@
 </head>
 
 <body>
-    <a href="https://vimpl-sl96.vercel.app/ailean-philosophy" class="powered-by-badge" target="_blank">
-        <span>Powered by</span>
-        <span class="lean-logo">AILEAN</span>
-    </a>
     <!-- Auth Loading Overlay - shown until auth verified -->
     <div id="authLoadingOverlay" class="auth-loading-overlay">
         <div class="auth-spinner"></div>
@@ -621,6 +655,10 @@
     <div id="pageContent" class="page-content">
         <div class="header">
             <div class="logo">vimpl</div>
+            <a href="https://www.ailean.dk" class="header-ailean-badge" target="_blank">
+                <span>Powered by</span>
+                <span class="lean-logo">AILEAN</span>
+            </a>
             <div class="header-right">
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar"></div>

@@ -375,11 +375,17 @@
 </head>
 
 <body>
-    <div class="login-container">
+    <div class="login-container" style="position: relative;">
+        <!-- Close / Cancel -->
+        <a href="index.html" title="Cancel login"
+            style="position: absolute; top: 1rem; right: 1rem; width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.1); border-radius: 50%; color: rgba(0,0,0,0.35); text-decoration: none; font-size: 1.1rem; font-weight: 300; transition: all 0.2s ease; cursor: pointer; z-index: 10;"
+            onmouseover="this.style.background='rgba(0,0,0,0.09)';this.style.color='rgba(0,0,0,0.7)';this.style.borderColor='rgba(0,0,0,0.2)'"
+            onmouseout="this.style.background='rgba(0,0,0,0.04)';this.style.color='rgba(0,0,0,0.35)';this.style.borderColor='rgba(0,0,0,0.1)'">✕</a>
+
         <div class="logo">
             <div class="logo-main">
                 <h1>vimpl</h1>
-                <a href="https://vimpl-sl96.vercel.app/ailean-philosophy" class="powered-by-badge" target="_blank">
+                <a href="https://www.ailean.dk" class="powered-by-badge" target="_blank">
                     <span>Powered by</span>
                     <span class="lean-logo">AILEAN</span>
                 </a>

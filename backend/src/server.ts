@@ -42,12 +42,17 @@ const corsOptions = {
     const allowedOrigins = config.frontend.allowedOrigins.map(o => o.toLowerCase());
     const lowerOrigin = origin.toLowerCase().replace(/\/+$/, '');
 
-    // Check main list, wildcards, or any vercel.app subdomain
+    // Check main list, wildcards, vercel.app subdomains, same-host (Swagger UI),
+    // or any host on Vite's dev ports (5173/5174) for local network access
+    const selfOrigin = `http://localhost:${config.port}`;
+    const isViteDevOrigin = lowerOrigin.endsWith(':5173') || lowerOrigin.endsWith(':5174');
     if (
       allowedOrigins.includes(lowerOrigin) ||
       allowedOrigins.includes('*') ||
       lowerOrigin === config.frontend.url.toLowerCase() ||
-      lowerOrigin.endsWith('.vercel.app')
+      lowerOrigin.endsWith('.vercel.app') ||
+      lowerOrigin === selfOrigin.toLowerCase() ||
+      isViteDevOrigin
     ) {
       callback(null, true);
     } else {

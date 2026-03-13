@@ -271,16 +271,42 @@ async function loadBoardState() {
                 }
             }
 
+            const matrixPostitIds = [];
+
             Object.values(AppState.postits).forEach(postitData => {
                 const section = document.querySelector(`[gs-id="${postitData.section}"]`);
-                if (section) {
-                    const dropzone = section.querySelector('.postit-dropzone');
-                    if (dropzone) restorePostit(postitData, dropzone);
-                    else console.warn('Dropzone not found in section:', postitData.section);
-                } else {
+                if (!section) {
                     console.error('Orphaned Post-it (Section missing):', postitData.id, 'Section:', postitData.section);
+                    return;
                 }
+
+                if (postitData.isWeekPlan && postitData.weekIndex !== undefined) {
+                    const weekCol = section.querySelector(`.week-column[data-week-index="${postitData.weekIndex}"]`);
+                    const cells = weekCol?.querySelectorAll('.week-cell');
+                    const targetCell = cells?.[postitData.trackIndex ?? 0];
+                    if (targetCell) { restorePostit(postitData, targetCell); return; }
+                }
+
+                if (postitData.isMatrix) {
+                    const matrixDropzone = section.querySelector('.matrix-dropzone');
+                    if (matrixDropzone) {
+                        restorePostit(postitData, matrixDropzone);
+                        matrixPostitIds.push(postitData.id);
+                        return;
+                    }
+                }
+
+                const dropzone = section.querySelector('.postit-dropzone');
+                if (dropzone) restorePostit(postitData, dropzone);
+                else console.warn('Dropzone not found in section:', postitData.section);
             });
+
+            // Reposition all matrix postits after GridStack has fully rendered
+            if (matrixPostitIds.length > 0) {
+                setTimeout(() => {
+                    matrixPostitIds.forEach(id => updatePostitPositionInMatrix(id));
+                }, 500);
+            }
 
             AppState.lockedSections.forEach(id => updateSectionLockUI(id, true));
             initializeDropzones();

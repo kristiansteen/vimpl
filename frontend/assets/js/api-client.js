@@ -4,7 +4,7 @@
  * Set BACKEND_URL to your deployed backend URL (Railway, etc.)
  */
 
-const BACKEND_URL = 'https://vimpl-sl96.vercel.app';
+const BACKEND_URL = 'https://backend-eight-rho-46.vercel.app';
 
 class ApiClient {
     constructor(baseURL) {
