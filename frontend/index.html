@@ -23,6 +23,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/index.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client-ts/2.2.0/oidc-client-ts.min.js"></script>
+  <!-- Swagger UI -->
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    #swagger-ui .swagger-ui .topbar { display: none; }
+    #swagger-ui .swagger-ui { font-family: 'Inter', sans-serif; }
+    #swagger-ui .swagger-ui .info .title { font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 700; }
+    #swagger-ui .swagger-ui .opblock-tag { font-family: 'Inter', sans-serif; font-weight: 600; }
+  </style>
 </head>
 
 <body>
@@ -160,219 +168,19 @@
 
 
   <!-- API Reference Section -->
-  <section id="api" style="padding: 100px 24px; background: var(--gray-100);">
+  <section id="api" style="padding: 100px 24px 60px; background: var(--gray-100);">
     <div style="max-width: 1200px; margin: 0 auto;">
 
       <!-- Header -->
       <div class="section-header">
         <h2>API Reference</h2>
-        <p>Full REST API for integrating Voice-to-BPMN outputs directly into vimpl boards, or building your own tooling on top.</p>
+        <p>Full REST API for integrating Voice-to-BPMN outputs directly into vimpl boards, or building your own tooling on top.
+          Use <strong>Authorize</strong> to add your token, then <strong>Try it out</strong> on any endpoint.</p>
       </div>
 
-      <!-- Base URL + Auth cards -->
-      <div style="max-width: 860px; margin: 0 auto 2.5rem auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-        <div style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 1.25rem 1.5rem;">
-          <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Base URL</div>
-          <code style="font-family: monospace; font-size: 0.85rem; color: var(--dark);">https://backend-eight-rho-46.vercel.app/api/v1</code>
-          <div style="color: var(--gray-400); font-size: 0.78rem; margin-top: 0.5rem;">Configured via <code style="color: var(--primary);">BACKEND_URL</code> in frontend</div>
-        </div>
-        <div style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 1.25rem 1.5rem;">
-          <div style="color: var(--secondary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Authentication</div>
-          <code style="font-family: monospace; font-size: 0.85rem; color: var(--dark);">Authorization: Bearer &lt;token&gt;</code>
-          <div style="color: var(--gray-400); font-size: 0.78rem; margin-top: 0.5rem;">Obtain via <code style="color: var(--secondary);">POST /auth/login</code></div>
-        </div>
-      </div>
+      <!-- Swagger UI -->
+      <div id="swagger-ui" style="background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--gray-200, #e5e7eb);"></div>
 
-      <!-- Key integration callout -->
-      <div style="max-width: 860px; margin: 0 auto 2.5rem auto; background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 1.75rem 2rem;">
-        <div style="display: flex; align-items: flex-start; gap: 1rem;">
-          <span style="background: var(--primary); color: white; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; white-space: nowrap; margin-top: 2px;">KEY ENDPOINT</span>
-          <div>
-            <div style="font-family: monospace; font-size: 1rem; color: var(--dark); margin-bottom: 0.4rem;"><span style="color: var(--accent); font-weight: 700;">POST</span> &nbsp;/boards/import</div>
-            <div style="color: var(--gray-600); font-size: 0.9rem; line-height: 1.7;">Imports a full project plan from Voice-to-BPMN in one atomic operation — creates the board, weekplan section, task post-its by track and week, risk matrix, and ideas matrix.</div>
-            <div style="margin-top: 0.75rem; padding: 0.75rem 1rem; background: var(--gray-100); border-radius: 6px; font-family: monospace; font-size: 0.78rem; color: var(--gray-600); line-height: 1.8;">
-              Body: { plan_name, process_name, duration_weeks, tracks[], tasks[], risks[], improvements[] }<br>
-              Returns: { boardId, boardUrl, sectionId, tasksCreated }
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Accordion groups -->
-      <div style="max-width: 860px; margin: 0 auto;">
-
-        <!-- 01 Auth -->
-        <div class="vimpl-phil-item" onclick="toggleVimplPhil(this)" style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 2rem;">
-            <span style="color: var(--primary); font-size: 1.1rem; font-weight: 900; min-width: 2rem; font-family: monospace;">01</span>
-            <div style="flex: 1;">
-              <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem;">Auth</div>
-              <h3 style="color: var(--dark); font-size: 1rem; font-weight: 600; margin: 0;">Authentication &amp; User Management</h3>
-            </div>
-            <svg class="vimpl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--gray-400); transition: transform 0.35s; flex-shrink: 0;"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="vimpl-phil-body" style="max-height: 0; overflow: hidden; transition: max-height 0.45s ease;">
-            <div style="padding: 0 2rem 1.5rem; border-top: 1px solid var(--gray-200);">
-              <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/auth/register</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Register a new user</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/auth/login</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Log in with email and password</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/auth/logout</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Log out the current user</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/auth/refresh</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Refresh access token</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/auth/me</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Get currently authenticated user</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/auth/google</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Initiate Google OAuth login</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 02 Boards -->
-        <div class="vimpl-phil-item" onclick="toggleVimplPhil(this)" style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 2rem;">
-            <span style="color: var(--primary); font-size: 1.1rem; font-weight: 900; min-width: 2rem; font-family: monospace;">02</span>
-            <div style="flex: 1;">
-              <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem;">Boards</div>
-              <h3 style="color: var(--dark); font-size: 1rem; font-weight: 600; margin: 0;">Board CRUD &amp; Project Plan Import</h3>
-            </div>
-            <svg class="vimpl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--gray-400); transition: transform 0.35s; flex-shrink: 0;"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="vimpl-phil-body" style="max-height: 0; overflow: hidden; transition: max-height 0.45s ease;">
-            <div style="padding: 0 2rem 1.5rem; border-top: 1px solid var(--gray-200);">
-              <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/boards</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Get all boards for the authenticated user</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/boards</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Create a new board</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/import</code><span style="color: var(--primary); font-size: 0.75rem; font-weight: 700; margin-left: auto;">⚡ Key integration endpoint</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/slug/:slug</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Get a board by its slug</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Get a board by ID</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dbeafe; color: #1e40af; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">PUT</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Update a board</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fee2e2; color: #991b1b; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">DEL</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Delete a board</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:id/share</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Share a board with another user by email</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 03 Sections & Post-its -->
-        <div class="vimpl-phil-item" onclick="toggleVimplPhil(this)" style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 2rem;">
-            <span style="color: var(--primary); font-size: 1.1rem; font-weight: 900; min-width: 2rem; font-family: monospace;">03</span>
-            <div style="flex: 1;">
-              <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem;">Sections &amp; Post-its</div>
-              <h3 style="color: var(--dark); font-size: 1rem; font-weight: 600; margin: 0;">Board Content Management</h3>
-            </div>
-            <svg class="vimpl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--gray-400); transition: transform 0.35s; flex-shrink: 0;"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="vimpl-phil-body" style="max-height: 0; overflow: hidden; transition: max-height 0.45s ease;">
-            <div style="padding: 0 2rem 1.5rem; border-top: 1px solid var(--gray-200);">
-              <div style="padding-top: 1rem;">
-                <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;">Sections</div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/sections</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Create a section</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dbeafe; color: #1e40af; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">PUT</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/sections/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Update a section</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fee2e2; color: #991b1b; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">DEL</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/sections/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Delete a section</span></div>
-                </div>
-                <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;">Post-its</div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/postits</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Create a post-it note</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dbeafe; color: #1e40af; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">PUT</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/postits/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Update a post-it note</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fee2e2; color: #991b1b; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">DEL</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/postits/:id</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Delete a post-it note</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 04 Subscription -->
-        <div class="vimpl-phil-item" onclick="toggleVimplPhil(this)" style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 2rem;">
-            <span style="color: var(--primary); font-size: 1.1rem; font-weight: 900; min-width: 2rem; font-family: monospace;">04</span>
-            <div style="flex: 1;">
-              <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem;">Subscription</div>
-              <h3 style="color: var(--dark); font-size: 1rem; font-weight: 600; margin: 0;">Tier Management — Student / Commercial / Enterprise</h3>
-            </div>
-            <svg class="vimpl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--gray-400); transition: transform 0.35s; flex-shrink: 0;"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="vimpl-phil-body" style="max-height: 0; overflow: hidden; transition: max-height 0.45s ease;">
-            <div style="padding: 0 2rem 1.5rem; border-top: 1px solid var(--gray-200);">
-              <div style="display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1rem;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/subscription/tiers</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">List all available subscription tiers</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/subscription/current</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Get the current user's subscription</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/subscription/upgrade/commercial</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Upgrade to Commercial tier</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/subscription/upgrade/enterprise</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Upgrade to Enterprise tier</span></div>
-                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #fef3c7; color: #92400e; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">POST</span><code style="color: var(--dark); font-size: 0.85rem;">/subscription/downgrade/student</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Downgrade to free Student tier</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 05 Portfolio & Event Log -->
-        <div class="vimpl-phil-item" onclick="toggleVimplPhil(this)" style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 2rem;">
-            <span style="color: var(--primary); font-size: 1.1rem; font-weight: 900; min-width: 2rem; font-family: monospace;">05</span>
-            <div style="flex: 1;">
-              <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem;">Portfolio &amp; Event Log</div>
-              <h3 style="color: var(--dark); font-size: 1rem; font-weight: 600; margin: 0;">Cross-Board Analytics &amp; Activity History</h3>
-            </div>
-            <svg class="vimpl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--gray-400); transition: transform 0.35s; flex-shrink: 0;"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="vimpl-phil-body" style="max-height: 0; overflow: hidden; transition: max-height 0.45s ease;">
-            <div style="padding: 0 2rem 1.5rem; border-top: 1px solid var(--gray-200);">
-              <div style="padding-top: 1rem;">
-                <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;">Portfolio</div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/portfolio</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Portfolio dashboard — all boards with stats</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/portfolio/compare</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Compare metrics across all boards</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/portfolio/activity</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Recent activity across all boards</span></div>
-                </div>
-                <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;">Event Log</div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/boards/:boardId/events</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Board activity history</span></div>
-                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.9rem; background: var(--gray-100); border-radius: 8px;"><span style="background: #dcfce7; color: #166534; font-family: monospace; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; min-width: 44px; text-align: center;">GET</span><code style="color: var(--dark); font-size: 0.85rem;">/admin/login-audit</code><span style="color: var(--gray-400); font-size: 0.8rem; margin-left: auto;">Login audit log (admin only)</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 06 Schema -->
-        <div class="vimpl-phil-item" onclick="toggleVimplPhil(this)" style="background: white; border: 1px solid var(--gray-200); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; padding: 1.25rem 2rem;">
-            <span style="color: var(--primary); font-size: 1.1rem; font-weight: 900; min-width: 2rem; font-family: monospace;">06</span>
-            <div style="flex: 1;">
-              <div style="color: var(--primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem;">Schema</div>
-              <h3 style="color: var(--dark); font-size: 1rem; font-weight: 600; margin: 0;">ProjectPlanImportRequest — Full Body Schema</h3>
-            </div>
-            <svg class="vimpl-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--gray-400); transition: transform 0.35s; flex-shrink: 0;"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="vimpl-phil-body" style="max-height: 0; overflow: hidden; transition: max-height 0.45s ease;">
-            <div style="padding: 0 2rem 1.5rem; border-top: 1px solid var(--gray-200);">
-              <pre style="margin-top: 1rem; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px; padding: 1.25rem 1.5rem; overflow-x: auto; font-family: monospace; font-size: 0.78rem; line-height: 1.8; color: var(--dark);">{
-  "plan_name":       "string",
-  "process_name":    "string",
-  "duration_weeks":  14,
-  "tracks": [{ "id": "track_1", "name": "Technology" }],
-  "tasks": [{
-    "id": "task_1",  "title": "string",
-    "track_id": "track_1",
-    "week_start": 1,  "week_end": 3,
-    "owner": "string"
-  }],
-  "risks": [{
-    "id": "risk_1",  "title": "string",
-    "probability": 60,  "consequence": 80
-  }],
-  "improvements": [{
-    "id": "imp_1",  "title": "string",
-    "effort_score": 30,  "impact_score": 85
-  }]
-}</pre>
-              <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 0.82rem; color: var(--gray-600); line-height: 1.7;">
-                Returns <code style="color: var(--secondary);">201</code> with <code style="color: var(--primary);">{ boardId, boardUrl, sectionId, tasksCreated }</code>. The <code style="color: var(--primary);">boardUrl</code> links directly to the new board in vimpl.
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /accordion -->
     </div>
   </section>
 
@@ -444,6 +252,18 @@
       chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
       item.style.borderColor = isOpen ? 'rgba(255,255,255,0.08)' : 'rgba(101,196,52,0.4)';
     }
+  </script>
+  <!-- Swagger UI init -->
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: "https://backend-eight-rho-46.vercel.app/api/docs.json",
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+      layout: "BaseLayout",
+      deepLinking: true,
+      persistAuthorization: true,
+    });
   </script>
   <script src="assets/js/api-client.js"></script>
   <script>
