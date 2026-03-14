@@ -43,6 +43,7 @@ model User {
   boardCollaborations BoardCollaborator[]
   sessionsCreated  Session[]
   loginAudits      LoginAudit[]
+  bpmnDiagrams     BpmnDiagram[]
 
   @@map("users")
 }
@@ -207,6 +208,21 @@ model LoginAudit {
   @@index([email])
   @@index([createdAt])
   @@map("login_audits")
+}
+
+model BpmnDiagram {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  name        String
+  xml         String
+  processName String?  @map("process_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("bpmn_diagrams")
 }
 
 model Lead {
