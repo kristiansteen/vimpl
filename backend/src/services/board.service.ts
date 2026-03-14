@@ -155,6 +155,8 @@ class BoardService {
             plan_name: string;
             process_name?: string;
             duration_weeks: number;
+            overview?: string;
+            scope?: string;
             tracks: Array<{ id: string; name: string }>;
             tasks: Array<{
                 id: string;
@@ -203,9 +205,23 @@ class BoardService {
         const weekplanGsId = `weekplan_${Math.random().toString(36).slice(2, 9)}`;
         const matrixGsId = `matrix_${Math.random().toString(36).slice(2, 9)}`;
         const ideasGsId = `ideas_${Math.random().toString(36).slice(2, 9)}`;
+        const overviewGsId = `overview_${Math.random().toString(36).slice(2, 9)}`;
+        const scopeGsId = `scope_${Math.random().toString(36).slice(2, 9)}`;
 
         // ── Build gridData ────────────────────────────────────────────────────
         const e = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        const buildTextSection = (sectionTitle: string, body: string) => `
+            <div class="section-header">
+                <input type="text" class="section-title" value="${e(sectionTitle)}" />
+                <div class="section-controls">
+                    <button class="section-btn lock-btn" title="Lock Section"><i class="fas fa-unlock"></i></button>
+                    <button class="section-btn delete-section-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="section-content postit-dropzone">
+                <textarea class="text-content">${e(body)}</textarea>
+            </div>`;
 
         // Weekplan section HTML
         const tracksHtml = trackNames.map(t =>
@@ -294,14 +310,27 @@ class BoardService {
                 </div>
             </div>`;
 
-        // Grid layout
+        // Grid layout — overview + scope on left (x=0, w=2), weekplan shifted to x=2
+        const hasOverview = !!(plan.overview?.trim());
+        const hasScope = !!(plan.scope?.trim());
+        const leftColW = (hasOverview || hasScope) ? 2 : 0;
+        const weekplanX = leftColW;
+
         const gridItems: object[] = [
-            { x: 0, y: 0, w: 8, h: 5, id: weekplanGsId, content: weekplanHtml },
+            { x: weekplanX, y: 0, w: 8, h: 5, id: weekplanGsId, content: weekplanHtml },
         ];
-        let matrixX = 0;
+
+        if (hasOverview) {
+            gridItems.push({ x: 0, y: 0, w: 2, h: 3, id: overviewGsId, content: buildTextSection('Overview', plan.overview!) });
+        }
+        if (hasScope) {
+            gridItems.push({ x: 0, y: hasOverview ? 3 : 0, w: 2, h: 2, id: scopeGsId, content: buildTextSection('Scope', plan.scope!) });
+        }
+
+        let matrixX = weekplanX;
         if (risks.length > 0) {
-            gridItems.push({ x: 0, y: 5, w: 4, h: 4, id: matrixGsId, content: matrixHtml });
-            matrixX = 4;
+            gridItems.push({ x: weekplanX, y: 5, w: 4, h: 4, id: matrixGsId, content: matrixHtml });
+            matrixX = weekplanX + 4;
         }
         if (improvements.length > 0) {
             gridItems.push({ x: matrixX, y: 5, w: 4, h: 4, id: ideasGsId, content: ideasMatrixHtml });

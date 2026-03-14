@@ -441,7 +441,7 @@ class BoardController {
         return;
       }
 
-      const { plan_name, process_name, duration_weeks, tracks, tasks, risks, improvements } = req.body;
+      const { plan_name, process_name, duration_weeks, overview, scope, tracks, tasks, risks, improvements } = req.body;
 
       if (!plan_name && !process_name) {
         res.status(400).json({ error: 'Validation Error', message: 'plan_name or process_name is required' });
@@ -457,7 +457,7 @@ class BoardController {
       }
 
       const result = await boardService.importProjectPlan(req.user.userId, {
-        plan_name, process_name, duration_weeks: duration_weeks ?? 14, tracks, tasks, risks, improvements,
+        plan_name, process_name, duration_weeks: duration_weeks ?? 14, overview, scope, tracks, tasks, risks, improvements,
       });
 
       res.status(201).json({
