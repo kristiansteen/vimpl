@@ -69,15 +69,26 @@
         const token = urlParams.get('token');
         const error = urlParams.get('error');
 
+        // Decode returnTo from OAuth state (set in login.html loginWithGoogle)
+        let returnTo = null;
+        try {
+            const stateParam = urlParams.get('state');
+            if (stateParam) {
+                const stateData = JSON.parse(atob(stateParam));
+                returnTo = stateData.returnTo || null;
+            }
+        } catch { /* ignore malformed state */ }
+
         if (error) {
-            // Redirect to login with error
             window.location.href = `login.html?error=${encodeURIComponent(error)}`;
         } else if (token) {
-            // Store token and redirect to dashboard
             localStorage.setItem('accessToken', token);
-            window.location.href = 'dashboard.html';
+            if (returnTo) {
+                window.location.href = `${returnTo}?token=${token}`;
+            } else {
+                window.location.href = 'dashboard.html';
+            }
         } else {
-            // No token or error, redirect to login
             setTimeout(() => {
                 window.location.href = 'login.html';
             }, 2000);

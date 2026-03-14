@@ -454,10 +454,16 @@
     <script src="assets/js/lang.js"></script>
     <script>
         const apiClient = new ApiClient();
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get('returnTo');
 
         // Check if already logged in
         if (apiClient.isAuthenticated()) {
-            window.location.href = 'dashboard.html';
+            if (returnTo) {
+                window.location.href = `${returnTo}?token=${apiClient.getToken()}`;
+            } else {
+                window.location.href = 'dashboard.html';
+            }
         }
 
         // Handle form submission
@@ -481,9 +487,12 @@
                 // Show success message
                 showSuccess('Login successful! Redirecting...');
 
-                // Redirect to dashboard after brief delay
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    if (returnTo) {
+                        window.location.href = `${returnTo}?token=${response.accessToken}`;
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 }, 1000);
 
             } catch (error) {
@@ -510,11 +519,11 @@
             }
         }
 
-        // Google login
+        // Google login — encode returnTo in the OAuth state so callback.html can read it
         function loginWithGoogle() {
-            // Redirect to backend Google OAuth endpoint
-            const baseUrl = apiClient.baseURL.replace('/api/v1', ''); // Get root URL
-            const state = btoa(window.location.origin);
+            const baseUrl = apiClient.baseURL.replace('/api/v1', '');
+            const stateData = JSON.stringify({ origin: window.location.origin, returnTo: returnTo || null });
+            const state = btoa(stateData);
             window.location.href = `${baseUrl}/api/v1/auth/google?state=${state}`;
         }
 
