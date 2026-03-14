@@ -127,6 +127,9 @@
                         <button class="menu-item primary" id="exportBoard">
                             <i class="fas fa-download"></i> Export JSON
                         </button>
+                        <button class="menu-item" id="voiceToBpmn" onclick="openVoiceToBpmn()">
+                            <i class="fas fa-microphone-alt"></i> Voice to BPMN
+                        </button>
                         <div class="menu-divider"></div>
                         <button class="menu-item logout" id="logoutBtn">
                             <i class="fas fa-sign-out-alt"></i> Logout
@@ -369,6 +372,20 @@
     <script src="assets/js/board-postits.js"></script>
     <script src="assets/js/board-grid.js"></script>
     <script src="assets/js/board-init.js"></script>
+    <script>
+        // ── Voice to BPMN launcher ────────────────────────────────────────
+        // Passes the vimpl JWT as a URL hash fragment (not a query param) so
+        // it never reaches any server logs. voice-2-launch reads it on mount,
+        // stores it as the vimpl-saas credential, then cleans the URL.
+        const VOICE_TO_BPMN_URL = 'https://voice-2-launch.vercel.app';
+        const VIMPL_BACKEND_URL = 'https://backend-eight-rho-46.vercel.app';
+
+        function openVoiceToBpmn() {
+            const token = localStorage.getItem('accessToken') || '';
+            const hash = new URLSearchParams({ token, baseUrl: VIMPL_BACKEND_URL }).toString();
+            window.open(`${VOICE_TO_BPMN_URL}/#${hash}`, '_blank', 'noopener');
+        }
+    </script>
 </body>
 
 </html>
