@@ -48,10 +48,11 @@ class AuthController {
       const tokens = authService.generateTokens(user);
 
       // Set refresh token as httpOnly cookie
+      // Use 'none' in production for cross-domain (vimpl.com → backend.vercel.app)
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: config.nodeEnv === 'production',
-        sameSite: 'strict',
+        sameSite: config.nodeEnv === 'production' ? 'none' : 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -96,10 +97,11 @@ class AuthController {
       const { user, tokens } = await authService.login(email, password, ipAddress, userAgent);
 
       // Set refresh token as httpOnly cookie
+      // Use 'none' in production for cross-domain (vimpl.com → backend.vercel.app)
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: config.nodeEnv === 'production',
-        sameSite: 'strict',
+        sameSite: config.nodeEnv === 'production' ? 'none' : 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -123,8 +125,12 @@ class AuthController {
    */
   async logout(_req: Request, res: Response): Promise<void> {
     try {
-      // Clear refresh token cookie
-      res.clearCookie('refreshToken');
+      // Clear refresh token cookie (must match the same options used when setting it)
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: config.nodeEnv === 'production',
+        sameSite: config.nodeEnv === 'production' ? 'none' : 'strict',
+      });
 
       res.json({
         message: 'Logout successful',
@@ -308,7 +314,7 @@ class AuthController {
       res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         secure: config.nodeEnv === 'production',
-        sameSite: 'strict',
+        sameSite: config.nodeEnv === 'production' ? 'none' : 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
