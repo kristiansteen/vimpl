@@ -101,7 +101,12 @@
                 <div id="auth-container"></div>
                 <div class="autosave-indicator" id="autosaveIndicator">
                     <span class="autosave-dot"></span>
-                    <span class="autosave-text">All changes saved</span>
+                    <span class="autosave-text" data-i18n="allChangesSaved">All changes saved</span>
+                </div>
+
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang-switch="en">EN</button>
+                    <button class="lang-btn" data-lang-switch="da">DA</button>
                 </div>
 
                 <div class="settings-menu" id="settingsMenu">
@@ -110,29 +115,29 @@
                     </button>
                     <div class="settings-dropdown" id="settingsDropdown">
                         <a href="dashboard.html" class="menu-item" id="goDashboard">
-                            <i class="fas fa-th-large"></i> Dashboard
+                            <i class="fas fa-th-large"></i> <span data-i18n="dashboard">Dashboard</span>
                         </a>
                         <button class="menu-item" id="newBoard">
-                            <i class="fas fa-file"></i> New Board
+                            <i class="fas fa-file"></i> <span data-i18n="newBoard">New Board</span>
                         </button>
                         <button class="menu-item" id="editLayout" style="display:none;">
-                            <i class="fas fa-pen-to-square"></i> Edit Layout
+                            <i class="fas fa-pen-to-square"></i> <span data-i18n="editLayout">Edit Layout</span>
                         </button>
                         <button class="menu-item" id="toggleGrid">
-                            <i class="fas fa-th"></i> Toggle Grid
+                            <i class="fas fa-th"></i> <span data-i18n="toggleGrid">Toggle Grid</span>
                         </button>
                         <button class="menu-item" id="showBackend">
-                            <i class="fas fa-database"></i> Event Log
+                            <i class="fas fa-database"></i> <span data-i18n="eventLog">Event Log</span>
                         </button>
                         <button class="menu-item primary" id="exportBoard">
-                            <i class="fas fa-download"></i> Export JSON
+                            <i class="fas fa-download"></i> <span data-i18n="exportJson">Export JSON</span>
                         </button>
                         <button class="menu-item" id="voiceToBpmn" onclick="openVoiceToBpmn()">
-                            <i class="fas fa-microphone-alt"></i> Voice to BPMN
+                            <i class="fas fa-microphone-alt"></i> <span data-i18n="voiceToBpmn">Voice to BPMN</span>
                         </button>
                         <div class="menu-divider"></div>
                         <button class="menu-item logout" id="logoutBtn">
-                            <i class="fas fa-sign-out-alt"></i> Logout
+                            <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
                         </button>
                     </div>
                 </div>
@@ -372,6 +377,7 @@
     <script src="assets/js/board-postits.js"></script>
     <script src="assets/js/board-grid.js"></script>
     <script src="assets/js/board-init.js"></script>
+    <script src="assets/js/lang.js"></script>
     <script>
         // ── Voice to BPMN launcher ────────────────────────────────────────
         // Passes the vimpl JWT as a URL hash fragment (not a query param) so

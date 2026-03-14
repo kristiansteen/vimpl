@@ -660,34 +660,38 @@
                 <span class="lean-logo">AILEAN</span>
             </a>
             <div class="header-right">
+                <div class="lang-switcher light">
+                    <button class="lang-btn active" data-lang-switch="en">EN</button>
+                    <button class="lang-btn" data-lang-switch="da">DA</button>
+                </div>
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar"></div>
                     <div class="user-name" id="userName">Loading...</div>
                 </div>
-                <button class="btn btn-logout" onclick="logout()">Log out</button>
+                <button class="btn btn-logout" onclick="logout()" data-i18n="logOut">Log out</button>
             </div>
         </div>
 
         <div class="container">
             <div class="dashboard-header">
-                <h1>My Boards</h1>
-                <button class="btn btn-new-board" onclick="showCreateBoardModal()">
+                <h1 data-i18n="myBoards">My Boards</h1>
+                <button class="btn btn-new-board" onclick="showCreateBoardModal()" data-i18n="newBoardBtn">
                     + New Board
                 </button>
             </div>
 
             <div id="loading" class="loading">
                 <div class="spinner-large"></div>
-                <p style="margin-top: 16px; color: #666;">Loading your boards...</p>
+                <p style="margin-top: 16px; color: #666;" data-i18n="loadingBoards">Loading your boards...</p>
             </div>
 
             <div id="boardsGrid" class="boards-grid" style="display: none;"></div>
 
             <div id="emptyState" class="empty-state" style="display: none;">
                 <div class="empty-state-icon">📋</div>
-                <h2>No boards yet</h2>
-                <p>Create your first board to start planning!</p>
-                <button class="btn btn-new-board" onclick="showCreateBoardModal()">
+                <h2 data-i18n="noBoardsYet">No boards yet</h2>
+                <p data-i18n="createFirstBoard">Create your first board to start planning!</p>
+                <button class="btn btn-new-board" onclick="showCreateBoardModal()" data-i18n="createYourFirst">
                     Create Your First Board
                 </button>
             </div>
@@ -698,22 +702,22 @@
     <div id="createBoardModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Create New Board</h2>
+                <h2 data-i18n="createNewBoard">Create New Board</h2>
             </div>
             <form id="createBoardForm">
                 <div class="form-group">
-                    <label for="boardTitle">Board Title *</label>
-                    <input type="text" id="boardTitle" placeholder="e.g., Q1 Planning" required>
+                    <label for="boardTitle" data-i18n="boardTitle">Board Title *</label>
+                    <input type="text" id="boardTitle" placeholder="e.g., Q1 Planning" required data-i18n-placeholder="boardTitlePh">
                 </div>
                 <div class="form-group">
-                    <label for="boardDescription">Description (optional)</label>
-                    <textarea id="boardDescription" placeholder="What's this board for?"></textarea>
+                    <label for="boardDescription" data-i18n="description">Description (optional)</label>
+                    <textarea id="boardDescription" placeholder="What's this board for?" data-i18n-placeholder="boardDescPh"></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeCreateBoardModal()">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateBoardModal()" data-i18n="cancel">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-new-board" id="createBoardBtn">
+                    <button type="submit" class="btn btn-new-board" id="createBoardBtn" data-i18n="createBoard">
                         Create Board
                     </button>
                 </div>
@@ -725,19 +729,19 @@
     <div id="shareBoardModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Share Board</h2>
+                <h2 data-i18n="shareBoard">Share Board</h2>
             </div>
             <form onsubmit="handleShareBoard(event)">
                 <div class="form-group">
-                    <label for="shareEmail">User Email address</label>
-                    <input type="email" id="shareEmail" placeholder="colleague@example.com" required>
-                    <small style="color:#666; display:block; margin-top:4px;">User must be registered first.</small>
+                    <label for="shareEmail" data-i18n="userEmail">User Email address</label>
+                    <input type="email" id="shareEmail" placeholder="colleague@example.com" required data-i18n-placeholder="emailPh">
+                    <small style="color:#666; display:block; margin-top:4px;" data-i18n="emailHelper">User must be registered first.</small>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeShareModal()">
+                    <button type="button" class="btn btn-secondary" onclick="closeShareModal()" data-i18n="cancel">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-new-board" id="shareBoardBtn">
+                    <button type="submit" class="btn btn-new-board" id="shareBoardBtn" data-i18n="shareBtn">
                         Share Board
                     </button>
                 </div>
@@ -779,6 +783,7 @@
     </div>
 
     <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/lang.js"></script>
     <script>
         const apiClient = new ApiClient();
 

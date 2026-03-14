@@ -394,7 +394,12 @@
 </head>
 
 <body>
-    <div class="register-container">
+    <div class="register-container" style="position: relative;">
+        <!-- Language switcher -->
+        <div class="lang-switcher light" style="position: absolute; top: 1rem; left: 1rem;">
+            <button class="lang-btn active" data-lang-switch="en">EN</button>
+            <button class="lang-btn" data-lang-switch="da">DA</button>
+        </div>
         <div class="logo">
             <div class="logo-main">
                 <h1>vimpl</h1>
@@ -403,7 +408,7 @@
                     <span class="lean-logo">AILEAN</span>
                 </a>
             </div>
-            <p>Create your account and start planning.</p>
+            <p data-i18n="createAccount">Create your account and start planning.</p>
         </div>
 
         <div id="errorMessage" class="error-message"></div>
@@ -411,21 +416,21 @@
 
         <form id="registerForm">
             <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="John Doe" required autocomplete="name">
+                <label for="name" data-i18n="fullName">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required autocomplete="name" data-i18n-placeholder="fullNamePh">
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email" data-i18n="emailLabel">Email</label>
                 <input type="email" id="email" name="email" placeholder="your.email@example.com" required
                     autocomplete="email">
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="passwordLabel">Password</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" name="password" placeholder="At least 8 characters" required
-                        autocomplete="new-password" minlength="8">
+                        autocomplete="new-password" minlength="8" data-i18n-placeholder="passwordPh">
                     <button type="button" class="toggle-password" onclick="togglePassword()">
                         👁️
                     </button>
@@ -434,18 +439,18 @@
             </div>
 
             <div class="terms">
-                By creating an account, you agree to our
-                <a href="terms.html">Terms of Service</a> and
-                <a href="privacy.html">Privacy Policy</a>.
+                <span data-i18n="agreeTerms">By creating an account, you agree to our</span>
+                <a href="terms.html" data-i18n="termsLink">Terms of Service</a> <span data-i18n="andWord">and</span>
+                <a href="privacy.html" data-i18n="privacyLink">Privacy Policy</a>.
             </div>
 
-            <button type="submit" class="btn btn-primary" id="registerBtn">
+            <button type="submit" class="btn btn-primary" id="registerBtn" data-i18n="createAccountBtn">
                 Create Account
             </button>
         </form>
 
         <div class="divider">
-            <span>or</span>
+            <span data-i18n="orDivider">or</span>
         </div>
 
         <button type="button" class="btn btn-google" onclick="signUpWithGoogle()">
@@ -459,15 +464,16 @@
                 <path fill="#EA4335"
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
-            Continue with Google
+            <span data-i18n="continueGoogle">Continue with Google</span>
         </button>
 
         <div class="login-link">
-            Already have an account? <a href="login.html">Log in</a>
+            <span data-i18n="alreadyAccount">Already have an account?</span> <a href="login.html" data-i18n="logIn">Log in</a>
         </div>
     </div>
 
     <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/lang.js"></script>
     <script>
         const apiClient = new ApiClient();
 
