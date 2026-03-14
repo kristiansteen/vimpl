@@ -401,7 +401,7 @@
         <div id="errorMessage" class="error-message"></div>
         <div id="successMessage" class="success-message"></div>
 
-        <form id="loginForm">
+        <form id="loginForm" method="post" action="javascript:void(0)">
             <div class="form-group">
                 <label for="email" data-i18n="emailLabel">Email</label>
                 <input type="email" id="email" name="email" placeholder="your.email@example.com" required
@@ -548,7 +548,6 @@
         }
 
         // Check for error in URL (from OAuth callback)
-        const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
         if (error) {
             showError(decodeURIComponent(error));
