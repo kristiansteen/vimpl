@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Docs - vimpl</title>
+    <meta name="description" content="vimpl REST API documentation — interactive reference for all endpoints.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2365c434' rx='20' width='100' height='100'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>v</text></svg>">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+
+    <!-- Swagger UI -->
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+
+    <style>
+        body {
+            background: #0a0a0a;
+        }
+
+        .api-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 24px 60px;
+        }
+
+        .api-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .api-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .api-header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .api-header a {
+            color: var(--primary, #65c434);
+            text-decoration: none;
+        }
+
+        /* Override Swagger UI to fit dark page */
+        #swagger-ui {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .swagger-ui .topbar {
+            display: none;
+        }
+
+        .swagger-ui {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="https://www.ailean.dk" class="powered-by-badge" target="_blank">
+        <span>Powered by</span>
+        <span class="lean-logo">AILEAN</span>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">vimpl<span>.com</span></a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="api.html" class="nav-link active">API</a>
+            </div>
+            <div class="nav-auth">
+                <a href="login.html" class="nav-link">Log in</a>
+                <a href="register.html" class="btn-primary-small">Sign up</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="api-wrapper">
+        <div class="api-header">
+            <h1>API <span style="color: var(--primary, #65c434);">Reference</span></h1>
+            <p>Interactive docs for the vimpl REST API &mdash; use <strong>Authorize</strong> to add your token, then <strong>Try it out</strong> on any endpoint.</p>
+            <p style="margin-top: 8px; font-size: 0.9rem;">
+                Get a token via <code style="background:#1a1a1a;padding:2px 6px;border-radius:4px;">POST /api/v1/auth/login</code> below.
+                &nbsp;|&nbsp;
+                <a href="https://backend-eight-rho-46.vercel.app/api/docs" target="_blank">Open full-screen <i class="fas fa-external-link-alt" style="font-size:0.8em"></i></a>
+            </p>
+        </div>
+
+        <div id="swagger-ui"></div>
+    </div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+        SwaggerUIBundle({
+            url: "https://backend-eight-rho-46.vercel.app/api/docs.json",
+            dom_id: '#swagger-ui',
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            layout: "BaseLayout",
+            deepLinking: true,
+            persistAuthorization: true,
+        });
+    </script>
+
+    <script src="assets/js/api-client.js"></script>
+    <script>
+        // Show logged-in state in nav if applicable
+        const apiClient = new ApiClient();
+        if (apiClient.isAuthenticated()) {
+            document.querySelector('.nav-auth').innerHTML = `
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <button onclick="apiClient.logout()" class="btn-primary-small">Log out</button>
+            `;
+        }
+    </script>
+</body>
+
+</html>
