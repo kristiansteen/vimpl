@@ -122,21 +122,25 @@ class BoardService {
             throw error;
         }
 
-        const board = await prisma.$transaction(async (tx) => {
-            const boardInTx = await tx.board.findUnique({ where: { id: boardId }, select: { version: true } });
+        // Use updateMany with version in the WHERE clause for optimistic locking
+        // (avoids interactive transactions which fail with PgBouncer in transaction mode)
+        const whereClause = expectedVersion !== undefined
+            ? { id: boardId, version: expectedVersion }
+            : { id: boardId };
 
-            if (expectedVersion !== undefined && boardInTx?.version !== expectedVersion) {
-                const error = new Error('Board has been modified by another user. Please refresh and try again.');
-                (error as any).statusCode = 409;
-                (error as any).currentVersion = boardInTx?.version;
-                throw error;
-            }
-
-            return tx.board.update({
-                where: { id: boardId },
-                data: { ...safeData, version: { increment: 1 }, updatedAt: new Date() },
-            });
+        const updated = await prisma.board.updateMany({
+            where: whereClause,
+            data: { ...safeData, version: { increment: 1 }, updatedAt: new Date() },
         });
+
+        if (updated.count === 0) {
+            const error = new Error('Board has been modified by another user. Please refresh and try again.');
+            (error as any).statusCode = 409;
+            throw error;
+        }
+
+        const board = await prisma.board.findUnique({ where: { id: boardId } });
+        if (!board) throw new Error('Board not found after update');
 
         logger.info(`Board updated: ${boardId} by user ${userId} (version: ${board.version})`);
         return board;
@@ -437,83 +441,81 @@ class BoardService {
             version: 2,
         };
 
-        // ── Persist ───────────────────────────────────────────────────────────
-        const result = await prisma.$transaction(async (tx) => {
-            const board = await tx.board.create({
-                data: { userId, title, slug, gridData: gridData as any, settings: {} },
-            });
+        // ── Persist (sequential queries — compatible with PgBouncer transaction mode) ──
+        const board = await prisma.board.create({
+            data: { userId, title, slug, gridData: gridData as any, settings: {} },
+        });
 
-            const section = await tx.section.create({
+        const section = await prisma.section.create({
+            data: {
+                boardId: board.id,
+                type: 'weekplan',
+                content: { tracks: plan.tracks, weeks: plan.duration_weeks, startDate: today } as any,
+            },
+        });
+
+        // Task post-its
+        let tasksCreated = 0;
+        for (const task of (plan.tasks || [])) {
+            const colourIdx = trackIndex[task.track_id] ?? 0;
+            await prisma.postit.create({
                 data: {
                     boardId: board.id,
-                    type: 'weekplan',
-                    content: { tracks: plan.tracks, weeks: plan.duration_weeks, startDate: today } as any,
+                    sectionId: section.id,
+                    color: TASK_COLOURS[colourIdx % TASK_COLOURS.length],
+                    content: `${task.title}\nWk ${task.week_start}–${task.week_end}`,
+                    owner: task.owner || null,
+                    status: 'todo',
                 },
             });
+            tasksCreated++;
+        }
 
-            // DB postit records for tasks
-            let tasksCreated = 0;
-            for (const task of (plan.tasks || [])) {
-                const colourIdx = trackIndex[task.track_id] ?? 0;
-                await tx.postit.create({
+        // Risk matrix section + post-its
+        if (risks.length > 0) {
+            const riskSection = await prisma.section.create({
+                data: { boardId: board.id, type: 'matrix', content: {} as any },
+            });
+            for (const risk of risks) {
+                await prisma.postit.create({
                     data: {
                         boardId: board.id,
-                        sectionId: section.id,
-                        color: TASK_COLOURS[colourIdx % TASK_COLOURS.length],
-                        content: `${task.title}\nWk ${task.week_start}–${task.week_end}`,
-                        owner: task.owner || null,
+                        sectionId: riskSection.id,
+                        color: ((risk.probability ?? 50) * (risk.consequence ?? 50)) >= 5000 ? 'pink'
+                            : ((risk.probability ?? 50) * (risk.consequence ?? 50)) >= 2000 ? 'orange' : 'yellow',
+                        content: risk.title,
+                        mitigation: risk.mitigation || null,
+                        riskScore: Math.round((risk.probability ?? 50) * (risk.consequence ?? 50) / 100),
+                        xValue: risk.probability ?? 50,
+                        yValue: risk.consequence ?? 50,
                         status: 'todo',
                     },
                 });
-                tasksCreated++;
             }
+        }
 
-            // DB section + postit records for risks
-            if (risks.length > 0) {
-                const riskSection = await tx.section.create({
-                    data: { boardId: board.id, type: 'matrix', content: {} as any },
+        // Ideas matrix section + post-its
+        if (improvements.length > 0) {
+            const ideasSection = await prisma.section.create({
+                data: { boardId: board.id, type: 'matrix', content: {} as any },
+            });
+            for (const [i, idea] of improvements.entries()) {
+                await prisma.postit.create({
+                    data: {
+                        boardId: board.id,
+                        sectionId: ideasSection.id,
+                        color: IDEA_COLOURS[i % IDEA_COLOURS.length],
+                        content: idea.title,
+                        mitigation: idea.benefit || null,
+                        xValue: idea.effort_score ?? 50,
+                        yValue: idea.impact_score ?? 50,
+                        status: 'todo',
+                    },
                 });
-                for (const risk of risks) {
-                    await tx.postit.create({
-                        data: {
-                            boardId: board.id,
-                            sectionId: riskSection.id,
-                            color: ((risk.probability ?? 50) * (risk.consequence ?? 50)) >= 5000 ? 'pink'
-                                : ((risk.probability ?? 50) * (risk.consequence ?? 50)) >= 2000 ? 'orange' : 'yellow',
-                            content: risk.title,
-                            mitigation: risk.mitigation || null,
-                            riskScore: Math.round((risk.probability ?? 50) * (risk.consequence ?? 50) / 100),
-                            xValue: risk.probability ?? 50,
-                            yValue: risk.consequence ?? 50,
-                            status: 'todo',
-                        },
-                    });
-                }
             }
+        }
 
-            // DB section + postit records for ideas
-            if (improvements.length > 0) {
-                const ideasSection = await tx.section.create({
-                    data: { boardId: board.id, type: 'matrix', content: {} as any },
-                });
-                for (const [i, idea] of improvements.entries()) {
-                    await tx.postit.create({
-                        data: {
-                            boardId: board.id,
-                            sectionId: ideasSection.id,
-                            color: IDEA_COLOURS[i % IDEA_COLOURS.length],
-                            content: idea.title,
-                            mitigation: idea.benefit || null,
-                            xValue: idea.effort_score ?? 50,
-                            yValue: idea.impact_score ?? 50,
-                            status: 'todo',
-                        },
-                    });
-                }
-            }
-
-            return { boardId: board.id, sectionId: section.id, tasksCreated };
-        });
+        const result = { boardId: board.id, sectionId: section.id, tasksCreated };
 
         const boardUrl = `${config.frontend.url}/board.html?id=${result.boardId}`;
         logger.info(`Project plan imported: board ${result.boardId} with ${result.tasksCreated} tasks by user ${userId}`);
