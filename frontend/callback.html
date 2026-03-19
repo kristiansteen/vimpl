@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authenticating...</title>
@@ -69,15 +70,12 @@
         const token = urlParams.get('token');
         const error = urlParams.get('error');
 
-        // Decode returnTo from OAuth state (set in login.html loginWithGoogle)
+        // Read returnTo from sessionStorage (stored by login.html before Google OAuth redirect)
         let returnTo = null;
         try {
-            const stateParam = urlParams.get('state');
-            if (stateParam) {
-                const stateData = JSON.parse(atob(stateParam));
-                returnTo = stateData.returnTo || null;
-            }
-        } catch { /* ignore malformed state */ }
+            returnTo = sessionStorage.getItem('vimpl_oauth_return') || null;
+            if (returnTo) sessionStorage.removeItem('vimpl_oauth_return');
+        } catch { /* ignore */ }
 
         if (error) {
             window.location.href = `login.html?error=${encodeURIComponent(error)}`;

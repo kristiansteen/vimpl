@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - vimpl</title>
@@ -519,11 +520,12 @@
             }
         }
 
-        // Google login — encode returnTo in the OAuth state so callback.html can read it
+        // Google login — store returnTo in sessionStorage, encode only origin as state
+        // (backend expects plain base64 origin URL, not JSON)
         function loginWithGoogle() {
             const baseUrl = apiClient.baseURL.replace('/api/v1', '');
-            const stateData = JSON.stringify({ origin: window.location.origin, returnTo: returnTo || null });
-            const state = btoa(stateData);
+            if (returnTo) sessionStorage.setItem('vimpl_oauth_return', returnTo);
+            const state = btoa(window.location.origin);
             window.location.href = `${baseUrl}/api/v1/auth/google?state=${state}`;
         }
 
