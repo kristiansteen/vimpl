@@ -59,7 +59,8 @@ const config: Config = {
       'http://localhost:5173',
       'https://frontend-puce-ten-18.vercel.app',
       'https://vimpl.com',
-      'https://www.vimpl.com'
+      'https://www.vimpl.com',
+      'https://app.vimpl.com'
     ],
   },
   rateLimit: {
