@@ -626,7 +626,7 @@ let currentView = 'analytics';
 
 // ── Bootstrap ───────────────────────────────────────────────────────
 async function init() {
-  if (!token) { location.href = '/login.html?returnTo=/admin.html'; return; }
+  if (!token) { location.href = '/login?returnTo=/admin'; return; }
 
   let r;
   try {
@@ -636,7 +636,7 @@ async function init() {
     return;
   }
 
-  if (r.status === 401) { location.href = '/login.html?returnTo=/admin.html'; return; }
+  if (r.status === 401) { location.href = '/login?returnTo=/admin'; return; }
   if (r.status === 403) { showGuardError('Access denied — admin only.'); return; }
   if (!r.ok) { showGuardError('Server error ' + r.status); return; }
 
@@ -1196,7 +1196,7 @@ async function removeCollaborator(boardId, userId, email) {
 
 // ── Utils ───────────────────────────────────────────────────────────
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function logout() { localStorage.removeItem('accessToken'); location.href = '/login.html'; }
+function logout() { localStorage.removeItem('accessToken'); location.href = '/login'; }
 
 function esc(str) {
   if (!str) return '';
