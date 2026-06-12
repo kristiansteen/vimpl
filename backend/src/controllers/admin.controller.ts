@@ -123,6 +123,10 @@ class AdminController {
             orderBy: { updatedAt: 'desc' },
             take: 20,
           },
+          flows: {
+            select: { id: true, name: true, updatedAt: true },
+            orderBy: { updatedAt: 'desc' },
+          },
           loginAudits: {
             select: { id: true, success: true, loginMethod: true, ipAddress: true, createdAt: true },
             orderBy: { createdAt: 'desc' },
