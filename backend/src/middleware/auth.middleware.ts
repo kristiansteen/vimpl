@@ -3,7 +3,6 @@ import authService from '../services/auth.service';
 import prisma from '../config/database';
 import logger from '../utils/logger';
 
-// Import necessary types for compatibility
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 
@@ -11,51 +10,30 @@ export interface AuthRequest extends Request<ParamsDictionary, any, any, ParsedQ
   user?: any;
 }
 
-/**
- * Middleware to authenticate JWT token
- */
+function extractToken(req: AuthRequest): string | undefined {
+  const header = req.headers.authorization;
+  if (header?.startsWith('Bearer ')) return header.substring(7);
+  return req.cookies?.accessToken;
+}
+
 export const authenticate = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    // Get token from Authorization header or cookie
-    const authHeader = req.headers.authorization;
-    const cookieToken = req.cookies?.accessToken;
-
-    let token: string | undefined;
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.substring(7);
-    } else if (cookieToken) {
-      token = cookieToken;
-    }
-
+    const token = extractToken(req);
     if (!token) {
-      res.status(401).json({
-        error: 'Unauthorized',
-        message: 'No authentication token provided',
-      });
+      res.status(401).json({ error: 'Unauthorized', message: 'No authentication token provided' });
       return;
     }
 
-    // Verify token
     const payload = authService.verifyAccessToken(token);
-
-    // Attach user info to request
-    req.user = {
-      userId: payload.userId,
-      email: payload.email,
-    };
-
+    req.user = { userId: payload.userId, email: payload.email };
     next();
   } catch (error) {
     logger.error('Authentication error:', error);
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Invalid or expired token',
-    });
+    res.status(401).json({ error: 'Unauthorized', message: 'Invalid or expired token' });
   }
 };
 
@@ -93,41 +71,19 @@ export const requireAdmin = async (
   }
 };
 
-/**
- * Optional authentication - doesn't fail if token is missing/invalid
- */
 export const optionalAuthenticate = async (
   req: AuthRequest,
   _res: Response,
   next: NextFunction
 ): Promise<void> => {
-  try {
-    const authHeader = req.headers.authorization;
-    const cookieToken = req.cookies?.accessToken;
-
-    let token: string | undefined;
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.substring(7);
-    } else if (cookieToken) {
-      token = cookieToken;
+  const token = extractToken(req);
+  if (token) {
+    try {
+      const payload = authService.verifyAccessToken(token);
+      req.user = { userId: payload.userId, email: payload.email };
+    } catch {
+      logger.debug('Optional auth - invalid token');
     }
-
-    if (token) {
-      try {
-        const payload = authService.verifyAccessToken(token);
-        req.user = {
-          userId: payload.userId,
-          email: payload.email,
-        };
-      } catch (error) {
-        // Ignore token errors for optional auth
-        logger.debug('Optional auth - invalid token');
-      }
-    }
-
-    next();
-  } catch (error) {
-    next();
   }
+  next();
 };

@@ -1,11 +1,17 @@
 import { Response } from 'express';
 import prisma from '../config/database';
 import loginAuditService from '../services/login-audit.service';
-import subscriptionService from '../services/subscription.service';
+import subscriptionService, { SUBSCRIPTION_TIERS } from '../services/subscription.service';
 import { AuthRequest } from '../middleware/auth.middleware';
 import logger from '../utils/logger';
 
-const VALID_TIERS = ['student', 'commercial', 'enterprise'];
+const VALID_TIERS = Object.values(SUBSCRIPTION_TIERS).map((t: any) => t.id);
+
+function parsePagination(query: any): { page: number; limit: number; skip: number } {
+  const page  = Math.max(1, parseInt(query.page  || '1'));
+  const limit = Math.min(100, Math.max(1, parseInt(query.limit || '50')));
+  return { page, limit, skip: (page - 1) * limit };
+}
 
 class AdminController {
   // ── Stats ─────────────────────────────────────────────────────────────
@@ -61,9 +67,7 @@ class AdminController {
     try {
       const search = (req.query.search as string) || '';
       const tier = (req.query.tier as string) || '';
-      const page = Math.max(1, parseInt((req.query.page as string) || '1'));
-      const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || '50')));
-      const skip = (page - 1) * limit;
+      const { page, limit, skip } = parsePagination(req.query);
 
       const where: any = {};
       if (search) {
@@ -188,9 +192,7 @@ class AdminController {
   async listBoards(req: AuthRequest, res: Response): Promise<void> {
     try {
       const search = (req.query.search as string) || '';
-      const page = Math.max(1, parseInt((req.query.page as string) || '1'));
-      const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || '50')));
-      const skip = (page - 1) * limit;
+      const { page, limit, skip } = parsePagination(req.query);
 
       const where: any = {};
       if (search) {

@@ -1,26 +1,18 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../config/database';
 import logger from '../utils/logger';
 import { AuthRequest } from '../middleware/auth.middleware';
 
-// Cost estimates per provider
-const CLAUDE_INPUT_COST_PER_TOKEN = 3 / 1_000_000;   // $3 per 1M input tokens
+const CLAUDE_INPUT_COST_PER_TOKEN  = 3  / 1_000_000;  // $3 per 1M input tokens
 const CLAUDE_OUTPUT_COST_PER_TOKEN = 15 / 1_000_000;  // $15 per 1M output tokens
-const ELEVENLABS_COST_PER_CHAR = 0.0003 / 1;          // ~$0.30 per 1000 chars (turbo tier)
+const ELEVENLABS_COST_PER_CHAR     = 0.0003;           // ~$0.30 per 1000 chars (turbo tier)
 
 class UsageController {
   /**
    * POST /api/v1/usage/log
-   * Called by the voice-2-launch Vercel proxies after each API call.
-   * Secured by a shared USAGE_LOG_SECRET header.
+   * Secret check handled by requireUsageSecret middleware in the route file.
    */
-  async logUsage(req: Request, res: Response): Promise<void> {
-    const secret = req.headers['x-usage-secret'];
-    if (!secret || secret !== process.env.USAGE_LOG_SECRET) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
+  async logUsage(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { userId, provider, inputTokens, outputTokens, characters } = req.body;
 
@@ -50,7 +42,6 @@ class UsageController {
 
   /**
    * GET /api/v1/usage/admin?days=30
-   * Returns per-user Claude and ElevenLabs usage aggregated over the given window.
    */
   async getAdminUsage(req: AuthRequest, res: Response): Promise<void> {
     try {
@@ -64,7 +55,6 @@ class UsageController {
         _sum: { inputTokens: true, outputTokens: true, characters: true, estimatedCost: true },
       });
 
-      // Fetch user details for all involved userIds
       const userIds = [...new Set(rows.map(r => r.userId))];
       const users = await prisma.user.findMany({
         where: { id: { in: userIds } },
@@ -72,10 +62,13 @@ class UsageController {
       });
       const userMap = Object.fromEntries(users.map(u => [u.id, u]));
 
+      const fallback = (userId: string) =>
+        userMap[userId] || { id: userId, email: userId, name: null, subscriptionTier: null };
+
       const claudeRows = rows
         .filter(r => r.provider === 'claude')
         .map(r => ({
-          user: userMap[r.userId] || { id: r.userId, email: r.userId, name: null, subscriptionTier: null },
+          user: fallback(r.userId),
           calls: r._count.id,
           inputTokens: r._sum.inputTokens || 0,
           outputTokens: r._sum.outputTokens || 0,
@@ -86,7 +79,7 @@ class UsageController {
       const elevenRows = rows
         .filter(r => r.provider === 'elevenlabs')
         .map(r => ({
-          user: userMap[r.userId] || { id: r.userId, email: r.userId, name: null, subscriptionTier: null },
+          user: fallback(r.userId),
           calls: r._count.id,
           characters: r._sum.characters || 0,
           estimatedCost: r._sum.estimatedCost || 0,
