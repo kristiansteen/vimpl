@@ -14,7 +14,7 @@ async function sendEmail(to: string, subject: string, html: string, attachments?
 
     try {
         const { error } = await resend.emails.send({
-            from: 'vimpl <hello@vimpl.com>',
+            from: 'Ailean from Vimpl <ailean@onboard.vimpl.com>',
             to,
             subject,
             html,
@@ -89,5 +89,42 @@ export async function sendInviteEmail(to: string, boardUrl: string, recipientNam
     `;
 
     return sendEmail(to, `You've been invited to collaborate on a vimpl board`, html);
+}
+
+const ONBOARDING_SUBJECTS: Record<number, string> = {
+  0: 'Welcome to vimpl — here\'s how to get started',
+  1: 'Day 1: Your first steps in vimpl',
+  2: 'Day 2: Getting more out of vimpl',
+  3: 'Day 3: Tips & tricks for vimpl',
+  5: 'Day 5: How is vimpl working for you?',
+  7: 'Day 7: Make vimpl part of your workflow',
+};
+
+export async function sendOnboardingEmail(to: string, name: string, day: number): Promise<boolean> {
+  const greeting = name || 'there';
+  const subject = ONBOARDING_SUBJECTS[day] ?? `vimpl onboarding — Day ${day}`;
+
+  const html = `
+    <div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:30px;background:#fff;border:1px solid #eaeaea;border-radius:12px;">
+      <img src="https://frontend-puce-ten-18.vercel.app/assets/images/vimpl.png" alt="vimpl" height="48" style="margin-bottom:24px">
+      <h2 style="color:#111;margin-bottom:16px">Hi ${greeting},</h2>
+      <p style="font-size:16px;line-height:1.6;color:#444">
+        This is your Day ${day} message from vimpl. We hope you're getting value from the platform.
+      </p>
+      <div style="margin:32px 0;text-align:center">
+        <a href="https://app.vimpl.com" style="background:#4f46e5;color:#fff;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block">
+          Open vimpl
+        </a>
+      </div>
+      <p style="font-size:16px;line-height:1.6;color:#222">
+        Best,<br><strong>Kristian from vimpl</strong>
+      </p>
+      <p style="font-size:12px;color:#999;margin-top:24px">
+        You received this because you signed up at vimpl.com.
+      </p>
+    </div>
+  `;
+
+  return sendEmail(to, subject, html);
 }
 

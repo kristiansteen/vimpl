@@ -143,6 +143,40 @@ class AdminController {
     }
   }
 
+  async triggerOnboarding(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const day = parseInt(req.params.day);
+      const VALID_DAYS = [0, 1, 2, 3, 5, 7];
+      if (!VALID_DAYS.includes(day)) {
+        res.status(400).json({ error: 'Validation Error', message: `Invalid day. Use: ${VALID_DAYS.join(', ')}` });
+        return;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, email: true, name: true, sentOnboardingMilestones: true },
+      });
+      if (!user) { res.status(404).json({ error: 'Not Found', message: 'User not found' }); return; }
+
+      const { sendOnboardingEmail } = await import('../services/email.service');
+      const sent = await sendOnboardingEmail(user.email, user.name || '', day);
+      if (!sent) {
+        res.status(502).json({ error: 'Email Error', message: 'Failed to send onboarding email' });
+        return;
+      }
+
+      const milestones = Array.from(new Set([...user.sentOnboardingMilestones, day]));
+      await prisma.user.update({ where: { id: userId }, data: { sentOnboardingMilestones: milestones } });
+
+      logger.info(`Admin triggered Day ${day} onboarding email for ${user.email}`);
+      res.json({ ok: true, day, email: user.email });
+    } catch (error) {
+      logger.error('Trigger onboarding error:', error);
+      res.status(500).json({ error: 'Server Error', message: 'Failed to trigger onboarding email' });
+    }
+  }
+
   async updateSubscription(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { userId } = req.params;

@@ -16,6 +16,7 @@ router.get('/stats', ...guard, adminController.getStats);
 router.get('/users', ...guard, adminController.listUsers);
 router.get('/users/:userId', ...guard, adminController.getUser);
 router.patch('/users/:userId/subscription', ...guard, adminController.updateSubscription);
+router.post('/users/:userId/onboarding/:day', ...guard, adminController.triggerOnboarding);
 router.delete('/users/:userId', ...guard, adminController.deleteUser);
 
 // ── Board management ──────────────────────────────────────────────────
