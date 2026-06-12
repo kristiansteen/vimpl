@@ -479,7 +479,7 @@
 
         // Check if already logged in
         if (apiClient.isAuthenticated()) {
-            window.location.href = 'dashboard.html';
+            window.location.href = 'dashboard';
         }
 
         // Password strength checker
@@ -541,7 +541,7 @@
 
                 // Redirect to dashboard after brief delay
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'dashboard';
                 }, 1000);
 
             } catch (error) {
