@@ -312,7 +312,7 @@
     const res = await fetch(BACKEND + path, {
       headers: { 'Authorization': 'Bearer ' + getToken() }
     });
-    if (res.status === 401) { window.location.replace('login.html'); throw new Error('Unauthorized'); }
+    if (res.status === 401) { window.location.replace('login'); throw new Error('Unauthorized'); }
     if (!res.ok) throw new Error('Request failed: ' + res.status);
     return res.json();
   }
@@ -321,7 +321,7 @@
   async function checkAuth() {
     const overlay = document.getElementById('authLoadingOverlay');
     const page    = document.getElementById('pageContent');
-    if (!getToken()) { window.location.replace('login.html'); return; }
+    if (!getToken()) { window.location.replace('login'); return; }
     try {
       const data = await apiFetch('/auth/me');
       const user = data.user || data;
@@ -331,14 +331,15 @@
       loadStats();
       loadAudits();
       loadSubs();
-    } catch {
-      window.location.replace('login.html');
+    } catch (err) {
+      if (err.message === 'Unauthorized') return;
+      overlay.querySelector('.auth-loading-text').textContent = 'Error: ' + err.message;
     }
   }
 
   function logout() {
     localStorage.removeItem('accessToken');
-    window.location.replace('login.html');
+    window.location.replace('login');
   }
 
   // ── Tabs ─────────────────────────────────────────────────────────────────
