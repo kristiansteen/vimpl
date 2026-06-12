@@ -38,6 +38,10 @@ model User {
   lastLoginAt      DateTime? @map("last_login_at")
   isActive         Boolean   @default(true) @map("is_active")
 
+  isAdmin          Boolean   @default(false) @map("is_admin")
+  emailUnsubscribed Boolean  @default(false) @map("email_unsubscribed")
+  sentOnboardingMilestones Int[] @default([]) @map("sent_onboarding_milestones")
+
   // Relations
   boards           Board[]
   eventLogs        EventLog[]
@@ -45,6 +49,7 @@ model User {
   sessionsCreated  Session[]
   loginAudits      LoginAudit[]
   bpmnDiagrams     BpmnDiagram[]
+  apiUsage         ApiUsage[]
 
   @@map("users")
 }
@@ -224,6 +229,24 @@ model BpmnDiagram {
 
   @@index([userId])
   @@map("bpmn_diagrams")
+}
+
+model ApiUsage {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  provider     String   // 'claude' | 'elevenlabs'
+  inputTokens  Int?     @map("input_tokens")
+  outputTokens Int?     @map("output_tokens")
+  characters   Int?
+  estimatedCost Float?  @map("estimated_cost")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([provider])
+  @@index([createdAt])
+  @@map("api_usage")
 }
 
 model Lead {

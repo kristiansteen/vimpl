@@ -19,6 +19,7 @@ import adminRoutes from './routes/admin.routes';
 import eventlogRoutes from './routes/eventlog.routes';
 import leadRoutes from './routes/lead.routes';
 import diagramRoutes from './routes/diagram.routes';
+import usageRoutes from './routes/usage.routes';
 
 import { configureGoogleStrategy } from './auth/googleAuth';
 
@@ -132,6 +133,7 @@ app.use('/api/v1/subscription', subscriptionRoutes);
 app.use('/api/v1/boards/:boardId/eventlog', eventlogRoutes);
 app.use('/api/v1/leads', leadRoutes);
 app.use('/api/v1/diagrams', diagramRoutes);
+app.use('/api/v1/usage', usageRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

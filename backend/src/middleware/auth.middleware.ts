@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import authService from '../services/auth.service';
+import prisma from '../config/database';
 import logger from '../utils/logger';
 
 // Import necessary types for compatibility
@@ -55,6 +56,40 @@ export const authenticate = async (
       error: 'Unauthorized',
       message: 'Invalid or expired token',
     });
+  }
+};
+
+/**
+ * Requires the authenticated user to be an admin (isAdmin flag or ADMIN_EMAILS env var).
+ * Must be used after `authenticate`.
+ */
+export const requireAdmin = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized', message: 'Not authenticated' });
+      return;
+    }
+
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean);
+
+    let isAdmin = adminEmails.includes(req.user.email);
+    if (!isAdmin) {
+      const u = await prisma.user.findUnique({ where: { id: req.user.userId }, select: { isAdmin: true } });
+      isAdmin = u?.isAdmin ?? false;
+    }
+
+    if (!isAdmin) {
+      res.status(403).json({ error: 'Forbidden', message: 'Admin access required' });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(403).json({ error: 'Forbidden', message: 'Admin access required' });
   }
 };
 
