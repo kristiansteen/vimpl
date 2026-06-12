@@ -78,17 +78,17 @@
         } catch { /* ignore */ }
 
         if (error) {
-            window.location.href = `login.html?error=${encodeURIComponent(error)}`;
+            window.location.href = `login?error=${encodeURIComponent(error)}`;
         } else if (token) {
             localStorage.setItem('accessToken', token);
             if (returnTo) {
                 window.location.href = `${returnTo}?token=${token}`;
             } else {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'dashboard';
             }
         } else {
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'login';
             }, 2000);
         }
     </script>
