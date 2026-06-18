@@ -286,9 +286,17 @@ class AuthController {
 
       if (state) {
         try {
-          const decodedOrigin = Buffer.from(state, 'base64').toString();
-          if (decodedOrigin.startsWith('http')) {
-            redirectUrl = decodedOrigin.replace(/\/+$/, '');
+          const decoded = Buffer.from(decodeURIComponent(state), 'base64').toString();
+          let origin: string | null = null;
+          if (decoded.startsWith('http')) {
+            origin = decoded;
+          } else {
+            // JSON format: { origin: "https://...", source: "..." }
+            const parsed = JSON.parse(decoded);
+            if (parsed?.origin?.startsWith('http')) origin = parsed.origin;
+          }
+          if (origin) {
+            redirectUrl = origin.replace(/\/+$/, '');
             logger.info(`Using dynamic redirect URL from state: ${redirectUrl}`);
           }
         } catch (e) {
