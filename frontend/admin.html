@@ -636,7 +636,7 @@ async function init() {
     return;
   }
 
-  if (r.status === 401) { location.href = '/login?returnTo=/admin'; return; }
+  if (r.status === 401) { localStorage.removeItem('accessToken'); location.href = '/login?returnTo=/admin'; return; }
   if (r.status === 403) { showGuardError('Access denied — admin only.'); return; }
   if (!r.ok) { showGuardError('Server error ' + r.status); return; }
 
