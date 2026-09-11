@@ -33,18 +33,33 @@ export async function stripeWebhookHandler(req: Request, res: Response): Promise
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.client_reference_id || session.metadata?.userId;
-        if (userId && session.customer) {
-          await prisma.user.update({
-            where: { id: userId },
-            data: {
-              subscriptionTier: 'commercial',
-              subscriptionStatus: 'active',
-              subscriptionStartDate: new Date(),
-              stripeCustomerId: String(session.customer),
-              stripeSubscriptionId: session.subscription ? String(session.subscription) : null,
-            },
-          });
-          logger.info(`Stripe checkout completed for user ${userId} — upgraded to commercial`);
+        const email = session.customer_details?.email || session.customer_email;
+
+        if (session.customer) {
+          const data = {
+            subscriptionTier: 'commercial',
+            subscriptionStatus: 'active',
+            subscriptionStartDate: new Date(),
+            stripeCustomerId: String(session.customer),
+            stripeSubscriptionId: session.subscription ? String(session.subscription) : null,
+          };
+
+          if (userId) {
+            await prisma.user.update({ where: { id: userId }, data });
+            logger.info(`Stripe checkout completed for user ${userId} — upgraded to commercial`);
+          } else if (email) {
+            // No client_reference_id — this came from a bare Payment Link/buy-button
+            // on a public marketing page with no logged-in session (e.g. ailean.dk's
+            // pricing page), so fall back to matching an existing account by email.
+            const result = await prisma.user.updateMany({ where: { email }, data });
+            if (result.count > 0) {
+              logger.info(`Stripe checkout completed for ${email} (matched by email) — upgraded to commercial`);
+            } else {
+              logger.warn(`Stripe checkout completed for ${email} but no matching user account exists — tier not updated`);
+            }
+          } else {
+            logger.warn(`Stripe checkout completed with no userId or email to match — tier not updated. session=${session.id}`);
+          }
         }
         break;
       }
