@@ -31,6 +31,7 @@ interface Config {
     secret: string;
   };
   resendApiKey: string;
+  cronSecret: string;
 }
 
 const config: Config = {
@@ -71,6 +72,7 @@ const config: Config = {
     secret: process.env.SESSION_SECRET || 'your-session-secret',
   },
   resendApiKey: process.env.RESEND_API_KEY || '',
+  cronSecret: process.env.CRON_SECRET || '',
 };
 
 // Validate required environment variables

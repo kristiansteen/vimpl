@@ -21,6 +21,7 @@ import leadRoutes from './routes/lead.routes';
 import diagramRoutes from './routes/diagram.routes';
 import usageRoutes from './routes/usage.routes';
 import flowRoutes from './routes/flow.routes';
+import cronRoutes from './routes/cron.routes';
 
 import { configureGoogleStrategy } from './auth/googleAuth';
 
@@ -136,6 +137,7 @@ app.use('/api/v1/leads', leadRoutes);
 app.use('/api/v1/diagrams', diagramRoutes);
 app.use('/api/v1/usage', usageRoutes);
 app.use('/api/v1/flows', flowRoutes);
+app.use('/api/v1/cron', cronRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
