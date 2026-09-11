@@ -22,6 +22,8 @@ import diagramRoutes from './routes/diagram.routes';
 import usageRoutes from './routes/usage.routes';
 import flowRoutes from './routes/flow.routes';
 import cronRoutes from './routes/cron.routes';
+import billingRoutes from './routes/billing.routes';
+import { stripeWebhookHandler } from './controllers/stripeWebhook.controller';
 
 import { configureGoogleStrategy } from './auth/googleAuth';
 
@@ -71,6 +73,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
+
+// Stripe webhook needs the raw request body for signature verification, so
+// it must be mounted before the global JSON body parser below.
+app.post('/api/v1/billing/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
 
 // Body parsing middleware
 app.use(express.json({ limit: '50mb' }));
@@ -138,6 +144,7 @@ app.use('/api/v1/diagrams', diagramRoutes);
 app.use('/api/v1/usage', usageRoutes);
 app.use('/api/v1/flows', flowRoutes);
 app.use('/api/v1/cron', cronRoutes);
+app.use('/api/v1/billing', billingRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

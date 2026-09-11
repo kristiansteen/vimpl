@@ -32,6 +32,11 @@ interface Config {
   };
   resendApiKey: string;
   cronSecret: string;
+  stripe: {
+    secretKey: string;
+    webhookSecret: string;
+    priceCommercial: string;
+  };
 }
 
 const config: Config = {
@@ -73,6 +78,11 @@ const config: Config = {
   },
   resendApiKey: process.env.RESEND_API_KEY || '',
   cronSecret: process.env.CRON_SECRET || '',
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY || '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+    priceCommercial: process.env.STRIPE_PRICE_COMMERCIAL || '',
+  },
 };
 
 // Validate required environment variables
