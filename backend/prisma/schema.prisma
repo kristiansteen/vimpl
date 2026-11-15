@@ -51,6 +51,8 @@ model User {
   bpmnDiagrams     BpmnDiagram[]
   apiUsage         ApiUsage[]
   flows            Flow[]
+  asIsRounds       AsIsRound[]
+  asIsSubmissions  AsIsSubmission[]
 
   @@map("users")
 }
@@ -274,4 +276,47 @@ model Lead {
 
   @@index([email])
   @@map("leads")
+}
+
+// ── AS-IS rounds (voice-2-launch) ────────────────────────────────────────────
+// A process owner invites several people to describe the same process.
+// Each participant's contribution is stored here, not as one of their flows.
+
+model AsIsRound {
+  id           String   @id @default(uuid())
+  ownerId      String   @map("owner_id")
+  processName  String   @map("process_name")
+  startTrigger String   @map("start_trigger")
+  endPoint     String   @map("end_point")
+  language     String   @default("en")
+  inviteToken  String   @unique @map("invite_token")
+  status       String   @default("open") // open | closed | promoted
+  draft        Json?
+  flowId       String?  @map("flow_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  owner       User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  submissions AsIsSubmission[]
+
+  @@index([ownerId])
+  @@map("as_is_rounds")
+}
+
+model AsIsSubmission {
+  id           String    @id @default(uuid())
+  roundId      String    @map("round_id")
+  userId       String    @map("user_id")
+  status       String    @default("opened") // opened | started | submitted
+  contribution Json      @default("{}")
+  submittedAt  DateTime? @map("submitted_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  round AsIsRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roundId, userId])
+  @@index([userId])
+  @@map("as_is_submissions")
 }

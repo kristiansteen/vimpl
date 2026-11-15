@@ -21,6 +21,7 @@ import leadRoutes from './routes/lead.routes';
 import diagramRoutes from './routes/diagram.routes';
 import usageRoutes from './routes/usage.routes';
 import flowRoutes from './routes/flow.routes';
+import roundRoutes from './routes/round.routes';
 import cronRoutes from './routes/cron.routes';
 import billingRoutes from './routes/billing.routes';
 import { stripeWebhookHandler } from './controllers/stripeWebhook.controller';
@@ -143,6 +144,7 @@ app.use('/api/v1/leads', leadRoutes);
 app.use('/api/v1/diagrams', diagramRoutes);
 app.use('/api/v1/usage', usageRoutes);
 app.use('/api/v1/flows', flowRoutes);
+app.use('/api/v1/rounds', roundRoutes);
 app.use('/api/v1/cron', cronRoutes);
 app.use('/api/v1/billing', billingRoutes);
 
