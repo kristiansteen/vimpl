@@ -12,7 +12,7 @@ import prisma from '../config/database';
 import logger from '../utils/logger';
 import {
   newInviteToken, canStartRound, validateRoundInput, validateContribution,
-  canContribute, invitationView, ownerRoundView, roundSummary,
+  canContribute, invitationView, ownerRoundView, roundSummary, nextSubmission,
 } from '../services/round.policy';
 
 const router = Router();
@@ -64,16 +64,15 @@ router.put('/invite/:token/contribution', async (req: AuthRequest, res: Response
 
     const parsed = validateContribution(req.body);
     if (!parsed.ok) { res.status(400).json({ error: parsed.error }); return; }
-    const { status, contribution } = parsed.value;
     const userId = req.user!.userId;
-    const data = {
-      status,
-      contribution: contribution as Prisma.InputJsonValue,
-      submittedAt: status === 'submitted' ? new Date() : null,
-    };
+    const where = { roundId_userId: { roundId: round.id, userId } };
+    const existing = await prisma.asIsSubmission.findUnique({ where, select: { status: true, submittedAt: true, updatedAt: true } });
+    const next = nextSubmission(existing, parsed.value);
+    if (!next) { res.json(existing); return; } // the submitted version stands
+    const data = { ...next, contribution: next.contribution as Prisma.InputJsonValue };
 
     const saved = await prisma.asIsSubmission.upsert({
-      where: { roundId_userId: { roundId: round.id, userId } },
+      where,
       update: data,
       create: { roundId: round.id, userId, ...data },
       select: { status: true, submittedAt: true, updatedAt: true },

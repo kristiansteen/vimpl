@@ -1,6 +1,6 @@
 import {
   newInviteToken, canStartRound, validateRoundInput, validateContribution,
-  canContribute, invitationView, ownerRoundView, roundSummary,
+  canContribute, invitationView, ownerRoundView, roundSummary, nextSubmission,
 } from '../round.policy';
 
 const round = {
@@ -115,5 +115,23 @@ describe('newInviteToken', () => {
     expect(a.length).toBeGreaterThanOrEqual(43);
     expect(a).not.toBe(b);
     expect(a).toMatch(/^[A-Za-z0-9_-]+$/);
+  });
+});
+
+describe('nextSubmission', () => {
+  const submitted = { status: 'submitted', contribution: { transcript: 'old', description: { steps: [1] } }, submittedAt: new Date('2026-11-14') };
+  it('a draft save never replaces a submitted version', () => {
+    expect(nextSubmission(submitted, { status: 'started', contribution: { transcript: 'new' } })).toBeNull();
+    expect(nextSubmission(submitted, { status: 'opened', contribution: {} })).toBeNull();
+  });
+  it('a new submit replaces the submitted version', () => {
+    const r = nextSubmission(submitted, { status: 'submitted', contribution: { transcript: 'new', description: {} } });
+    expect(r).toMatchObject({ status: 'submitted', contribution: { transcript: 'new', description: {} } });
+    expect(r!.submittedAt).toBeInstanceOf(Date);
+  });
+  it('drafts are saved while nothing has been submitted', () => {
+    expect(nextSubmission(null, { status: 'opened', contribution: {} })).toEqual({ status: 'opened', contribution: {}, submittedAt: null });
+    expect(nextSubmission({ ...submitted, status: 'started', submittedAt: null }, { status: 'started', contribution: { transcript: 'x' } }))
+      .toEqual({ status: 'started', contribution: { transcript: 'x' }, submittedAt: null });
   });
 });

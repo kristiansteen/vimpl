@@ -101,6 +101,23 @@ export function validateContribution(body: unknown): Result<{ status: Submission
   return { ok: true, value: { status, contribution } };
 }
 
+/**
+ * What to write for a save. A submitted version stands until a new submit replaces it:
+ * a draft save ("opened", "started") after submitting returns null and changes nothing,
+ * so "Change my answer" followed by closing the tab keeps the submitted version.
+ */
+export function nextSubmission(
+  existing: { status: string; submittedAt?: Date | null } | null,
+  incoming: { status: SubmissionStatus; contribution: Contribution },
+): { status: SubmissionStatus; contribution: Contribution; submittedAt: Date | null } | null {
+  if (existing?.status === 'submitted' && incoming.status !== 'submitted') return null;
+  return {
+    status: incoming.status,
+    contribution: incoming.contribution,
+    submittedAt: incoming.status === 'submitted' ? new Date() : null,
+  };
+}
+
 /** Closed and promoted rounds accept nothing. The owner may contribute like anyone else. */
 export function canContribute(round: { status: string }): boolean {
   return round.status === 'open';
