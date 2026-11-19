@@ -1,0 +1,6 @@
+/* Self-hosted fonts: no request to Google when a page loads. */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 900; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Birthstone'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/birthstone-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Kalam'; font-style: normal; font-weight: 300; font-display: swap; src: url('../fonts/kalam-latin-300-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Kalam'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/kalam-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Kalam'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/kalam-latin-700-normal.woff2') format('woff2'); }
