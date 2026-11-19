@@ -22,6 +22,7 @@ import diagramRoutes from './routes/diagram.routes';
 import usageRoutes from './routes/usage.routes';
 import flowRoutes from './routes/flow.routes';
 import roundRoutes from './routes/round.routes';
+import preferencesRoutes from './routes/preferences.routes';
 import cronRoutes from './routes/cron.routes';
 import billingRoutes from './routes/billing.routes';
 import { stripeWebhookHandler } from './controllers/stripeWebhook.controller';
@@ -134,6 +135,7 @@ app.get('/api/docs.json', (_req: Request, res: Response) => {
 });
 
 // API Routes
+app.use('/api/v1/auth/me/preferences', preferencesRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/boards', boardRoutes);
 app.use('/api/v1/admin', adminRoutes);

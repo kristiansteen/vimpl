@@ -320,3 +320,13 @@ model AsIsSubmission {
   @@index([userId])
   @@map("as_is_submissions")
 }
+
+// Ailean app preferences per user (language, process taxonomy). Own table, so the
+// users table and every login query stay untouched by it.
+model UserPreference {
+  userId    String   @id @map("user_id")
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
