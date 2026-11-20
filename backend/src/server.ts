@@ -24,6 +24,7 @@ import flowRoutes from './routes/flow.routes';
 import roundRoutes from './routes/round.routes';
 import preferencesRoutes from './routes/preferences.routes';
 import cronRoutes from './routes/cron.routes';
+import emailRoutes from './routes/email.routes';
 import billingRoutes from './routes/billing.routes';
 import { stripeWebhookHandler } from './controllers/stripeWebhook.controller';
 
@@ -148,6 +149,7 @@ app.use('/api/v1/usage', usageRoutes);
 app.use('/api/v1/flows', flowRoutes);
 app.use('/api/v1/rounds', roundRoutes);
 app.use('/api/v1/cron', cronRoutes);
+app.use('/api/v1/email', emailRoutes);
 app.use('/api/v1/billing', billingRoutes);
 
 // 404 handler

@@ -3,6 +3,8 @@ import authService from '../services/auth.service';
 import { AuthRequest } from '../middleware/auth.middleware';
 import logger from '../utils/logger';
 import config from '../config';
+import { welcomeNewUser } from '../services/onboarding.service';
+import { signupSourceFromState } from '../services/onboarding.policy';
 
 class AuthController {
   /**
@@ -11,7 +13,7 @@ class AuthController {
    */
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, name, signupSource } = req.body;
 
       // Validation
       if (!email || !password) {
@@ -43,6 +45,7 @@ class AuthController {
 
       // Register user
       const user = await authService.register(email, password, name);
+      await welcomeNewUser(user.id, signupSource === 'voice2launch' || signupSource === 'ailean' ? 'ailean' : 'vimpl');
 
       // Generate tokens
       const tokens = authService.generateTokens(user);
@@ -313,6 +316,11 @@ class AuthController {
       if (!user) {
         res.redirect(`${redirectUrl}/login?error=user_not_found`);
         return;
+      }
+
+      // A Google account created in the last few minutes is a new sign-up: welcome it.
+      if (Date.now() - new Date(user.createdAt).getTime() < 5 * 60 * 1000 && !user.sentOnboardingMilestones?.includes(0)) {
+        await welcomeNewUser(user.id, signupSourceFromState(state) || 'vimpl');
       }
 
       // Generate tokens

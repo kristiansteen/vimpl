@@ -31,6 +31,7 @@ interface Config {
     secret: string;
   };
   resendApiKey: string;
+  apiUrl: string;
   cronSecret: string;
   stripe: {
     secretKey: string;
@@ -77,6 +78,8 @@ const config: Config = {
     secret: process.env.SESSION_SECRET || 'your-session-secret',
   },
   resendApiKey: process.env.RESEND_API_KEY || '',
+  // Public URL of this API, used in links inside emails (unsubscribe).
+  apiUrl: (process.env.API_URL || 'https://backend-eight-rho-46.vercel.app').replace(/\/+$/, ''),
   cronSecret: process.env.CRON_SECRET || '',
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY || '',

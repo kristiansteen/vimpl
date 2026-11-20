@@ -153,21 +153,16 @@ class AdminController {
         return;
       }
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true, email: true, name: true, sentOnboardingMilestones: true },
-      });
+      const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true, emailUnsubscribed: true } });
       if (!user) { res.status(404).json({ error: 'Not Found', message: 'User not found' }); return; }
+      if (user.emailUnsubscribed) { res.status(409).json({ error: 'Unsubscribed', message: 'User has unsubscribed from emails' }); return; }
 
-      const { sendOnboardingEmail } = await import('../services/email.service');
-      const sent = await sendOnboardingEmail(user.email, user.name || '', day);
+      const { sendMilestone } = await import('../services/onboarding.service');
+      const sent = await sendMilestone(userId, day);
       if (!sent) {
         res.status(502).json({ error: 'Email Error', message: 'Failed to send onboarding email' });
         return;
       }
-
-      const milestones = Array.from(new Set([...user.sentOnboardingMilestones, day]));
-      await prisma.user.update({ where: { id: userId }, data: { sentOnboardingMilestones: milestones } });
 
       logger.info(`Admin triggered Day ${day} onboarding email for ${user.email}`);
       res.json({ ok: true, day, email: user.email });
