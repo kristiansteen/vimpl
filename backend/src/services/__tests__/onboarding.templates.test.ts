@@ -22,6 +22,11 @@ describe('onboardingEmail — Ailean', () => {
     expect(e.from).toMatch(/Ailean/);
   });
 
+  it('sends replies to a real inbox', () => {
+    expect(onboardingEmail({ ...base, product: 'ailean', lang: 'en', day: 7 }).replyTo).toBe('ailean@vimpl.com');
+    expect(onboardingEmail({ ...base, product: 'vimpl', lang: 'en', day: 7 }).replyTo).toBe('ailean@vimpl.com');
+  });
+
   it('writes Danish when asked', () => {
     const e = onboardingEmail({ ...base, product: 'ailean', lang: 'da', day: 0 });
     expect(e.html).toContain('Hej Mette');

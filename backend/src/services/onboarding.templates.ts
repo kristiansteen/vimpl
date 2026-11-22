@@ -6,6 +6,8 @@ export const AILEAN_APP_URL = 'https://voice-2-launch.vercel.app/';
 const VIMPL_APP_URL = 'https://app.vimpl.com';
 const FROM_AILEAN = 'Kristian from Ailean <ailean@onboard.vimpl.com>';
 const FROM_VIMPL = 'Kristian from vimpl <ailean@onboard.vimpl.com>';
+// onboard.vimpl.com only sends; replies go to a real inbox.
+const REPLY_TO = 'ailean@vimpl.com';
 
 interface Day { subject: string; paras: string[]; cta: string }
 type Copy = Record<number, Day>;
@@ -132,7 +134,7 @@ export interface OnboardingEmailInput {
   unsubscribeUrl: string;
 }
 
-export interface OnboardingEmail { from: string; subject: string; html: string; text: string }
+export interface OnboardingEmail { from: string; replyTo: string; subject: string; html: string; text: string }
 
 export function onboardingEmail(i: OnboardingEmailInput): OnboardingEmail {
   return i.product === 'ailean' ? aileanEmail(i) : vimplEmail(i);
@@ -169,7 +171,7 @@ function aileanEmail({ lang, day, name, unsubscribeUrl }: OnboardingEmailInput):
     `${signoff},`, 'Kristian Steen', role, '', '--', footer, `${unsub}: ${unsubscribeUrl}`,
   ].join('\n');
 
-  return { from: FROM_AILEAN, subject: copy.subject, html, text };
+  return { from: FROM_AILEAN, replyTo: REPLY_TO, subject: copy.subject, html, text };
 }
 
 function vimplEmail({ day, name, unsubscribeUrl }: OnboardingEmailInput): OnboardingEmail {
@@ -189,5 +191,5 @@ function vimplEmail({ day, name, unsubscribeUrl }: OnboardingEmailInput): Onboar
       <p style="font-size:12px;color:#888;margin-top:24px">You get this email because you signed up for vimpl. <a href="${esc(unsubscribeUrl)}" style="color:#888">Unsubscribe</a></p>
     </div>`;
   const text = `Hi ${greeting},\n\nThis is your Day ${day} message from vimpl.\n\nOpen vimpl: ${VIMPL_APP_URL}\n\nBest,\nKristian from vimpl\n\n--\nUnsubscribe: ${unsubscribeUrl}`;
-  return { from: FROM_VIMPL, subject, html, text };
+  return { from: FROM_VIMPL, replyTo: REPLY_TO, subject, html, text };
 }

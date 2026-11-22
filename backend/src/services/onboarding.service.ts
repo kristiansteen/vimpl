@@ -47,6 +47,7 @@ export async function sendMilestone(userId: string, day: number): Promise<boolea
 
   const ok = await sendEmail(user.email, email.subject, email.html, {
     from: email.from,
+    replyTo: email.replyTo,
     text: email.text,
     headers: { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
   });

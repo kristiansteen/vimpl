@@ -6,7 +6,7 @@ import logger from '../utils/logger';
 
 const resend = config.resendApiKey ? new Resend(config.resendApiKey) : null;
 
-interface EmailOptions { from?: string; text?: string; headers?: Record<string, string>; attachments?: any[] }
+interface EmailOptions { from?: string; replyTo?: string; text?: string; headers?: Record<string, string>; attachments?: any[] }
 
 const DEFAULT_FROM = 'Ailean from Vimpl <ailean@onboard.vimpl.com>';
 
@@ -20,6 +20,7 @@ export async function sendEmail(to: string, subject: string, html: string, opts:
     try {
         const { error } = await resend.emails.send({
             from: o.from || DEFAULT_FROM,
+            replyTo: o.replyTo,
             to,
             subject,
             html,
