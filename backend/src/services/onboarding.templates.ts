@@ -1,6 +1,7 @@
 // Onboarding email content. Ailean users get Ailean emails (English or Danish);
 // vimpl users keep the vimpl emails. Every email has an unsubscribe link.
 import type { Lang, Product } from './onboarding.policy';
+import { aileanShell, button, esc, muted, para } from './email.layout';
 
 export const AILEAN_APP_URL = 'https://voice-2-launch.vercel.app/';
 const VIMPL_APP_URL = 'https://app.vimpl.com';
@@ -123,8 +124,6 @@ const VIMPL_SUBJECTS: Record<number, string> = {
   7: 'Day 7: Make vimpl part of your workflow',
 };
 
-const esc = (s: string) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export interface OnboardingEmailInput {
   product: Product;
@@ -151,19 +150,14 @@ function aileanEmail({ lang, day, name, unsubscribeUrl }: OnboardingEmailInput):
     : 'You get this email because you signed up for Ailean.';
   const unsub = da ? 'Afmeld' : 'Unsubscribe';
 
-  const p = (t: string) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#141414">${esc(t)}</p>`;
-  const html = `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#F1F1EE">
-<div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid #DCDCD6;border-radius:10px;padding:32px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif">
-  <p style="margin:0 0 28px;font-size:14px;font-weight:700;letter-spacing:.3em;color:#141414"><span style="display:inline-block;width:9px;height:9px;background:#E65008;margin-right:10px"></span>AILEAN</p>
-  ${p(greeting)}
-  ${copy.paras.map(p).join('\n  ')}
-  <p style="margin:28px 0"><a href="${AILEAN_APP_URL}" style="display:inline-block;background:#141414;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:999px">${esc(copy.cta)}</a></p>
-  ${p(`${signoff},`).replace('margin:0 0 16px', 'margin:0')}
-  <p style="margin:0 0 4px;font-size:16px;color:#141414"><strong>Kristian Steen</strong></p>
-  <p style="margin:0;font-size:14px;color:#6B6B66">${role}</p>
-</div>
-<p style="max-width:560px;margin:16px auto 0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6B6B66;text-align:center">${esc(footer)} <a href="${esc(unsubscribeUrl)}" style="color:#6B6B66">${unsub}</a></p>
-</body></html>`;
+  const html = aileanShell([
+    para(greeting),
+    ...copy.paras.map(t => para(t)),
+    button(copy.cta, AILEAN_APP_URL),
+    para(`${signoff},`, '0'),
+    `<p style="margin:0 0 4px;font-size:16px;color:#141414"><strong>Kristian Steen</strong></p>`,
+    muted(role, '0'),
+  ].join('\n  '), `${esc(footer)} <a href="${esc(unsubscribeUrl)}" style="color:#6B6B66">${unsub}</a>`);
 
   const text = [
     greeting, '', ...copy.paras.flatMap(t => [t, '']),

@@ -298,6 +298,7 @@ model AsIsRound {
 
   owner       User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   submissions AsIsSubmission[]
+  invites     RoundInvite[]
 
   @@index([ownerId])
   @@map("as_is_rounds")
@@ -319,6 +320,23 @@ model AsIsSubmission {
   @@unique([roundId, userId])
   @@index([userId])
   @@map("as_is_submissions")
+}
+
+// People asked by email to describe a round's process. Status is read from the
+// submission made with the same email; this table only records who was asked.
+model RoundInvite {
+  id         String   @id @default(uuid())
+  roundId    String   @map("round_id")
+  email      String
+  note       String   @default("")
+  lastSentAt DateTime @map("last_sent_at")
+  sendCount  Int      @default(1) @map("send_count")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  round AsIsRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+
+  @@unique([roundId, email])
+  @@map("round_invites")
 }
 
 // Ailean app preferences per user (language, process taxonomy). Own table, so the
