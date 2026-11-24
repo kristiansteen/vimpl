@@ -256,7 +256,7 @@ async function setStatus(req: AuthRequest, res: Response, status: 'open' | 'clos
   if (!round) return;
   if (round.status === 'promoted') { res.status(409).json({ error: 'ROUND_PROMOTED', code: 'ROUND_PROMOTED' }); return; }
   const updated = await prisma.asIsRound.update({ where: { id: round.id }, data: { status }, include: withParticipants });
-  res.json(ownerRoundView(updated, updated.submissions));
+  res.json(await ownerView(updated));
 }
 
 // POST /api/v1/rounds/:id/close — stop accepting contributions
@@ -283,7 +283,7 @@ router.post('/:id/renew-link', async (req: AuthRequest, res: Response) => {
     const updated = await prisma.asIsRound.update({
       where: { id: round.id }, data: { inviteToken: newInviteToken() }, include: withParticipants,
     });
-    res.json(ownerRoundView(updated, updated.submissions));
+    res.json(await ownerView(updated));
   } catch (error) {
     logger.error('Renew round link error:', error);
     res.status(500).json({ error: 'Failed to renew link' });
