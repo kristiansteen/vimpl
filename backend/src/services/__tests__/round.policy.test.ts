@@ -107,6 +107,10 @@ describe('roundSummary', () => {
     expect(v.counts).toEqual({ opened: 1, started: 2, submitted: 3 });
     expect(v.submissions).toBeUndefined();
   });
+
+  it('says which flow the round belongs to', () => {
+    expect((roundSummary({ ...round, flowId: 'f1' }, { opened: 0, started: 0, submitted: 0 }) as Record<string, unknown>).flowId).toBe('f1');
+  });
 });
 
 describe('newInviteToken', () => {

@@ -171,6 +171,7 @@ export function roundSummary(round: Round, counts: { opened: number; started: nu
     processName: round.processName,
     status: round.status,
     language: round.language,
+    flowId: round.flowId,
     createdAt: round.createdAt,
     updatedAt: round.updatedAt,
     counts,
