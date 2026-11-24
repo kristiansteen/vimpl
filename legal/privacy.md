@@ -1,4 +1,4 @@
-Last updated: 19 November 2026.
+Last updated: 24 November 2026.
 
 ## 1. Who we are and what this notice covers
 
@@ -53,6 +53,7 @@ We use the providers below to run the websites and your account. Each processes 
 | Vercel | Hosting of websites and servers | Servers in the EU (Frankfurt); pages delivered from a worldwide network |
 | Stripe | Payments and invoices | EU and US |
 | Resend | Sending account e-mails | US |
+| Slack | Internal notice to our team when someone signs up (name and e-mail) | US |
 | Google | Sign in with Google; website statistics on vimpl.com and ailean.dk if you consent | US |
 
 The AI providers we use for the apps' features (Anthropic for text, ElevenLabs for voice) process the content of your work, not your account. They are covered by the [Data Processing Agreement](dpa.html).
