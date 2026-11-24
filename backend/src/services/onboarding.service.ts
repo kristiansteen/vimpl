@@ -3,7 +3,7 @@ import prisma from '../config/database';
 import config from '../config';
 import logger from '../utils/logger';
 import { sendEmail } from './email.service';
-import { notifySignup } from './whatsapp';
+import { notifySignup } from './signupNotice';
 import { onboardingEmail } from './onboarding.templates';
 import { dueMilestone, langFor, productFor, unsubscribeToken, LAST_WINDOW_END, type Product } from './onboarding.policy';
 
@@ -59,7 +59,7 @@ export async function sendMilestone(userId: string, day: number): Promise<boolea
   return true;
 }
 
-/** Called right after sign-up. Never throws: a failed email or WhatsApp must not fail the sign-up. */
+/** Called right after sign-up. Never throws: a failed email or Slack message must not fail the sign-up. */
 export async function welcomeNewUser(userId: string, source: Product | null, method: 'email' | 'google' = 'email'): Promise<void> {
   try {
     if (source) await recordSignupSource(userId, source);
