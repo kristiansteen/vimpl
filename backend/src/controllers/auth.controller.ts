@@ -320,7 +320,7 @@ class AuthController {
 
       // A Google account created in the last few minutes is a new sign-up: welcome it.
       if (Date.now() - new Date(user.createdAt).getTime() < 5 * 60 * 1000 && !user.sentOnboardingMilestones?.includes(0)) {
-        await welcomeNewUser(user.id, signupSourceFromState(state) || 'vimpl');
+        await welcomeNewUser(user.id, signupSourceFromState(state) || 'vimpl', 'google');
       }
 
       // Generate tokens

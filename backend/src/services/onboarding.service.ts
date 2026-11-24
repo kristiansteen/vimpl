@@ -3,6 +3,7 @@ import prisma from '../config/database';
 import config from '../config';
 import logger from '../utils/logger';
 import { sendEmail } from './email.service';
+import { notifySignup } from './whatsapp';
 import { onboardingEmail } from './onboarding.templates';
 import { dueMilestone, langFor, productFor, unsubscribeToken, LAST_WINDOW_END, type Product } from './onboarding.policy';
 
@@ -58,19 +59,20 @@ export async function sendMilestone(userId: string, day: number): Promise<boolea
   return true;
 }
 
-/** Called right after sign-up. Never throws: a failed email must not fail the sign-up. */
-export async function welcomeNewUser(userId: string, source: Product | null): Promise<void> {
+/** Called right after sign-up. Never throws: a failed email or WhatsApp must not fail the sign-up. */
+export async function welcomeNewUser(userId: string, source: Product | null, method: 'email' | 'google' = 'email'): Promise<void> {
   try {
     if (source) await recordSignupSource(userId, source);
   } catch (err) {
     logger.error('Could not record sign-up source:', err);
   }
-  try {
-    const ok = await sendMilestone(userId, 0);
-    if (!ok) logger.warn(`Welcome email not sent for user ${userId}; the daily run will retry today`);
-  } catch (err) {
-    logger.error('Welcome email error:', err);
-  }
+  const welcome = sendMilestone(userId, 0)
+    .then(ok => { if (!ok) logger.warn(`Welcome email not sent for user ${userId}; the daily run will retry today`); })
+    .catch(err => logger.error('Welcome email error:', err));
+  const notice = prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true } })
+    .then(u => u && notifySignup({ product: source === 'ailean' ? 'ailean' : 'vimpl', name: u.name || '', email: u.email, method }))
+    .catch(err => logger.error('Sign-up notice error:', err));
+  await Promise.all([welcome, notice]);
 }
 
 /** Daily run: sends whichever milestone is due for each user in their first nine days. */
